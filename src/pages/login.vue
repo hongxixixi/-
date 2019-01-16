@@ -19,7 +19,7 @@
         <el-button @click="resetForm('ruleForm2')">重置</el-button>
       </el-form-item>
     </el-form>
-    <!-- <router-link to="/home">Home</router-link> -->
+    <!-- <router-link to="/index">index</router-link> -->
   </div>
 </template>
 
@@ -63,7 +63,7 @@ export default {
             message: h("i", { style: "color: teal" }, "登陆成功")
           });
           // this.$route.matched[0].meta.is_login = true;
-          this.$router.push("/home");
+          this.$router.push("/index");
         } else {
           console.log("error submit!!");
           return false;

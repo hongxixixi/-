@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '../components/login'
-import Home from '../components/home'
-import Nav1 from '../components/nav-fir'
-import Nav2 from '../components/nav-sec'
-import Nav3 from '../components/nav-thi'
+import Login from '@/pages/login'
+import Index from '@/pages/index'
+import Nav1 from '@/components/nav-fir'
+import Nav2 from '@/components/nav-sec'
+import Nav3 from '@/components/nav-thi'
 
 Vue.use(Router)
 
@@ -14,9 +14,9 @@ const router = new Router({
     name: 'login',
     component: Login,
   }, {
-    path: '/home',
-    name: 'home',
-    component: Home,
+    path: '/index',
+    name: 'index',
+    component: Index,
     children: [{
         path: 'nav-fir',
         name: 'nav1',

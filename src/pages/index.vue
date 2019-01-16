@@ -9,28 +9,6 @@
       <li>新增</li>
       <router-link :to="{name:'login'}">注销</router-link>
     </ul>
-    <!-- <el-menu
-      :default-active="activeIndex"
-      class="el-menu-demo"
-      mode="horizontal"
-      @select="handleSelect"
-    >
-      <el-menu-item index="1">
-        <router-link :to="{name:'nav1'}">Nav1</router-link>
-      </el-menu-item>
-      <el-menu-item index="2" keep-alive>
-        <router-link :to="{name:'nav2'}">Nav2</router-link>
-      </el-menu-item>
-      <el-menu-item index="3">
-        <router-link :to="{name:'nav3'}">Nav3</router-link>
-      </el-menu-item>
-      <el-menu-item index="4">
-        <span>新增</span>
-      </el-menu-item>
-      <el-menu-item index="5" class="right">
-        <router-link :to="{name:'login'}">注销</router-link>
-      </el-menu-item>
-    </el-menu>-->
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
