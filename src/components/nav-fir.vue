@@ -3,7 +3,7 @@
     <el-container>
       <el-aside width="200px"></el-aside>
       <el-container>
-        <el-header>我是：{{title}}</el-header>
+        <el-header>我就是是：{{title}}</el-header>
         <el-main></el-main>
       </el-container>
     </el-container>
