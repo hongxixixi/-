@@ -1,14 +1,17 @@
 <template>
-  <div class="home">
-    <h2>我是：{{title}}</h2>
-    <ul>
+  <div class="home" height="50px">
+   <el-container>
+  <el-header>Header</el-header>
+  <el-main>Main</el-main>
+</el-container>
+    <!-- <ul>
       <router-link :to="{name:'login'}" tag="li">Login</router-link>
       <router-link :to="{name:'nav1'}" tag="li">Nav1</router-link>
       <router-link :to="{name:'nav2'}" tag="li">Nav2</router-link>
       <router-link :to="{name:'nav3'}" tag="li">Nav3</router-link>
       <li>新增</li>
       <router-link :to="{name:'login'}">注销</router-link>
-    </ul>
+    </ul> -->
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
@@ -43,7 +46,7 @@ li {
   padding: 5px 10px;
   cursor: pointer;
 } */
-.home {
+/* .home {
   float: left;
   width: 30%;
 }
@@ -60,7 +63,21 @@ a {
 }
 .right {
   float: right;
-}
+} */
+.el-header {
+    background-color: #B3C0D1;
+    color: #333;
+    text-align: center;
+    line-height: 50px;
+    height:50px;
+  }
+  .el-main {
+    margin-top:50px;
+    background-color: #E9EEF3;
+    color: #333;
+    text-align: center;
+    height: 100%;
+  }
 </style>
 
 
