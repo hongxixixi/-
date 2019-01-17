@@ -1,10 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+// 这里如果里面是index.vue 写了会报错
 import Login from '@/pages/login'
 import Index from '@/pages/index'
-import Nav1 from '@/components/nav-fir'
-import Nav2 from '@/components/nav-sec'
-import Nav3 from '@/components/nav-thi'
+
 
 Vue.use(Router)
 
@@ -17,25 +16,7 @@ const router = new Router({
     path: '/index',
     name: 'index',
     component: Index,
-    children: [{
-        path: 'nav-fir',
-        name: 'nav1',
-        component: Nav1
-      },
-      {
-        path: 'nav-sec',
-        name: 'nav2',
-        component: Nav2,
-        meta: {
-          keepAlive: true // 不需要缓存
-        }
-      },
-      {
-        path: 'nav-thi',
-        name: 'nav3',
-        component: Nav3
-      }
-    ]
+    children: []
   }]
 })
 // router.beforeEach(function (to, from, next) {

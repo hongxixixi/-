@@ -1,0 +1,33 @@
+/* reset */
+
+body {
+  font-family: "Microsoft\ YaHei";
+  font-size: 14px;
+  position: relative;
+}
+
+html,
+body,
+#app {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  margin: 0;
+  padding: 0; //滚动条！
+}
+
+#app {
+  overflow: hidden; //形成BFC，解决父子盒子margin重合的问题
+  // background: url(../assets/background/phone-1280.jpg);
+}
+
+#video {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: -1;
+  -webkit-filter: grayscale(100%);
+}
