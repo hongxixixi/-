@@ -5,14 +5,14 @@
   bottom: 0;
   right: 0;
   margin: auto;
-  width: 24%;
+  width: 22%;
   height: 38%;
   padding: 20px;
   padding-top: 60px;
-  border-radius:20px;
+  border-radius: 20px;
   background: #f8f8f8;
-  min-height: 164px;
-  min-width: 240px;
+  min-height: 220px;
+  min-width: 280px;
   margin-top: 8%;
   .el-form-item {
     height: 20%;
@@ -20,9 +20,13 @@
     padding: 0 20px;
     .el-form-item__content {
       width: 100%;
+      margin-left: 0px !important;
+      margin-top: 6px;
       .el-button {
-        width: 28%;
+        width: 80%;
         float: left;
+        padding: 8px;
+        background: #5a98de;
       }
     }
     .el-input {
@@ -32,4 +36,31 @@
   .el-button+.el-button {
     margin-left: 10px;
   }
+  .login-footer {
+    width: 100%;
+    padding: 10px;
+    min-width: 280px;
+    padding-left: 16px;
+    box-sizing: border-box;
+    list-style: none;
+    a,
+    span {
+      float: left;
+      text-decoration: none;
+      padding: 0 6px;
+      color: #5a98de;
+      ;
+    }
+  }
+}
+
+.el-form-item.is-success .el-input__inner,
+.el-form-item.is-success .el-input__inner:focus,
+.el-form-item.is-success .el-textarea__inner,
+.el-form-item.is-success .el-textarea__inner:focus {
+  border-color: #5a98de;
+}
+
+.el-form-item.is-success .el-input__validateIcon {
+  color: #5a98de;
 }

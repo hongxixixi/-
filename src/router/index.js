@@ -12,6 +12,21 @@ const router = new Router({
     path: '/',
     name: 'login',
     component: Login,
+    children: [{
+        path: '/',
+        name: 'forgetCode',
+        component: Login,
+      }, {
+        path: '/',
+        name: 'registered',
+        component: Login,
+      },
+      {
+        path: '/',
+        name: 'suggest',
+        component: Login,
+      }
+    ]
   }, {
     path: '/index',
     name: 'index',

@@ -29,10 +29,36 @@
           type="primary"
           @click="submitForm('ruleForm2')"
         >提交</el-button>
-        <el-button @click="resetForm('ruleForm2')">重置</el-button>
+        <!-- <el-button @click="resetForm('ruleForm2')">重置</el-button> -->
       </el-form-item>
     </el-form>
     <!-- <router-link to="/index">index</router-link> -->
+
+    <div class="login-footer">
+      <router-link
+        tag="li"
+        to="/forgetCode"
+      >
+        <a>忘记密码</a>
+        <span>|</span>
+      </router-link>
+
+      <router-link
+        tag="li"
+        to="/registered"
+      >
+        <a>注册新账号</a>
+        <span>|</span>
+      </router-link>
+
+      <router-link
+        tag="li"
+        to="/suggest"
+      >
+        <a>意见反馈</a>
+      </router-link>
+
+    </div>
   </div>
 </template>
 
