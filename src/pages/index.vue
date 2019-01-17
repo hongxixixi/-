@@ -1,7 +1,7 @@
 <template>
   <div class="container-box">
     <el-container>
-      <el-header>Header</el-header>
+      <el-header><m-header/></el-header>
       <el-main>
         <left-side></left-side>
         <mid-side></mid-side>
@@ -14,12 +14,13 @@
   </div>
 </template>
 <script>
+import MHeader from '@/components/header/m-header.vue'
 import leftSide from '@/components/container/leftSide.vue'
 import midSide from '@/components/container/midSide'
 import rightSide from '@/components/container/rightSide'
 
 export default {
-  components: { leftSide, midSide, rightSide },
+  components: { leftSide, midSide, rightSide,MHeader },
   data() {
     return {
     };
