@@ -71,11 +71,11 @@ export default {
         if (valid) {
           // alert("登录成功!");
           const h = this.$createElement;
-          this.$notify({
-            title: "提示",
-            message: h("i", { style: "color: teal" }, "登陆成功")
-          });
-          // this.$route.matched[0].meta.is_login = true;
+          // this.$notify({
+          //   title: "提示",
+          //   message: h("i", { style: "color: teal" }, "登陆成功")
+          // });
+          this.$route.matched[0].meta.is_login = true;
           this.$router.push("/index");
         } else {
           console.log("error submit!!");
