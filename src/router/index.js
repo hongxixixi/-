@@ -8,6 +8,7 @@ import Index from '@/pages/index'
 Vue.use(Router)
 
 const router = new Router({
+  mode: 'history', //去掉井号
   routes: [{
     path: '/',
     name: 'login',
@@ -31,21 +32,42 @@ const router = new Router({
     path: '/index',
     name: 'index',
     component: Index,
-    children: []
+    children: [{
+        path: '/index/addEdit',
+        name: 'addEdit',
+        component: resolve => {
+          require(['@/components/lists/addEdit.vue'], resolve)
+        },
+      },
+      {
+        path: '/index/myshare',
+        name: 'myshare',
+        component: resolve => {
+          require(['@/components/lists/myshare.vue'], resolve)
+        },
+      }, {
+        path: '/index/shareList',
+        name: 'shareList',
+        component: resolve => {
+          require(['@/components/lists/shareList.vue'], resolve)
+        },
+      }, {
+        path: '/index/notes',
+        name: 'notes',
+        component: resolve => {
+          require(['@/components/lists/notes.vue'], resolve)
+        },
+      }, {
+        path: '/index/recover',
+        name: 'recover',
+        component: resolve => {
+          require(['@/components/lists/recover.vue'], resolve)
+        },
+      },
+
+
+    ]
   }]
 })
-// router.beforeEach(function (to, from, next) {
-//   // next()
-//   if (to.path == "/login/nav-fir" || to.path == "/login/nav-sec" || to.path == "/login/nav-thi") {
-//     if (to.matched[0].meta.is_login) {
-//       next()
-//     } else {
-//       next({
-//         name: 'home'
-//       });
-//     }
-//   } else {
-//     next();
-//   }
-// })
+
 export default router

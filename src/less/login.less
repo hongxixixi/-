@@ -20,12 +20,10 @@
     padding: 0 20px;
     .el-form-item__content {
       width: 100%;
-      margin-left: 0px !important;
-      margin-top: 6px;
+      box-sizing: border-box;
       .el-button {
-        width: 80%;
+        width: 70%;
         float: left;
-        padding: 8px;
         background: #5a98de;
       }
     }
@@ -33,15 +31,21 @@
       width: 60%;
     }
   }
+  .commitLogin {
+    padding-top: 16px;
+    .el-form-item__content {
+      margin-left: 30px !important;
+    }
+  }
   .el-button+.el-button {
     margin-left: 10px;
   }
   .login-footer {
-    width: 100%;
+    width: 72%;
+    margin: 0 auto;
     padding: 10px;
     min-width: 280px;
     padding-left: 16px;
-    box-sizing: border-box;
     list-style: none;
     a,
     span {

@@ -1,26 +1,24 @@
 <template>
   <div class="container-box">
     <el-container>
-      <el-header><m-header/></el-header>
+      <el-header>
+        <m-header />
+      </el-header>
       <el-main>
-        <left-side></left-side>
-        <mid-side></mid-side>
-        <right-side></right-side>
+        <menu-list />
       </el-main>
     </el-container>
-    <keep-alive>
+    <!-- <keep-alive>
       <router-view></router-view>
-    </keep-alive>
+    </keep-alive> -->
   </div>
 </template>
 <script>
 import MHeader from '@/components/header/m-header.vue'
-import leftSide from '@/components/container/leftSide.vue'
-import midSide from '@/components/container/midSide'
-import rightSide from '@/components/container/rightSide'
+import menuList from '@/components/content'
 
 export default {
-  components: { leftSide, midSide, rightSide,MHeader },
+  components: { menuList, MHeader },
   data() {
     return {
     };

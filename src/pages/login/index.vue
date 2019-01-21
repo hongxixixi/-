@@ -24,7 +24,7 @@
           autocomplete="off"
         ></el-input>
       </el-form-item>
-      <el-form-item>
+      <el-form-item class="commitLogin">
         <el-button
           type="primary"
           @click="submitForm('ruleForm2')"
