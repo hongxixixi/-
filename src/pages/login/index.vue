@@ -1,5 +1,6 @@
 <template>
   <div class="wrapper">
+    <!-- <div style="width：100%;text-align:center;padding:10px 0;">在线笔记系统</div> -->
     <el-form
       :model="ruleForm2"
       status-icon
@@ -29,10 +30,8 @@
           type="primary"
           @click="submitForm('ruleForm2')"
         >提交</el-button>
-        <!-- <el-button @click="resetForm('ruleForm2')">重置</el-button> -->
       </el-form-item>
     </el-form>
-    <!-- <router-link to="/index">index</router-link> -->
 
     <div class="login-footer">
       <router-link

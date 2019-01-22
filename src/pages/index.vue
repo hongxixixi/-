@@ -1,16 +1,14 @@
 <template>
   <div class="container-box">
     <el-container>
-      <el-header>
+      <!-- <el-header>
         <m-header />
-      </el-header>
+      </el-header> -->
       <el-main>
         <menu-list />
       </el-main>
     </el-container>
-    <!-- <keep-alive>
-      <router-view></router-view>
-    </keep-alive> -->
+
   </div>
 </template>
 <script>

@@ -1,4 +1,4 @@
-.contont-box {
+.content-box {
   width: 100%;
   height: 100%;
   position: relative;
@@ -6,13 +6,21 @@
     box-sizing: border-box;
     width: 14%;
     height: 100%;
-    padding: 0 20px;
     min-width: 100px;
     position: absolute;
     left: 0;
-    background: #f8f8f8;
+    padding-top: 4%;
+    padding-left: 40px;
+    color: #b5babe;
+    background: #454b50;
     .userAccount {
-      margin-top: 2%;
+      margin-bottom: 48px;
+      margin-left: -16px;
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
     }
     .menuList {
       width: 10%;
@@ -22,33 +30,71 @@
       position: relative;
       i {
         position: absolute;
-        left: 7%;
+        left: 4%;
         top: 4%;
       }
       a {
-        text-decoration: none;
-        color: #042e6f;
+        color: #b5babe;
       }
-    }
-    .addEdit {
-      i {
-        top: 0;
+      .el-dropdown-link {
+        color: #f7f7f7;
+        i {
+          position: relative;
+        }
       }
     }
     .el-icon-plus {
-      width: 20px;
-      height: 16px;
+      //创建笔记本的图标
+      margin: -7px 8px 0 -30px;
+      width: 28px;
+      height: 23px;
       background: #5a98de;
       border-radius: 50%;
-      padding-top: 4px;
+      padding-top: 5px;
+      color: #f7f7f7;
+      font-size: 18px;
     }
   }
   .right-side-box {
     width: 100%;
     height: 100%;
-    background: pink;
+    background: #f7f7f7;
     box-sizing: border-box;
     padding-left: 14%;
     z-index: -999;
+    .view-add-folder {
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      text-align: center;
+      vertical-align: middle;
+      background: #e8e8e8;
+      opacity: 0.6;
+      z-index: 99999;
+      .folder-box {
+        width: 26%;
+        height: 30%;
+        margin: 12% 28%;
+        padding-top: 48px;
+        background: #fff;
+        .fold-input {
+          width: 80%;
+          height: 36%;
+          margin: auto;
+          .el-input {
+            width: 70%;
+            height: 16px;
+            .el-input__inner {
+              border: none;
+              border-radius: 0px;
+              border-bottom: 1px solid #dcdfe6;
+            }
+          }
+        }
+        .folder-btn {
+          width: 100%;
+        }
+      }
+    }
   }
 }
