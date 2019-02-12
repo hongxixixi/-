@@ -5,12 +5,15 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    notesLists: [],
-    folderLists: [],
+    fileLists: ['笔记1', '笔记2'],
+    folderLists: ['文件夹1', '文件夹2'],
   },
   mutations: {
-    increment(listItem) {
-      state.notesLists.push(listItem);
+    addFile(state, fileItem) {
+      state.fileLists.push(fileItem);
+    },
+    addFolder(state, folderItem) {
+      state.folderLists.push(folderItem);
     }
   }
 })

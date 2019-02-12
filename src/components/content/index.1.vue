@@ -105,29 +105,29 @@
         <div class="folder-box">
           <div class="fold-input">
             <span>文件名称：</span>
-            <el-input v-model="fileName"></el-input>
+            <el-input v-model="foldName"></el-input>
           </div>
           <div class="fold-btn">
             <el-button
               type="primary"
-              @click="addfile"
+              @click="addFolder"
               class="addFolder-btn"
             >确定</el-button>
-            <el-button @click="cancelAddfile">取消</el-button>
+            <el-button @click="cancelAddFolder">取消</el-button>
 
             <el-dialog
               title="提示"
-              :visible.sync="dialogVisible2"
+              :visible.sync="dialogVisible"
               width="30%"
             >
-              <span>请填写文件夹名称</span>
+              <span>请填写文件名称</span>
               <span
                 slot="footer"
                 class="dialog-footer"
               >
                 <el-button
                   type="primary"
-                  @click="dialogVisible2 = false"
+                  @click="dialogVisible = false"
                 >确 定</el-button>
               </span>
             </el-dialog>
@@ -136,7 +136,6 @@
       </div>
 
       <router-view @toggleFileMask='toggleFileMask'></router-view>
-
     </div>
   </div>
 
@@ -149,35 +148,13 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      dialogVisible2: false,
       viewFolderMask: false,
       viewFileMask: false,
       foldName: '',
-      fileName: '',
     }
   },
   store,
   methods: {
-    // 添加文件的弹出罩切换
-    toggleFileMask() {
-      this.viewFileMask = !this.viewFileMask;
-    },
-    addfile() {
-      if (this.fileName != '') {
-        this.$store.commit('addFile', this.fileName);
-        this.toggleFileMask();
-        this.fileName = '';
-        this.$router.push('/index/notes');
-      }
-      else {
-        this.dialogVisible2 = true;
-      }
-    },
-    cancelAddfile() {
-      this.toggleFileMask();
-    },
-
-    // 添加文件夹的弹出罩切换
     toggleFolderMask() {
       this.viewFolderMask = !this.viewFolderMask;
     },

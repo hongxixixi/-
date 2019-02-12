@@ -6,6 +6,7 @@ import router from './router'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import '@/less/app.less'; //加载样式入口文件
+import '@/assets/icon/iconfont.css'; //加载样式入口文件
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)

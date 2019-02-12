@@ -1,22 +1,16 @@
 <template>
   <div class="container-box">
     <el-container>
-      <!-- <el-header>
-        <m-header />
-      </el-header> -->
       <el-main>
         <menu-list />
       </el-main>
     </el-container>
-
   </div>
 </template>
 <script>
-import MHeader from '@/components/header/m-header.vue'
 import menuList from '@/components/content'
-
 export default {
-  components: { menuList, MHeader },
+  components: { menuList },
   data() {
     return {
     };

@@ -6,7 +6,10 @@
       <i class="el-icon-share"></i>
       <i class="el-icon-delete"></i>
       <span>上次更新时间 : 2019/01/06</span>
-      <el-button type="primary">本地保存</el-button>
+      <el-button
+        type="primary"
+        @click="addFile"
+      >本地保存</el-button>
       <!-- <el-button>分享</el-button> -->
     </div>
     <div class="editor">
@@ -55,15 +58,21 @@ export default {
       }
     }
   },
-  // mounted() {
-  //   var editor = new E("#editor");
-  //   editor.create();
-  // }
   mounted() {
     this.seteditor();
     this.editor.txt.html(this.value);
   },
   methods: {
+    addFile() {
+      if (this.editor.txt.text()) {
+        this.$emit('toggleFileMask')
+      }
+      else {
+        // this.$alert('内容为空', '提示', {
+        //   confirmButtonText: '确定',
+        // });
+      }
+    },
     seteditor() {
       this.editor = new E(this.$refs.toolbar, this.$refs.editor);
       this.editor.customConfig.uploadImgShowBase64 = true; // base 64 存储图片
