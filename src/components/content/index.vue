@@ -48,6 +48,10 @@
       </div>
 
       <div class="menuList">
+        <router-link to='/index/partner'><i class='el-icon-goods'></i>笔记好友</router-link>
+      </div>
+
+      <div class="menuList">
         <router-link to='/index/recover'><i class='el-icon-delete'></i>回收站</router-link>
       </div>
 

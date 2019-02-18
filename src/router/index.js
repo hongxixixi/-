@@ -57,7 +57,21 @@ const router = new Router({
         component: resolve => {
           require(['@/components/lists/notes.vue'], resolve)
         },
+        children: [{
+          path: '/index/notes/openFolder',
+          name: 'openFolder',
+          component: resolve => {
+            require(['@/components/content/openFolder.vue'], resolve)
+          },
+        }, ]
       }, {
+        path: '/index/partner',
+        name: 'partner',
+        component: resolve => {
+          require(['@/components/lists/notePartner.vue'], resolve)
+        },
+      },
+      {
         path: '/index/recover',
         name: 'recover',
         component: resolve => {

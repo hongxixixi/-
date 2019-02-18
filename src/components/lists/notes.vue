@@ -7,6 +7,7 @@
       v-for="(item,index) in this.$store.state.fileLists"
       :key="index"
       class="flie-box"
+      @dblclick="openFile(index)"
     >
       <i class="iconfont icon-wenjian1"></i>
       {{item}}
@@ -16,6 +17,7 @@
       v-for="(item,index) in this.$store.state.folderLists"
       :key="index+'folder'"
       class="folder-box"
+      @dblclick="openFolder(index)"
     >
       <i class="iconfont icon-wenjianjia"></i>
       {{item}}
@@ -34,6 +36,9 @@
         <li>删除</li>
       </ul>
     </div>
+
+    <router-view></router-view>
+
   </div>
 </template>
 
@@ -86,9 +91,14 @@ export default {
       this.$store.commit('addShare', this.shareItem.outerText);
       this.shareItem = '';
     },
+    openFile(index) {
+      alert('跳转到打开文件页面，读取数据库中对应的文件的内容显示在页面')
+    },
+    openFolder(index) {
+      // 跳转到新路由，显示文件夹的文件
+      this.$router.push('/index/notes/openFolder');
+    },
   }
 }
 </script>
 
-<style lang="less" scoped>
-</style>

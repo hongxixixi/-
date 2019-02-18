@@ -1,7 +1,7 @@
 <template>
-  <div class="mid">
+  <div class="myshare-lists">
     <div
-      v-for="(item,index) in this.$store.state.shareLists"
+      v-for="(item,index) in this.$store.state.sharefiles"
       :key="index"
       class="flie-box"
     >
@@ -9,5 +9,13 @@
       {{item}}
     </div>
 
+    <div
+      v-for="(item,index) in this.$store.state.sharefolders"
+      :key="index+'folder'"
+      class="flie-box"
+    >
+      <i class="iconfont icon-wenjianjia"></i>
+      {{item}}
+    </div>
   </div>
 </template>
