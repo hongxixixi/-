@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="note-lists"
-    @mousedown="chooseShare"
-  >
+  <div class="note-lists" @mousedown="chooseShare">
     <div
       v-for="(item,index) in this.$store.state.fileLists"
       :key="index"
@@ -23,22 +20,16 @@
       {{item}}
     </div>
 
-    <div
-      ref="menu"
-      class="menu"
-      style="display:none;position:absolute;"
-      @click="share"
-    >
+    <div ref="menu" class="menu" style="display:none;position:absolute;">
       <ul>
         <li class="shareClick">分享</li>
         <li>复制</li>
         <li>编辑</li>
-        <li>删除</li>
+        <li class="deleteClick">删除</li>
       </ul>
     </div>
 
     <router-view></router-view>
-
   </div>
 </template>
 
@@ -47,58 +38,72 @@ export default {
   components: {},
   data() {
     return {
-      shareItem: '',
-    }
+      shareItem: ""
+    };
   },
   methods: {
     chooseShare(event) {
       var menu = this.$refs.menu;
       event = window.event || event;
-      if ((event.target.parentNode.classList.contains('flie-box')) || (event.target.parentNode.classList.contains('folder-box'))
-        || event.target.classList.contains('flie-box') || (event.target.classList.contains('folder-box'))) {
+      if (
+        event.target.parentNode.classList.contains("flie-box") ||
+        event.target.parentNode.classList.contains("folder-box") ||
+        event.target.classList.contains("flie-box") ||
+        event.target.classList.contains("folder-box")
+      ) {
         if (event.button == 2) {
-          if ((event.target.parentNode.classList.contains('flie-box')) || (event.target.parentNode.classList.contains('folder-box'))) {
+          if (
+            event.target.parentNode.classList.contains("flie-box") ||
+            event.target.parentNode.classList.contains("folder-box")
+          ) {
             this.shareItem = event.target.parentNode;
-          }
-          else {
+          } else {
             this.shareItem = event.target;
           }
 
-          document.oncontextmenu = function (ev) {
+          document.oncontextmenu = function(ev) {
             var ev = ev || event;
-            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            var scrollTop =
+              document.documentElement.scrollTop || document.body.scrollTop;
             menu.style.display = "block";
             menu.style.left = ev.clientX + "px";
             menu.style.top = ev.clientY + scrollTop - 12 + "px";
             return false;
-          }
-        }
-        else {
+          };
+        } else {
           menu.style.display = "none";
         }
-      }
-      else {
-        if (event.target.classList.contains('shareClick')) {
+      } else {
+        if (event.target.classList.contains("shareClick")) {
           this.share();
         }
-        menu.style.display = "none";
-        document.oncontextmenu = function (ev) {       // 如果点击的是其他区域，恢复默认事件
-          return true;
+        if (event.target.classList.contains("deleteClick")) {
+          this.delete();
         }
+        menu.style.display = "none";
+        document.oncontextmenu = function(ev) {
+          // 如果点击的是其他区域，恢复默认事件
+          return true;
+        };
       }
     },
     share() {
-      this.$store.commit('addShare', this.shareItem.outerText);
-      this.shareItem = '';
+      this.$store.commit("addShare", this.shareItem.outerText);
+      this.shareItem = "";
+    },
+    delete() {
+      // console.log(this.shareItem.outerText);
+      this.$store.commit("delete", this.shareItem.outerText);
+      this.shareItem = "";
     },
     openFile(index) {
-      alert('跳转到打开文件页面，读取数据库中对应的文件的内容显示在页面')
+      alert("跳转到打开文件页面，读取数据库中对应的文件的内容显示在页面");
     },
     openFolder(index) {
       // 跳转到新路由，显示文件夹的文件
-      this.$router.push('/index/notes/openFolder');
-    },
+      this.$router.push("/index/notes/openFolder");
+    }
   }
-}
+};
 </script>
 

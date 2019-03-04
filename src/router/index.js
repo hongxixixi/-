@@ -3,6 +3,7 @@ import Router from 'vue-router'
 // 这里如果里面是index.vue 写了会报错
 import Login from '@/pages/login'
 import Index from '@/pages/index'
+import Register from '@/pages/register'
 
 
 Vue.use(Router)
@@ -17,18 +18,20 @@ const router = new Router({
         path: '/',
         name: 'forgetCode',
         component: Login,
-      }, {
-        path: '/',
-        name: 'registered',
-        component: Login,
-      },
+      }, 
       {
         path: '/',
         name: 'suggest',
         component: Login,
       }
     ]
-  }, {
+  },
+  {
+    path: '/registered',
+    name: 'registered',
+    component: Register,
+  },
+   {
     path: '/index',
     name: 'index',
     component: Index,

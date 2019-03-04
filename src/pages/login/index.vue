@@ -25,11 +25,12 @@
           autocomplete="off"
         ></el-input>
       </el-form-item>
+      <el-row v-if="loginFlag" class="error">账号密码不对应或者不存在该账号</el-row>
       <el-form-item class="commitLogin">
         <el-button
           type="primary"
           @click="submitForm('ruleForm2')"
-        >提交</el-button>
+        >登录</el-button>
       </el-form-item>
     </el-form>
 
@@ -62,8 +63,10 @@
 </template>
 
 <script>
+import api from '@/api/index.js'
 export default {
   data() {
+    
     var checkName = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("用户名不能为空"));
@@ -79,10 +82,12 @@ export default {
       }
     };
     return {
+      loginFlag:false,
       ruleForm2: {
         pass: "",
         checkPass: "",
-        age: ""
+        username: "",
+        
       },
       rules2: {
         pass: [{ validator: validatePass, trigger: "blur" }],
@@ -94,14 +99,29 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+           api.login({
+                userName: this.ruleForm2.username,
+                password: this.ruleForm2.pass
+            }).then(res => {
+                console.log(res);
+                if (res.data.status == 'success') {
+                  console.log("success");
+                    // this.$store.dispatch('setUser', this.username);
+                    this.$router.push("/index/notes");//跳转哪一个路由
+                    
+                }
+                if(res.data.status == 'fail'){
+                  this.loginFlag = true;
+                }
+            })
           // alert("登录成功!");
           const h = this.$createElement;
           // this.$notify({
           //   title: "提示",
           //   message: h("i", { style: "color: teal" }, "登陆成功")
           // });
-          this.$route.matched[0].meta.is_login = true;
-          this.$router.push("/index");
+          // this.$route.matched[0].meta.is_login = true;
+          // this.$router.push("/index");
         } else {
           console.log("error submit!!");
           return false;

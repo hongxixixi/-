@@ -9,6 +9,8 @@ const store = new Vuex.Store({
     folderLists: ['文件夹1', '文件夹2'],
     sharefiles: [],
     sharefolders: [],
+    deletefiles:[],
+    deletefolders:[],
   },
   mutations: {
     addFile(state, fileItem) {
@@ -27,6 +29,22 @@ const store = new Vuex.Store({
       }
       if (flag) {
         state.sharefolders.push(shareItem);
+      }
+    },
+    delete(state,deleteItem){
+      let flag = true;
+      let index;
+      for (let i = 0; i < state.fileLists.length; i++) {
+        if (deleteItem == state.fileLists[i]) {
+          state.deletefiles.push(deleteItem);
+          index = i;
+          state.fileLists.splice(i,1);
+          flag = false;
+        }
+      }
+      if (flag) {
+        state.deletefolders.push(deleteItem);
+        state.folderLists.splice(index,1);
       }
     }
   }
