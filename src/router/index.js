@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 // 这里如果里面是index.vue 写了会报错
-import Login from '@/pages/login'
-import Index from '@/pages/index'
-import Register from '@/pages/register'
+import Login from '@/pages/login.vue'
+import ContentPage from '@/pages/contentPage.vue'
+import Register from '@/pages/register.vue'
 
 
 Vue.use(Router)
@@ -12,70 +12,77 @@ const router = new Router({
   mode: 'history', //去掉井号
   routes: [{
     path: '/',
+    redirect:"",
     name: 'login',
     component: Login,
     children: [{
-        path: '/',
+        path: '/login',
         name: 'forgetCode',
         component: Login,
       }, 
       {
-        path: '/',
+        path: '/login',
         name: 'suggest',
         component: Login,
       }
     ]
   },
   {
-    path: '/registered',
-    name: 'registered',
+    path: '/register',
+    name: 'register',
     component: Register,
   },
    {
-    path: '/index',
-    name: 'index',
-    component: Index,
+    path: '/content',
+    name: 'content',
+    component: ContentPage,
     children: [{
-        path: '/index/addEdit',
+        path: '/content/addEdit',
         name: 'addEdit',
         component: resolve => {
           require(['@/components/lists/addEdit.vue'], resolve)
         },
       },
       {
-        path: '/index/myshare',
+        path: '/content/myshare',
         name: 'myshare',
         component: resolve => {
           require(['@/components/lists/myshare.vue'], resolve)
         },
       }, {
-        path: '/index/shareList',
+        path: '/content/shareList',
         name: 'shareList',
         component: resolve => {
           require(['@/components/lists/shareList.vue'], resolve)
         },
       }, {
-        path: '/index/notes',
+        path: '/content/notes',
         name: 'notes',
         component: resolve => {
           require(['@/components/lists/notes.vue'], resolve)
         },
         children: [{
-          path: '/index/notes/openFolder',
+          path: '/content/notes/openFolder',
           name: 'openFolder',
           component: resolve => {
             require(['@/components/content/openFolder.vue'], resolve)
           },
-        }, ]
+        },{
+          path: '/content/notes/openFile',
+          name: 'openFile',
+          component: resolve => {
+            require(['@/components/content/openFile.vue'], resolve)
+          },
+        } ]
       }, {
-        path: '/index/partner',
+        path: '/content/partner',
         name: 'partner',
         component: resolve => {
           require(['@/components/lists/notePartner.vue'], resolve)
         },
       },
       {
-        path: '/index/recover',
+        path: '/content/recover',
         name: 'recover',
         component: resolve => {
           require(['@/components/lists/recover.vue'], resolve)

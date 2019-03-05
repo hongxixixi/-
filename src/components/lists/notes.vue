@@ -4,10 +4,10 @@
       v-for="(item,index) in this.$store.state.fileLists"
       :key="index"
       class="flie-box"
-      @dblclick="openFile(index)"
+      @dblclick="openFile(item)"
     >
       <i class="iconfont icon-wenjian1"></i>
-      {{item}}
+      {{item.name}}
     </div>
 
     <div
@@ -96,12 +96,17 @@ export default {
       this.$store.commit("delete", this.shareItem.outerText);
       this.shareItem = "";
     },
-    openFile(index) {
-      alert("跳转到打开文件页面，读取数据库中对应的文件的内容显示在页面");
+    openFile(item) {
+      console.log(item);
+      console.log(item.content);//将内容添加到编辑器中
+  
+      this.$router.push({path:'/content/addEdit',query:{item:item}});
+
+      // alert("跳转到打开文件页面，读取数据库中对应的文件的内容显示在页面");
     },
     openFolder(index) {
       // 跳转到新路由，显示文件夹的文件
-      this.$router.push("/index/notes/openFolder");
+      this.$router.push({'name':'openFolder'});
     }
   }
 };

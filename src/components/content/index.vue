@@ -1,10 +1,11 @@
 <template>
   <div class="content-box">
     <div class="left-side-box" @click="closeTheFolderOuter">
-      <div class="userAccount menuList">
+      <div class="userAccount">
         <img src="@/assets/pic.png">
         <!-- <span>账户名</span> -->
-        <el-dropdown>
+        <el-dropdown style="
+    margin-left: 12px;">
           <span class="el-dropdown-link">
             {{userName}}
             <i class="el-icon-arrow-down el-icon--right"></i>
@@ -28,38 +29,38 @@
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item @click.native="toggleFolderMask()">创建文件夹</el-dropdown-item>
             <el-dropdown-item>
-              <router-link to="/index/addEdit">创建笔记本</router-link>
+              <router-link :to="{'name':'addEdit'}">创建笔记本</router-link>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
 
       <div class="menuList">
-        <router-link to="/index/notes">
+        <router-link :to="{'name':'notes'}">
           <i class="el-icon-document"></i>我的桌面
         </router-link>
       </div>
 
       <div class="menuList">
-        <router-link to="/index/myshare">
+        <router-link :to="{'name':'myshare'}">
           <i class="el-icon-news"></i>我的分享
         </router-link>
       </div>
 
       <div class="menuList">
-        <router-link to="/index/shareList">
+        <router-link :to="{'name':'shareList'}">
           <i class="el-icon-tickets"></i>分享给我的
         </router-link>
       </div>
 
       <div class="menuList">
-        <router-link to="/index/partner">
+        <router-link :to="{'name':'partner'}">
           <i class="el-icon-goods"></i>笔记好友
         </router-link>
       </div>
 
       <div class="menuList">
-        <router-link to="/index/recover">
+        <router-link :to="{'name':'recover'}">
           <i class="el-icon-delete"></i>回收站
         </router-link>
       </div>
@@ -101,7 +102,7 @@
             <el-dialog title="提示" :visible.sync="dialogVisible2" width="30%">
               <span>请填写文件夹名称</span>
               <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="dialogVisible2 = false">确 定</el-button>
+                <el-button type="primary" @click="dialogVisible2 = false">确定</el-button>
               </span>
             </el-dialog>
           </div>
@@ -119,7 +120,7 @@
           </div>
         </div>
       </div>
-      <router-view @toggleFileMask="toggleFileMask"></router-view>
+      <router-view @toggleFileMask="toggleFileMask" @FileContent = "FileContent"></router-view>
     </div>
   </div>
 </template>
@@ -134,10 +135,12 @@ export default {
       viewFolderMask: false,
       viewFileMask: false,
       viewChangeName:false,
+      fileContent:'',
       foldName: "",
       fileName: "",
       userName: "微微",//用户名
       myChangeName:'',//修改用户名
+
     };
   },
   store,
@@ -146,12 +149,29 @@ export default {
     toggleFileMask() {
       this.viewFileMask = !this.viewFileMask;
     },
+    FileContent(text,filename){
+      this.fileContent = text;
+      this.fileName = filename;
+    },
     addfile() {
       if (this.fileName != "") {
-        this.$store.commit("addFile", this.fileName);
+
+        // this.$store.commit("modifyFileContent",this.fileName);
+
+        this.$store.commit("addFile", {name:this.fileName,content:this.fileContent});
+        console.log(this.$store);
         this.toggleFileMask();
         this.fileName = "";
-        this.$router.push("/index/notes");
+        this.$router.push({name:"notes"});
+        
+        
+        // 判断一下当前是否有文件名相同,相同直接修改
+        // for(let i = 0; i <this.$store.state.fileLists.length;i++){
+        //   if(this.$store.state.fileLists[i].name ==this.fileName ){
+        //     // this.$store.state.fileLists[i].content = this.fileContent;
+        //   }
+        // }
+        
       } else {
         this.dialogVisible2 = true;
       }
@@ -182,7 +202,7 @@ export default {
         this.$store.commit("addFolder", this.foldName);
         this.toggleFolderMask();
         this.foldName = "";
-        this.$router.push("/index/notes");
+        this.$router.push({name:"notes"});
       } else {
         this.dialogVisible = true;
       }
@@ -199,13 +219,13 @@ export default {
     conFirmChangeUserName(){
       this.userName = this.myChangeName;
       this.viewChangeName = !this.viewChangeName;
-      this.$router.push("/index/notes");
+      this.$router.push({name:"notes"});
     },
     //取消修改
     cancelChangeUserName(){
       this.myChangeName = this.userName,
       this.viewChangeName = !this.viewChangeName;
-      this.$router.push("/index/notes");
+      this.$router.push({name:"notes"});
     }
   }
 };

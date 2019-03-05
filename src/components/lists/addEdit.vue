@@ -32,7 +32,8 @@ export default {
   data() {
     return {
       editor: null,
-      info_: null
+      info_: null,
+      filename:'',
     };
   },
   model: {
@@ -61,17 +62,28 @@ export default {
   mounted() {
     this.seteditor();
     this.editor.txt.html(this.value);
+    if(this.$route.query.item){
+       this.$refs.editor.innerHTML = this.$route.query.item.content;
+        this.filename =  this.$route.query.item.name
+    }
+   
+    // console.log(this.$route.query.content);
   },
   methods: {
     addFile() {
-      if (this.editor.txt.text()) {
-        this.$emit('toggleFileMask')
-      }
-      else {
-        // this.$alert('内容为空', '提示', {
-        //   confirmButtonText: '确定',
-        // });
-      }
+      var text = this.$refs.editor.innerHTML;//获取编辑框内的内容
+      // console.log(text);
+    this.$emit('toggleFileMask');
+    this.$emit('FileContent',text,this.filename);
+
+      // if (this.editor.txt.text()) {
+      //   this.$emit('toggleFileMask')
+      // }
+      // else {
+      //   // this.$alert('内容为空', '提示', {
+      //   //   confirmButtonText: '确定',
+      //   // });
+      // }
     },
     seteditor() {
       this.editor = new E(this.$refs.toolbar, this.$refs.editor);

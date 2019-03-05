@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    fileLists: ['笔记1', '笔记2'],
+    fileLists: [{name:'笔记1',content:'11'},{name: '笔记2',content:'33'}],
     folderLists: ['文件夹1', '文件夹2'],
     sharefiles: [],
     sharefolders: [],
@@ -13,8 +13,16 @@ const store = new Vuex.Store({
     deletefolders:[],
   },
   mutations: {
-    addFile(state, fileItem) {
-      state.fileLists.push(fileItem);
+    addFile(state,file) {
+      state.fileLists.push({name:file.name,content:file.content});
+    },
+    modifyFileContent(state,file){
+      // for(let i = 0; i <state.fileLists.length;i++){
+      //   if(state.fileLists[i].name ==file.name ){
+      //     state.fileLists[i].content = file.content;
+      //     // this.$store.state.fileLists[i].content = this.fileContent;
+      //   }
+      // }
     },
     addFolder(state, folderItem) {
       state.folderLists.push(folderItem);
