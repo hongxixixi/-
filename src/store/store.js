@@ -30,7 +30,7 @@ const store = new Vuex.Store({
     addShare(state, shareItem) {
       let flag = true;
       for (let i = 0; i < state.fileLists.length; i++) {
-        if (shareItem == state.fileLists[i]) {
+        if (shareItem == state.fileLists[i].name) {
           state.sharefiles.push(shareItem);
           flag = false;
         }
@@ -43,7 +43,7 @@ const store = new Vuex.Store({
       let flag = true;
       let index;
       for (let i = 0; i < state.fileLists.length; i++) {
-        if (deleteItem == state.fileLists[i]) {
+        if (deleteItem == state.fileLists[i].name) {
           state.deletefiles.push(deleteItem);
           index = i;
           state.fileLists.splice(i,1);
