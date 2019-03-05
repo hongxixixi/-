@@ -10,11 +10,11 @@ const api = {
     return axios.get('/register',{params})
   },
   // 获取通知信息，返回20条数据
-  getMessageInfo(){
-    return axios.get('/getMessageInfo')
+  getName(params){
+    return axios.get('/getName',{params})
   },
-  getMessage(params){
-    return axios.get('/getMessageInfo',{params})
+  modifyName(params){
+    return axios.get('/modifyName',{params})
   },
   // 传入hiring时返回对象数组，传入id时返回某个对象
   getPartTimeInfos(params){
