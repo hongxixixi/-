@@ -14,7 +14,7 @@
       v-for="(item,index) in this.$store.state.folderLists"
       :key="index+'folder'"
       class="folder-box"
-      @dblclick="openFolder(index)"
+      @dblclick="openFolder(item)"
     >
       <i class="iconfont icon-wenjianjia"></i>
       {{item}}
@@ -105,9 +105,10 @@ export default {
 
       // alert("跳转到打开文件页面，读取数据库中对应的文件的内容显示在页面");
     },
-    openFolder(index) {
+    openFolder(item) {
+      this.$router.push({name:'openFolder',params:{item:item}});
       // 跳转到新路由，显示文件夹的文件
-      this.$router.push({'name':'openFolder'});
+      // this.$router.push({'name':'openFolder'});
     }
   }
 };

@@ -44,6 +44,13 @@ const router = new Router({
         },
       },
       {
+        path: '/content/openFolder',
+        name: 'openFolder',
+        component: resolve => {
+          require(['@/components/content/openFolder.vue'], resolve)
+        },
+      },
+      {
         path: '/content/myshare',
         name: 'myshare',
         component: resolve => {
@@ -62,12 +69,6 @@ const router = new Router({
           require(['@/components/lists/notes.vue'], resolve)
         },
         children: [{
-          path: '/content/notes/openFolder',
-          name: 'openFolder',
-          component: resolve => {
-            require(['@/components/content/openFolder.vue'], resolve)
-          },
-        },{
           path: '/content/notes/openFile',
           name: 'openFile',
           component: resolve => {
