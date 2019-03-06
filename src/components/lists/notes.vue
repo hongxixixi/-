@@ -100,7 +100,8 @@ export default {
       console.log(item);
       console.log(item.content);//将内容添加到编辑器中
   
-      this.$router.push({path:'/content/addEdit',query:{item:item}});
+      // this.$router.push({path:'/content/addEdit',query:{item:item}});
+      this.$router.push({name:'addEdit',params:{item:item}});
 
       // alert("跳转到打开文件页面，读取数据库中对应的文件的内容显示在页面");
     },

@@ -7,12 +7,14 @@
         <el-dropdown style="
     margin-left: 12px;">
           <span class="el-dropdown-link">
-            {{userName}}
+            {{name}}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>上传头像</el-dropdown-item>
-            <el-dropdown-item ><div @click="changeName">  修改昵称</div></el-dropdown-item>
+            <el-dropdown-item>
+              <div @click="changeName">修改昵称</div>
+            </el-dropdown-item>
             <el-dropdown-item divided>
               <router-link :to="{path:'/'}">退出登录</router-link>
             </el-dropdown-item>
@@ -109,69 +111,88 @@
         </div>
       </div>
       <div class="view-change-name" v-if="viewChangeName">
-         <div class="name-box">
+        <div class="name-box">
           <div class="name-input">
-            <span>用户名：</span>
+            <span>昵称：</span>
             <el-input v-model="myChangeName"></el-input>
           </div>
           <div class="fold-btn">
-            <el-button type="primary" @click="conFirmChangeUserName">确定</el-button>
-            <el-button @click="cancelChangeUserName">取消</el-button>
+            <el-button type="primary" @click="conFirmChangeName">确定</el-button>
+            <el-button @click="cancelChangeName">取消</el-button>
           </div>
         </div>
       </div>
-      <router-view @toggleFileMask="toggleFileMask" @FileContent = "FileContent"></router-view>
+      <router-view @toggleFileMask="toggleFileMask" @FileContent="FileContent"></router-view>
     </div>
   </div>
 </template>
 
 <script>
+import api from "@/api/index.js";
 import store from "@/store/store.js";
 export default {
+  mounted(){
+    this.getName();
+  },
   data() {
     return {
       dialogVisible: false,
       dialogVisible2: false,
       viewFolderMask: false,
       viewFileMask: false,
-      viewChangeName:false,
-      fileContent:'',
+      viewChangeName: false,
+      fileContent: "",
       foldName: "",
       fileName: "",
-      userName: "微微",//用户名
-      myChangeName:'',//修改用户名
-
+      username:store.state.username,//登录用户名
+      // idName: store.state.username,
+      name:'',//用户名
+      myChangeName: "" //修改昵称
     };
   },
   store,
+  // computed: {
+  //   name() {
+  //     api.getName({ userName: this.username, }).then(res => {
+  //       // console.log(res)
+  //       return res.data.name;
+  //     });
+  //   }
+  // },
   methods: {
+    //获取当前用户的昵称
+    getName(){
+       api.getName({ userName: this.username}).then(res => {
+        this.name =  res.data.name;
+      });
+    },
     // 添加文件的弹出罩切换
     toggleFileMask() {
       this.viewFileMask = !this.viewFileMask;
     },
-    FileContent(text,filename){
+    FileContent(text, filename) {
       this.fileContent = text;
       this.fileName = filename;
     },
     addfile() {
       if (this.fileName != "") {
-
         // this.$store.commit("modifyFileContent",this.fileName);
 
-        this.$store.commit("addFile", {name:this.fileName,content:this.fileContent});
+        this.$store.commit("addFile", {
+          name: this.fileName,
+          content: this.fileContent
+        });
         console.log(this.$store);
         this.toggleFileMask();
         this.fileName = "";
-        this.$router.push({name:"notes"});
-        
-        
+        this.$router.push({ name: "notes" });
+
         // 判断一下当前是否有文件名相同,相同直接修改
         // for(let i = 0; i <this.$store.state.fileLists.length;i++){
         //   if(this.$store.state.fileLists[i].name ==this.fileName ){
         //     // this.$store.state.fileLists[i].content = this.fileContent;
         //   }
         // }
-        
       } else {
         this.dialogVisible2 = true;
       }
@@ -202,7 +223,7 @@ export default {
         this.$store.commit("addFolder", this.foldName);
         this.toggleFolderMask();
         this.foldName = "";
-        this.$router.push({name:"notes"});
+        this.$router.push({ name: "notes" });
       } else {
         this.dialogVisible = true;
       }
@@ -212,20 +233,24 @@ export default {
     },
     //修改用户名
     changeName() {
-      this.myChangeName = this.userName;
-      this.viewChangeName = !this.viewChangeName
+      this.myChangeName = this.name;
+      this.viewChangeName = !this.viewChangeName;
     },
     //确认修改用户名
-    conFirmChangeUserName(){
-      this.userName = this.myChangeName;
+    conFirmChangeName() {
+      // this.name = this.myChangeName;
+      api.modifyName({ userName: this.username,name:this.myChangeName}).then(res => {
+        console.log(res);
+        this.getName();
+      });
       this.viewChangeName = !this.viewChangeName;
-      this.$router.push({name:"notes"});
+      this.$router.push({ name: "notes" });
     },
     //取消修改
-    cancelChangeUserName(){
-      this.myChangeName = this.userName,
-      this.viewChangeName = !this.viewChangeName;
-      this.$router.push({name:"notes"});
+    cancelChangeName() {
+      (this.myChangeName = this.name),
+        (this.viewChangeName = !this.viewChangeName);
+      this.$router.push({ name: "notes" });
     }
   }
 };

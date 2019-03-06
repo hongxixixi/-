@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
+    username:'',
     fileLists: [{name:'笔记1',content:'11'},{name: '笔记2',content:'33'}],
     folderLists: ['文件夹1', '文件夹2'],
     sharefiles: [],
@@ -15,6 +16,9 @@ const store = new Vuex.Store({
   mutations: {
     addFile(state,file) {
       state.fileLists.push({name:file.name,content:file.content});
+    },
+    getUserName(state,name){
+      state.username = name;
     },
     modifyFileContent(state,file){
       // for(let i = 0; i <state.fileLists.length;i++){

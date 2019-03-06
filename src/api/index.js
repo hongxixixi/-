@@ -9,7 +9,7 @@ const api = {
   register(params){
     return axios.get('/register',{params})
   },
-  // 获取通知信息，返回20条数据
+  // 获取昵称，返回20条数据
   getName(params){
     return axios.get('/getName',{params})
   },

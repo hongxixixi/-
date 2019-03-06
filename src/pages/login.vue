@@ -64,6 +64,7 @@
 
 <script>
 import api from '@/api/index.js';
+import store from "@/store/store.js";
 export default {
   data() {
     
@@ -106,6 +107,15 @@ export default {
                 console.log(res);
                 if (res.data.status == 'success') {
                   console.log("success");
+                  //将用户名传入store中的username;
+                  store.commit('getUserName',this.ruleForm2.username);
+                  console.log(store.state.username);
+                //  api.getName({userName:this.ruleForm2.username}).then(res2=>{
+                //     if (res2.data.status == 'success'){
+                //       store.commit('getName',res2.data.name);
+                //     }
+                  
+                //  })
                     // this.$store.dispatch('setUser', this.username);
                     this.$router.push({name:"notes"});//跳转哪一个路由
                     

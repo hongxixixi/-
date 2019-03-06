@@ -62,13 +62,21 @@ export default {
   mounted() {
     this.seteditor();
     this.editor.txt.html(this.value);
-    if(this.$route.query.item){
-       this.$refs.editor.innerHTML = this.$route.query.item.content;
-        this.filename =  this.$route.query.item.name
+    console.log(this.$route.params);
+    if(this.$route.params.item){
+       this.$refs.editor.innerHTML = this.$route.params.item.content;
+        this.filename =  this.$route.params.item.name
     }
    
     // console.log(this.$route.query.content);
   },
+  // created(){
+  //  console.log(this.$route.params);
+  //   if(this.$route.params.item){
+  //      this.$refs.editor.innerHTML = this.$route.params.item.content;
+  //       this.filename =  this.$route.params.item.name
+  //   }
+  // },
   methods: {
     addFile() {
       var text = this.$refs.editor.innerHTML;//获取编辑框内的内容
