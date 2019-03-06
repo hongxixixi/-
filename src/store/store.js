@@ -21,12 +21,11 @@ const store = new Vuex.Store({
       state.username = name;
     },
     modifyFileContent(state,file){
-      // for(let i = 0; i <state.fileLists.length;i++){
-      //   if(state.fileLists[i].name ==file.name ){
-      //     state.fileLists[i].content = file.content;
-      //     // this.$store.state.fileLists[i].content = this.fileContent;
-      //   }
-      // }
+      for(var i = 0;i <state.fileLists.length;i++ ){
+        if(state.fileLists[i].name == file.name){
+          state.fileLists[i].content = file.content;
+        }
+      }
     },
     addFolder(state, folderItem) {
       state.folderLists.push(folderItem);

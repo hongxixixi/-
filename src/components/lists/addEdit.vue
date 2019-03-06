@@ -29,6 +29,7 @@
 
 <script>
 import E from "wangeditor";
+import store from "@/store/store.js";
 export default {
   name: 'editor',
   data () {
@@ -58,9 +59,13 @@ export default {
         // },
     addFile() {
       var text = this.editorContent;//获取编辑框内的内容
-    this.$emit('toggleFileMask');
     this.$emit('FileContent',text,this.filename);
-
+    this.$emit('toggleConfirmSave');
+    // this.$store.commit("addFile", {
+    //       name: this.fileName,
+    //       content: text
+    //     });
+    // this.$router.push({ name: "notes" });
       // if (this.editor.txt.text()) {
       //   this.$emit('toggleFileMask')
       // }

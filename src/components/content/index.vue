@@ -30,9 +30,10 @@
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item @click.native="toggleFolderMask()">创建文件夹</el-dropdown-item>
-            <el-dropdown-item>
+            <el-dropdown-item @click.native="toggleFileMask()">创建笔记本</el-dropdown-item>
+            <!-- <el-dropdown-item>
               <router-link :to="{'name':'addEdit'}">创建笔记本</router-link>
-            </el-dropdown-item>
+            </el-dropdown-item>-->
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -110,6 +111,7 @@
           </div>
         </div>
       </div>
+      <!-- 修改名字弹出框 -->
       <div class="view-change-name" v-if="viewChangeName">
         <div class="name-box">
           <div class="name-input">
@@ -122,7 +124,14 @@
           </div>
         </div>
       </div>
-      <router-view @toggleFileMask="toggleFileMask" @FileContent="FileContent"></router-view>
+      <div class="view-confirm-save" v-if="viewConfirmMask">
+        <div class="confirm-box">
+          <h1>确认保存？</h1>
+          <el-button type="primary" @click="confirmSaveFile">确定</el-button>
+          <el-button @click="cancelSaveFile">取消</el-button>
+        </div>
+      </div>
+      <router-view @toggleConfirmSave="toggleConfirmSave" @FileContent="FileContent"></router-view>
     </div>
   </div>
 </template>
@@ -131,7 +140,7 @@
 import api from "@/api/index.js";
 import store from "@/store/store.js";
 export default {
-  mounted(){
+  mounted() {
     this.getName();
   },
   data() {
@@ -141,62 +150,52 @@ export default {
       viewFolderMask: false,
       viewFileMask: false,
       viewChangeName: false,
+      viewConfirmMask: false,
       fileContent: "",
       foldName: "",
       fileName: "",
-      username:store.state.username,//登录用户名
+      username: store.state.username, //登录用户名
       // idName: store.state.username,
-      name:'',//用户名
+      name: "", //用户名
       myChangeName: "" //修改昵称
     };
   },
   store,
-  // computed: {
-  //   name() {
-  //     api.getName({ userName: this.username, }).then(res => {
-  //       // console.log(res)
-  //       return res.data.name;
-  //     });
-  //   }
-  // },
+
   methods: {
-    //获取当前用户的昵称
-    getName(){
-       api.getName({ userName: this.username}).then(res => {
-        this.name =  res.data.name;
+    //确认保存（修改笔记本内容）
+    confirmSaveFile() {
+      this.$store.commit("modifyFileContent", {
+        name: this.fileName,
+        content: this.fileContent
+      });
+      this.viewConfirmMask = !this.viewConfirmMask;
+      this.fileName = "";
+      this.$router.push({ name: "notes" });
+    },
+    cancelSaveFile(){
+      this.toggleConfirmSave();
+    },
+        //获取当前用户的昵称
+    getName() {
+      api.getName({ userName: this.username }).then(res => {
+        this.name = res.data.name;
       });
     },
     // 添加文件的弹出罩切换
     toggleFileMask() {
       this.viewFileMask = !this.viewFileMask;
     },
+    //确认保存弹出框显示切换
+    toggleConfirmSave() {
+      this.viewConfirmMask = !this.viewConfirmMask;
+    },
+    //获取编辑器文件内容和文件名称
     FileContent(text, filename) {
       this.fileContent = text;
       this.fileName = filename;
     },
-    addfile() {
-      if (this.fileName != "") {
-        // this.$store.commit("modifyFileContent",this.fileName);
 
-        this.$store.commit("addFile", {
-          name: this.fileName,
-          content: this.fileContent
-        });
-        console.log(this.$store);
-        this.toggleFileMask();
-        this.fileName = "";
-        this.$router.push({ name: "notes" });
-
-        // 判断一下当前是否有文件名相同,相同直接修改
-        // for(let i = 0; i <this.$store.state.fileLists.length;i++){
-        //   if(this.$store.state.fileLists[i].name ==this.fileName ){
-        //     // this.$store.state.fileLists[i].content = this.fileContent;
-        //   }
-        // }
-      } else {
-        this.dialogVisible2 = true;
-      }
-    },
     cancelAddfile() {
       this.toggleFileMask();
     },
@@ -218,6 +217,7 @@ export default {
         this.viewFolderMask = !this.viewFolderMask;
       }
     },
+    //添加文件夹
     addFolder() {
       if (this.foldName != "") {
         this.$store.commit("addFolder", this.foldName);
@@ -226,6 +226,20 @@ export default {
         this.$router.push({ name: "notes" });
       } else {
         this.dialogVisible = true;
+      }
+    },
+    //添加笔记本
+    addfile() {
+      if (this.fileName != "") {
+        this.$store.commit("addFile", {
+          name: this.fileName,
+          content: ""
+        });
+        this.toggleFileMask();
+        this.fileName = "";
+        this.$router.push({ name: "notes" });
+      } else {
+        this.dialogVisible2 = true;
       }
     },
     cancelAddFolder() {
@@ -239,10 +253,12 @@ export default {
     //确认修改用户名
     conFirmChangeName() {
       // this.name = this.myChangeName;
-      api.modifyName({ userName: this.username,name:this.myChangeName}).then(res => {
-        console.log(res);
-        this.getName();
-      });
+      api
+        .modifyName({ userName: this.username, name: this.myChangeName })
+        .then(res => {
+          console.log(res);
+          this.getName();
+        });
       this.viewChangeName = !this.viewChangeName;
       this.$router.push({ name: "notes" });
     },
