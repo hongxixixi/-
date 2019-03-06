@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50725
 File Encoding         : 65001
 
-Date: 2019-03-05 18:31:36
+Date: 2019-03-06 18:57:29
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,16 +23,17 @@ CREATE TABLE `user_table` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `name` varbinary(255) DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`,`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of user_table
 -- ----------------------------
 INSERT INTO `user_table` VALUES ('1', '2262', '2666', null);
-INSERT INTO `user_table` VALUES ('2', '2634262', '2666', 0x3232333132);
-INSERT INTO `user_table` VALUES ('3', '26342676572', '2666', 0x3232333132);
-INSERT INTO `user_table` VALUES ('4', '11', '11', 0x3131);
-INSERT INTO `user_table` VALUES ('5', 'xiao', '22', 0x7869616F);
-INSERT INTO `user_table` VALUES ('6', '111111', '11', 0x3131);
+INSERT INTO `user_table` VALUES ('2', '2634262', '2666', '22312');
+INSERT INTO `user_table` VALUES ('3', '26342676572', '2666', '22312');
+INSERT INTO `user_table` VALUES ('4', '11', '11', '往后');
+INSERT INTO `user_table` VALUES ('5', 'xiao', '22', 'xiaofuying');
+INSERT INTO `user_table` VALUES ('6', '111111', '11', '11');
+INSERT INTO `user_table` VALUES ('7', '呜呜', '11', 'jjj');
