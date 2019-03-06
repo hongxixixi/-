@@ -1,5 +1,8 @@
 <template>
   <div class="editor-box">
+    <div class="file-title">
+      
+      文件名:{{filename}}</div>
     <div class="sava-edit">
       <i class="el-icon-edit"></i>
       <i class="el-icon-upload"></i>
@@ -53,6 +56,7 @@ export default {
   },
 
   methods: {
+   
 
         // getContent: function () {
         //     alert(this.editorContent)
@@ -135,45 +139,8 @@ export default {
   }
 };
 </script>
-
- <style lang="less" scoped>
-.editor-box {
-  width: 90%;
-  height: 100%;
-  margin: auto;
-  padding-top: 8px;
-  box-sizing: border-box;
-  .sava-edit {
-    height: 6%;
-    padding: 8px;
-    box-sizing: border-box;
-    overflow: hidden; //清除浮动
-    .el-button {
-      float: right;
-      margin: 0 6px;
-    }
-    i {
-      margin: 0 10px;
-      float: left;
-      font-size: 22px;
-    }
-  }
-  .editor {
-    width: 66%;
-    height: 92%;
-    margin: 0 auto;
-   .w-e-text-container{
-     height:600px !important;
-   }
-  }
-}
-
-// .w-e-text-container{
-//     height: 700px !important;/*!important是重点，因为原div是行内样式设置的高度300px*/
-// }
-</style>
 <style>
 .w-e-text-container{
-    height: 97% !important;/*!important是重点，因为原div是行内样式设置的高度300px*/
+    height: 92% !important;/*!important是重点，因为原div是行内样式设置的高度300px*/
 }
 </style>

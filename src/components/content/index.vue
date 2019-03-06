@@ -39,31 +39,31 @@
       </div>
 
       <div class="menuList">
-        <router-link :to="{'name':'notes'}">
+        <router-link :to="{name:'notes'}">
           <i class="el-icon-document"></i>我的桌面
         </router-link>
       </div>
 
       <div class="menuList">
-        <router-link :to="{'name':'myshare'}">
+        <router-link :to="{name:'myshare'}">
           <i class="el-icon-news"></i>我的分享
         </router-link>
       </div>
 
       <div class="menuList">
-        <router-link :to="{'name':'shareList'}">
+        <router-link :to="{name:'shareList'}">
           <i class="el-icon-tickets"></i>分享给我的
         </router-link>
       </div>
 
       <div class="menuList">
-        <router-link :to="{'name':'partner'}">
+        <router-link :to="{name:'partner'}">
           <i class="el-icon-goods"></i>笔记好友
         </router-link>
       </div>
 
       <div class="menuList">
-        <router-link :to="{'name':'recover'}">
+        <router-link :to="{name:'recover'}">
           <i class="el-icon-delete"></i>回收站
         </router-link>
       </div>
@@ -133,6 +133,8 @@
       </div>
       <router-view @toggleConfirmSave="toggleConfirmSave" @FileContent="FileContent"></router-view>
     </div>
+
+    <el-button type="primary" class = "backBtn" @click="back">返回</el-button>
   </div>
 </template>
 
@@ -155,7 +157,6 @@ export default {
       foldName: "",
       fileName: "",
       username: store.state.username, //登录用户名
-      // idName: store.state.username,
       name: "", //用户名
       myChangeName: "" //修改昵称
     };
@@ -163,6 +164,9 @@ export default {
   store,
 
   methods: {
+    back() {
+      this.$router.go(-1);
+    },
     //确认保存（修改笔记本内容）
     confirmSaveFile() {
       this.$store.commit("modifyFileContent", {
@@ -173,10 +177,10 @@ export default {
       this.fileName = "";
       this.$router.push({ name: "notes" });
     },
-    cancelSaveFile(){
+    cancelSaveFile() {
       this.toggleConfirmSave();
     },
-        //获取当前用户的昵称
+    //获取当前用户的昵称
     getName() {
       api.getName({ userName: this.username }).then(res => {
         this.name = res.data.name;
