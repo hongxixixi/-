@@ -7,7 +7,8 @@ const store = new Vuex.Store({
   state: {
     username:'',
     fileLists: [{name:'笔记1',content:'11'},{name: '笔记2',content:'33'}],
-    folderLists: ['文件夹1', '文件夹2'],
+    // folderLists: ['文件夹1', '文件夹2'],
+    folderLists:[{name:'文件夹1',files:[{name:'aa',content:'啊啊啊啊1'},{name: 'bb',content:'巴巴爸爸'}]},{name:'文件夹2',files:[{name:'bb',content:'bbbb1'},{name: 'cc',content:'asadas'}]}],
     sharefiles: [],
     sharefolders: [],
     deletefiles:[],
@@ -27,8 +28,8 @@ const store = new Vuex.Store({
         }
       }
     },
-    addFolder(state, folderItem) {
-      state.folderLists.push(folderItem);
+    addFolder(state, folder) {
+      state.folderLists.push({name:folder.name,files:folder.content});
     },
     addShare(state, shareItem) {
       let flag = true;

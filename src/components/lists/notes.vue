@@ -1,5 +1,6 @@
 <template>
   <div class="note-lists" @mousedown="chooseShare">
+    <router-view></router-view>
     <div
       v-for="(item,index) in this.$store.state.fileLists"
       :key="index"
@@ -17,7 +18,7 @@
       @dblclick="openFolder(item)"
     >
       <i class="iconfont icon-wenjianjia"></i>
-      {{item}}
+      {{item.name}}
     </div>
 
     <div ref="menu" class="menu" style="display:none;position:absolute;">
@@ -29,18 +30,22 @@
       </ul>
     </div>
 
-    <router-view></router-view>
-  </div>
+   
+  </div> 
 </template>
 
 <script>
 export default {
+  // mounted(){
+  //   console.log(this.$route.params.item);
+  // },
   components: {},
   data() {
     return {
       shareItem: ""
     };
   },
+
   methods: {
     chooseShare(event) {
       var menu = this.$refs.menu;
@@ -106,11 +111,30 @@ export default {
       // alert("跳转到打开文件页面，读取数据库中对应的文件的内容显示在页面");
     },
     openFolder(item) {
-      this.$router.push({name:'openFolder',params:{item:item}});
+      // this.$router.push({name:'openFolder',params:{item:item}});
+      this.$router.push({name:'openFolder',params:{item}});
+
       // 跳转到新路由，显示文件夹的文件
       // this.$router.push({'name':'openFolder'});
     }
-  }
+  },
+  // computed:{
+  //   item:function(){
+  //     console.log(this.$route);
+  //     return this.$route.query;
+  //         }
+  // },
+  // watch:{
+  // item(){
+  //   console.log(item);
+  // }
+  // },
 };
 </script>
+<style>
+.note-lists{
+  overflow:hidden;
+}
+</style>
+
 

@@ -43,13 +43,13 @@ const router = new Router({
           require(['@/components/lists/addEdit.vue'], resolve)
         },
       },
-      {
-        path: '/content/openFolder',
-        name: 'openFolder',
-        component: resolve => {
-          require(['@/components/content/openFolder.vue'], resolve)
-        },
-      },
+      // {
+      //   path: '/content/openFolder',
+      //   name: 'openFolder',
+      //   component: resolve => {
+      //     require(['@/components/content/openFolder.vue'], resolve)
+      //   },
+      // },
       {
         path: '/content/myshare',
         name: 'myshare',
@@ -74,7 +74,14 @@ const router = new Router({
           component: resolve => {
             require(['@/components/content/openFile.vue'], resolve)
           },
-        } ]
+        },
+        {
+          path: '/content/openFolder:item?',
+          name: 'openFolder',
+          component: resolve => {
+            require(['@/components/content/openFolder.vue'], resolve)
+          },
+        }, ]
       }, {
         path: '/content/partner',
         name: 'partner',

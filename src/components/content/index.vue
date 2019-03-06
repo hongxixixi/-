@@ -224,7 +224,7 @@ export default {
     //添加文件夹
     addFolder() {
       if (this.foldName != "") {
-        this.$store.commit("addFolder", this.foldName);
+        this.$store.commit("addFolder", {name:this.foldName,files:[]});
         this.toggleFolderMask();
         this.foldName = "";
         this.$router.push({ name: "notes" });
