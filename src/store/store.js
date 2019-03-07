@@ -14,6 +14,9 @@ const store = new Vuex.Store({
     myfolders:['文件夹1','文件夹2'],
     sharefiles: [],
     sharefolders: [],
+    // 添加的
+    shareMyfiles: [],
+    shareMyfolders: [],
     deletefiles:[],
     deletefolders:[],
   },
@@ -60,16 +63,28 @@ const store = new Vuex.Store({
     addMyFolder(state, folder) {
       state.myfolders.push(folder);
     },
-    addShare(state, shareItem) {
+    // addShare(state, shareItem) {
+    //   let flag = true;
+    //   for (let i = 0; i < state.fileLists.length; i++) {
+    //     if (shareItem == state.fileLists[i].name) {
+    //       state.sharefiles.push(shareItem);
+    //       flag = false;
+    //     }
+    //   }
+    //   if (flag) {
+    //     state.sharefolders.push(shareItem);
+    //   }
+    // },
+    addMyShare(state, shareItem) {
       let flag = true;
-      for (let i = 0; i < state.fileLists.length; i++) {
-        if (shareItem == state.fileLists[i].name) {
-          state.sharefiles.push(shareItem);
+      for (let i = 0; i < state.myfiles.length; i++) {
+        if (shareItem == state.myfiles[i].name) {
+          state.shareMyfiles.push(shareItem);
           flag = false;
         }
       }
       if (flag) {
-        state.sharefolders.push(shareItem);
+        state.shareMyfolders.push(shareItem);
       }
     },
     delete(state,deleteItem){

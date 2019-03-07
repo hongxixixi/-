@@ -129,8 +129,13 @@ export default {
         };
       }
     },
+    // share() {
+    //   this.$store.commit("addShare", this.shareItem.outerText);
+    //   this.shareItem = "";
+    // },
     share() {
-      this.$store.commit("addShare", this.shareItem.outerText);
+      this.$store.commit("addMyShare", this.shareItem.outerText);
+      console.log(this.shareItem);
       this.shareItem = "";
     },
     delete() {

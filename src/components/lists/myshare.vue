@@ -1,7 +1,7 @@
 <template>
   <div class="myshare-lists">
     <div
-      v-for="(item,index) in this.$store.state.sharefiles"
+      v-for="(item,index) in this.$store.state.shareMyfiles"
       :key="index"
       class="flie-box"
     >
@@ -19,3 +19,10 @@
     </div>
   </div>
 </template>
+<script>
+export default {
+  mounted(){
+    console.log(this.$store.state.shareMyfiles);
+  }
+}
+</script>
