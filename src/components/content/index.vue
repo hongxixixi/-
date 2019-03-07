@@ -43,7 +43,6 @@
           <i class="el-icon-document"></i>我的桌面
         </router-link>
       </div>
-
       <div class="menuList">
         <router-link :to="{name:'myshare'}">
           <i class="el-icon-news"></i>我的分享
@@ -59,6 +58,11 @@
       <div class="menuList">
         <router-link :to="{name:'partner'}">
           <i class="el-icon-goods"></i>笔记好友
+        </router-link>
+      </div>
+      <div class="menuList" style="display:none">
+        <router-link :to="{name:'myFiles'}">
+          <i class="el-icon-goods"></i>我的文件
         </router-link>
       </div>
 
@@ -92,12 +96,27 @@
       </div>
 
       <!-- 添加文件名弹出框 -->
+      
       <div class="view-add-folder" v-if="viewFileMask">
         <div class="folder-box">
           <div class="fold-input">
+            
             <span>文件名称：</span>
             <el-input v-model="fileName"></el-input>
+           
           </div>
+          <div class="select-fold">
+          <span>文件夹：</span>
+           <el-select v-model="fileFolderName" clearable placeholder="请选择文件夹">
+              <el-option
+                v-for="item in this.$store.state.myfolders"
+                :key="item"
+                :label="item"
+                :value="item"
+                >
+              </el-option>
+            </el-select>
+            </div>
           <div class="fold-btn">
             <el-button type="primary" @click="addfile" class="addFolder-btn">确定</el-button>
             <el-button @click="cancelAddfile">取消</el-button>
@@ -131,10 +150,10 @@
           <el-button @click="cancelSaveFile">取消</el-button>
         </div>
       </div>
-      <router-view @toggleConfirmSave="toggleConfirmSave" @FileContent="FileContent"></router-view>
+   <router-view @toggleConfirmSave="toggleConfirmSave" @FileContent="FileContent" v-if="!$route.meta.keepAlive"></router-view>
     </div>
 
-    <el-button type="primary" class = "backBtn" @click="back">返回</el-button>
+    <el-button type="primary" class="backBtn" @click="back">返回</el-button>
   </div>
 </template>
 
@@ -156,25 +175,32 @@ export default {
       fileContent: "",
       foldName: "",
       fileName: "",
-      username: store.state.username, //登录用户名
+      fileFolderName:'',
+      username: this.$store.state.username, //登录用户名
       name: "", //用户名
       myChangeName: "" //修改昵称
     };
   },
   store,
-
   methods: {
     back() {
       this.$router.go(-1);
     },
     //确认保存（修改笔记本内容）
     confirmSaveFile() {
-      this.$store.commit("modifyFileContent", {
+      // this.$store.commit("modifyFileContent", {
+      //   name: this.fileName,
+      //   folder:this.fileFolderName,
+      //   content: this.fileContent,
+      // });
+      this.$store.commit("modifyMyFileContent", {
         name: this.fileName,
-        content: this.fileContent
+        folder:this.fileFolderName,
+        content: this.fileContent,
       });
       this.viewConfirmMask = !this.viewConfirmMask;
       this.fileName = "";
+      this.fileFolderName = "";
       this.$router.push({ name: "notes" });
     },
     cancelSaveFile() {
@@ -182,7 +208,7 @@ export default {
     },
     //获取当前用户的昵称
     getName() {
-      api.getName({ userName: this.username }).then(res => {
+      api.getName({ userName: this.$store.state.username }).then(res => {
         this.name = res.data.name;
       });
     },
@@ -195,15 +221,14 @@ export default {
       this.viewConfirmMask = !this.viewConfirmMask;
     },
     //获取编辑器文件内容和文件名称
-    FileContent(text, filename) {
+    FileContent(text, filename,foldername) {
       this.fileContent = text;
       this.fileName = filename;
+      this.fileFolderName = foldername;
     },
-
     cancelAddfile() {
       this.toggleFileMask();
     },
-
     // 添加文件夹的弹出罩切换
     toggleFolderMask() {
       this.viewFolderMask = !this.viewFolderMask;
@@ -222,9 +247,19 @@ export default {
       }
     },
     //添加文件夹
+    // addFolder() {
+    //   if (this.foldName != "") {
+    //     this.$store.commit("addFolder", { name: this.foldName, files: [] });
+    //     this.toggleFolderMask();
+    //     this.foldName = "";
+    //     this.$router.push({ name: "notes" });
+    //   } else {
+    //     this.dialogVisible = true;
+    //   }
+    // },
     addFolder() {
       if (this.foldName != "") {
-        this.$store.commit("addFolder", {name:this.foldName,files:[]});
+        this.$store.commit("addMyFolder", this.foldName);
         this.toggleFolderMask();
         this.foldName = "";
         this.$router.push({ name: "notes" });
@@ -235,12 +270,19 @@ export default {
     //添加笔记本
     addfile() {
       if (this.fileName != "") {
-        this.$store.commit("addFile", {
+        // this.$store.commit("addFile", {
+        //   name: this.fileName,
+        //   content: ""
+        // });
+        this.$store.commit("addMyFiles", {
           name: this.fileName,
+          folder:this.fileFolderName,
           content: ""
         });
+        console.log(this.$store.state.myfiles);
         this.toggleFileMask();
         this.fileName = "";
+        this.fileFolderName = "";
         this.$router.push({ name: "notes" });
       } else {
         this.dialogVisible2 = true;
@@ -275,4 +317,3 @@ export default {
   }
 };
 </script>
-

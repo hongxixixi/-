@@ -90,6 +90,13 @@ const router = new Router({
         },
       },
       {
+        path: '/content/myFiles',
+        name: 'myFiles',
+        component: resolve => {
+          require(['@/components/lists/myFiles.vue'], resolve)
+        }
+      },
+      {
         path: '/content/recover',
         name: 'recover',
         component: resolve => {

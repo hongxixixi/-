@@ -39,6 +39,7 @@ export default {
     return {
       editorContent: '',
       filename:'',
+      foldername:''
     }
   },
 
@@ -52,6 +53,7 @@ export default {
       console.log(editor.customConfig);
       editor.txt.html(this.$route.params.item.content);
         this.filename =  this.$route.params.item.name
+        this.foldername =  this.$route.params.item.folder
     }
   },
 
@@ -63,7 +65,7 @@ export default {
         // },
     addFile() {
       var text = this.editorContent;//获取编辑框内的内容
-    this.$emit('FileContent',text,this.filename);
+    this.$emit('FileContent',text,this.filename,this.foldername);
     this.$emit('toggleConfirmSave');
     // this.$store.commit("addFile", {
     //       name: this.fileName,

@@ -9,27 +9,56 @@ const store = new Vuex.Store({
     fileLists: [{name:'笔记1',content:'11'},{name: '笔记2',content:'33'}],
     // folderLists: ['文件夹1', '文件夹2'],
     folderLists:[{name:'文件夹1',files:[{name:'aa',content:'啊啊啊啊1'},{name: 'bb',content:'巴巴爸爸'}]},{name:'文件夹2',files:[{name:'bb',content:'bbbb1'},{name: 'cc',content:'asadas'}]}],
+    // 新增的两行数据
+    myfiles:[{name:'笔记1',folder:'文件夹1',content:'啊啊啊啊1'},{name:'笔记2',folder:'文件夹1',content:'巴巴爸爸'},{name:'笔记3',folder:'文件夹2',content:'ccc'},{name:'笔记4',folder:'文件夹2',content:'4444'},{name:'笔记5',content:'555555'},{name:'笔记6',content:'66666'}],
+    myfolders:['文件夹1','文件夹2'],
     sharefiles: [],
     sharefolders: [],
     deletefiles:[],
     deletefolders:[],
   },
   mutations: {
-    addFile(state,file) {
-      state.fileLists.push({name:file.name,content:file.content});
-    },
+    // addFile(state,file) {
+    //   state.fileLists.push({name:file.name,content:file.content});
+    // },
     getUserName(state,name){
       state.username = name;
     },
-    modifyFileContent(state,file){
-      for(var i = 0;i <state.fileLists.length;i++ ){
-        if(state.fileLists[i].name == file.name){
-          state.fileLists[i].content = file.content;
+    // 新增的
+    addMyFiles(state,file){
+      if(file.folder){
+        state.myfiles.push({name:file.name,folder:file.folder,content:file.content});
+      }else{
+        state.myfiles.push({name:file.name,content:file.content});
+      }
+    },
+    modifyMyFileContent(state,file){
+      if(file.folder){
+         for(var i = 0;i <state.myfiles.length;i++ ){
+          if(state.myfiles[i].name == file.name &&state.myfiles[i].folder == file.folder){
+            state.myfiles[i].content = file.content;
+          }
+        }
+      }else{
+        for(var i = 0;i <state.myfiles.length;i++ ){
+          if(state.myfiles[i].name == file.name && !state.myfiles[i].folder){
+            state.myfiles[i].content = file.content;
+          }
         }
       }
     },
-    addFolder(state, folder) {
-      state.folderLists.push({name:folder.name,files:folder.content});
+    // modifyFileContent(state,file){
+    //   for(var i = 0;i <state.fileLists.length;i++ ){
+    //     if(state.fileLists[i].name == file.name){
+    //       state.fileLists[i].content = file.content;
+    //     }
+    //   }
+    // },
+    // addFolder(state, folder) {
+    //   state.folderLists.push({name:folder.name,files:folder.content});
+    // },
+    addMyFolder(state, folder) {
+      state.myfolders.push(folder);
     },
     addShare(state, shareItem) {
       let flag = true;
