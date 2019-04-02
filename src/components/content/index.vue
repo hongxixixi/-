@@ -188,6 +188,15 @@ export default {
     Synch(){
       let files = this.$store.state.myfiles;
       let folders = this.$store.state.myfolders;
+      let params1 = {userName: this.$store.state.username,files:JSON.stringify(files)};
+      let params2 = {userName: this.$store.state.username,folders:JSON.stringify(folders)};
+      console.log(params1);
+      api.refreshfiles(params1).then(res=>{
+        console.log(res);
+      });
+      api.refreshfolders(params2).then(res=>{
+        console.log(res);
+      })
       console.log(files);
       console.log(folders);
       console.log("222222");
@@ -214,7 +223,8 @@ export default {
     },
     //获取当前用户的昵称
     getName() {
-      api.getName({ userName: this.$store.state.username }).then(res => {
+      let username = localStorage.username;
+      api.getName({ userName: username }).then(res => {
         this.name = res.data.name;
       });
     },
@@ -304,9 +314,10 @@ export default {
     },
     //确认修改用户名
     conFirmChangeName() {
+      let username = localStorage.username;
       // this.name = this.myChangeName;
       api
-        .modifyName({ userName: this.username, name: this.myChangeName })
+        .modifyName({ userName: username, name: this.myChangeName })
         .then(res => {
           console.log(res);
           this.getName();

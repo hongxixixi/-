@@ -16,19 +16,12 @@ const api = {
   modifyName(params){
     return axios.get('/modifyName',{params})
   },
-  // 传入hiring时返回对象数组，传入id时返回某个对象
-  getPartTimeInfos(params){
-    return axios.get('/getPartTimeInfo',{params})
+  refreshfiles(params){
+    return axios.get('/refreshfiles',{params})
   },
-  getMyResume(){
-    return axios.get('/getMyResume')
+  refreshfolders(params){
+    return axios.get('/refreshfolders',{params})
   },
-  getExperience(){
-    return axios.get('/getInterviewExperience')
-  },
-  getDetailExperience(params){
-    return axios.get('/getInterviewExperience',{params})
-  }
 
   
 

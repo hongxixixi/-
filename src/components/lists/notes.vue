@@ -109,7 +109,9 @@ export default {
       deleteFolder:'',
     };
   },
-
+created(){
+  console.log(localStorage.username)
+},
   methods: {
     //删除文本
     deleteMyFile(item){
