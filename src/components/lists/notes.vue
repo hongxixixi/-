@@ -32,7 +32,8 @@
 
    
   </div>  -->
-    <div class="note-lists" @mousedown="chooseShare">
+    <!-- <div class="note-lists" @mousedown="chooseShare"> -->
+    <div class="note-lists">
 
     <template
       v-for="(item,index) in this.$store.state.myfiles"
@@ -40,10 +41,21 @@
       
       
     >
-    <div v-if="!item.folder" class="flie-box" @dblclick="openFile(item) " :key="index+'file'">
+    <div v-if="!item.folder" class="flie-box" @dblclick="openFile(item) " :key="index+'file'" @mousedown.right="showMenu1(item)">
       <i class="iconfont icon-wenjian1"></i>
-      {{item.name}}
+      {{item.name}} <el-dialog
+      title="操作"
+      :visible.sync="fileVisible"
+      width="30%"
+      center>
+      <!-- <span>需要注意的是内容是默认不居中的</span> -->
+      <span slot="footer" class="dialog-footer">
+        <el-button type="danger" @click="deleteMyFile(item)">删除</el-button>
+        <el-button type="primary" @click="fileVisible = false">分享</el-button>
+      </span>
+    </el-dialog>
       </div>
+       
     </template>
 
     <template
@@ -52,11 +64,23 @@
      
     >
     <div v-if="item"  class="folder-box" :key="index+'folder'"
-      @dblclick="openFolder(item)">
+      @dblclick="openFolder(item)" @mousedown.right="showMenu2(item)">
       <i class="iconfont icon-wenjianjia"></i>
       {{item}}
+    <el-dialog
+      title="操作"
+      :visible.sync="folderVisible"
+      width="30%"
+      center>
+      <!-- <span>需要注意的是内容是默认不居中的</span> -->
+      <span slot="footer" class="dialog-footer">
+        <el-button type="danger" @click="deleteMyFolder()">删除</el-button>
+        <el-button type="primary" @click="folderVisible = false">分享</el-button>
+      </span>
+    </el-dialog>
       </div>
     </template>
+    
 
     <div ref="menu" class="menu" style="display:none;position:absolute;">
       <ul>
@@ -79,11 +103,48 @@ export default {
   components: {},
   data() {
     return {
-      shareItem: ""
+      fileVisible: false,
+      shareItem: "",
+      folderVisible:false,
+      deleteFolder:'',
     };
   },
 
   methods: {
+    //删除文本
+    deleteMyFile(item){
+        this.fileVisible = false;
+        let files = {...item};
+        this.$store.commit('deleteMyFile',files)
+      console.log(files);
+
+    },
+    //弹出框，操作
+    showMenu1(item){
+       document.oncontextmenu = function(e){
+                e.preventDefault();
+          };
+    this.fileVisible = true
+    
+      console.log(item);
+      console.log("222");
+    },
+     deleteMyFolder(){
+        this.folderVisible = false;
+        let folder = this.deleteFolder;
+        console.log(this.deleteFolder);
+        this.$store.commit('deleteMyFolder',folder);
+        // console.log(folder);
+    },
+    showMenu2(item){
+       document.oncontextmenu = function(e){
+                e.preventDefault();
+          };
+      this.folderVisible = true;
+      this.deleteFolder = item;
+      console.log(item);
+      console.log("222");
+    },
     chooseShare(event) {
       var menu = this.$refs.menu;
       event = window.event || event;
@@ -141,6 +202,8 @@ export default {
     delete() {
       // console.log(this.shareItem.outerText);
       this.$store.commit("delete", this.shareItem.outerText);
+      // console.log(this.shareItem.outerText);
+      //根据文本名称删除文本（或者文件夹名称删除文件夹）
       this.shareItem = "";
     },
     openFile(item) {

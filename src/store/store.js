@@ -17,6 +17,7 @@ const store = new Vuex.Store({
     // 添加的
     shareMyfiles: [],
     shareMyfolders: [],
+    // deleteMyfiles:[],
     deletefiles:[],
     deletefolders:[],
   },
@@ -86,6 +87,40 @@ const store = new Vuex.Store({
       if (flag) {
         state.shareMyfolders.push(shareItem);
       }
+    },
+    //删除文本
+    deleteMyFile(state,files){
+      for(let i = 0 ;i <state.myfiles.length;i++){
+        if(files.folder){
+          if(state.myfile[i].folder == files.folder&&state.myfiles[i].name == files.name){
+            state.myfiles.splice(i,1);
+          } 
+        }else{
+          if(state.myfiles[i].name == files.name){
+            state.myfiles.splice(i,1);
+            state.deletefiles.push(files);
+            console.log(state.delefiles);
+          }
+        }
+      }
+    },
+    deleteMyFolder(state,name){
+       var leftData = state.myfiles.filter(function(item){
+        return item.folder != name; 
+      })
+
+       console.log(leftData);
+       state.myfiles = leftData.concat([]);
+      for(var i =0; i< state.myfolders.length;i++){
+        //删除文件夹中的
+        if(state.myfolders[i]==name){
+          console.log("22222ee2cdads");
+          state.myfolders.splice(i,1);
+          state.deletefolders.push(name);
+        }
+        
+      }
+     
     },
     delete(state,deleteItem){
       let flag = true;

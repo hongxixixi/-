@@ -71,6 +71,9 @@
           <i class="el-icon-delete"></i>回收站
         </router-link>
       </div>
+      <div class="menuList">
+          <a href="javascript:void(0);" @click="Synch"> <i class="el-icon-refresh"></i>同步</a>
+      </div>
     </div>
 
     <div class="right-side-box" @click="closeTheFolderInner">
@@ -152,8 +155,6 @@
       </div>
    <router-view @toggleConfirmSave="toggleConfirmSave" @FileContent="FileContent" v-if="!$route.meta.keepAlive"></router-view>
     </div>
-
-    <el-button type="primary" class="backBtn" @click="back">返回</el-button>
   </div>
 </template>
 
@@ -183,8 +184,13 @@ export default {
   },
   store,
   methods: {
-    back() {
-      this.$router.go(-1);
+    //同步功能
+    Synch(){
+      let files = this.$store.state.myfiles;
+      let folders = this.$store.state.myfolders;
+      console.log(files);
+      console.log(folders);
+      console.log("222222");
     },
     //确认保存（修改笔记本内容）
     confirmSaveFile() {

@@ -6,7 +6,7 @@
       class="flie-box"
     >
       <i class="iconfont icon-wenjian1"></i>
-      {{item}}
+      {{item.name}}
     </div>
 
     <div
