@@ -17,11 +17,17 @@ const api = {
     return axios.get('/modifyName',{params})
   },
   refreshfiles(params){
-    return axios.get('/refreshfiles',{params})
+    return axios.post('/refreshFiles.api',params)
   },
   refreshfolders(params){
-    return axios.get('/refreshfolders',{params})
+    return axios.post('/refreshFolders.api',params)
   },
+  getFiles(params){
+    return axios.post('/getFiles.api',params)
+  },
+  getFolders(params){
+    return axios.post('/getFolders.api',params)
+  }
 
   
 

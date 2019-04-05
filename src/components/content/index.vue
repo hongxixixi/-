@@ -164,6 +164,7 @@ import store from "@/store/store.js";
 export default {
   mounted() {
     this.getName();
+    // this.Synch();
   },
   data() {
     return {
@@ -177,29 +178,53 @@ export default {
       foldName: "",
       fileName: "",
       fileFolderName:'',
-      username: this.$store.state.username, //登录用户名
+      // username: this.$store.state.username, //登录用户名
       name: "", //用户名
-      myChangeName: "" //修改昵称
+      myChangeName: "" ,//修改昵称
+      files:[],
+      folders:[]
     };
   },
   store,
+  watch:{
+    '$store.state.myfiles'(val){
+      this.files = val;
+    },
+    '$store.state.myfolders'(val){
+      this.folders = val;
+    },
+
+  },
   methods: {
     //同步功能
     Synch(){
-      let files = this.$store.state.myfiles;
-      let folders = this.$store.state.myfolders;
-      let params1 = {userName: this.$store.state.username,files:JSON.stringify(files)};
-      let params2 = {userName: this.$store.state.username,folders:JSON.stringify(folders)};
-      console.log(params1);
-      api.refreshfiles(params1).then(res=>{
-        console.log(res);
+      this.files = this.$store.state.myfiles;
+      this.folders = this.$store.state.myfolders;
+      let username = localStorage.username;
+      let params1 = JSON.stringify({...{userName:username,files:this.files}});
+      let params2 = JSON.stringify({userName:username,folders:this.folders});
+      api.refreshfiles(
+      params1
+      ).then(res=>{
+        if(res.data.reason){
+          this.$message({
+          showClose: true,
+          message: '文本同步成功',
+          duration:2000,
+          type: 'success'
+        });
+        }
       });
       api.refreshfolders(params2).then(res=>{
-        console.log(res);
+        if(res.data.reason){
+          this.$message({
+          showClose: true,
+          message: '文件夹同步成功',
+          duration:4000,
+          type: 'success'
+        });
+        }
       })
-      console.log(files);
-      console.log(folders);
-      console.log("222222");
     },
     //确认保存（修改笔记本内容）
     confirmSaveFile() {
@@ -295,7 +320,6 @@ export default {
           folder:this.fileFolderName,
           content: ""
         });
-        console.log(this.$store.state.myfiles);
         this.toggleFileMask();
         this.fileName = "";
         this.fileFolderName = "";
@@ -319,7 +343,6 @@ export default {
       api
         .modifyName({ userName: username, name: this.myChangeName })
         .then(res => {
-          console.log(res);
           this.getName();
         });
       this.viewChangeName = !this.viewChangeName;

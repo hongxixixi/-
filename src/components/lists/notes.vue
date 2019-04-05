@@ -1,98 +1,71 @@
 <template>
-  <!-- <div class="note-lists" @mousedown="chooseShare">
-
-    <div
-      v-for="(item,index) in this.$store.state.fileLists"
-      :key="index"
-      class="flie-box"
-      @dblclick="openFile(item)"
-    >
-      <i class="iconfont icon-wenjian1"></i>
-      {{item.name}}
-    </div>
-
-    <div
-      v-for="(item,index) in this.$store.state.folderLists"
-      :key="index+'folder'"
-      class="folder-box"
-      @dblclick="openFolder(item)"
-    >
-      <i class="iconfont icon-wenjianjia"></i>
-      {{item.name}}
-    </div>
-
-    <div ref="menu" class="menu" style="display:none;position:absolute;">
-      <ul>
-        <li class="shareClick">分享</li>
-        <li>复制</li>
-        <li>编辑</li>
-        <li class="deleteClick">删除</li>
-      </ul>
-    </div>
-
-   
-  </div>  -->
-    <!-- <div class="note-lists" @mousedown="chooseShare"> -->
-    <div class="note-lists">
-
-    <template
-      v-for="(item,index) in this.$store.state.myfiles"
-
-      
-      
-    >
-    <div v-if="!item.folder" class="flie-box" @dblclick="openFile(item) " :key="index+'file'" @mousedown.right="showMenu1(item)">
-      <i class="iconfont icon-wenjian1"></i>
-      {{item.name}} <el-dialog
-      title="操作"
-      :visible.sync="fileVisible"
-      width="30%"
-      center>
-      <!-- <span>需要注意的是内容是默认不居中的</span> -->
-      <span slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="deleteMyFile(item)">删除</el-button>
-        <el-button type="primary" @click="fileVisible = false">分享</el-button>
-      </span>
-    </el-dialog>
-      </div>
-       
-    </template>
-
-    <template
-      v-for="(item,index) in this.$store.state.myfolders"
-      
-     
-    >
-    <div v-if="item"  class="folder-box" :key="index+'folder'"
-      @dblclick="openFolder(item)" @mousedown.right="showMenu2(item)">
-      <i class="iconfont icon-wenjianjia"></i>
-      {{item}}
-    <el-dialog
-      title="操作"
-      :visible.sync="folderVisible"
-      width="30%"
-      center>
-      <!-- <span>需要注意的是内容是默认不居中的</span> -->
-      <span slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="deleteMyFolder()">删除</el-button>
-        <el-button type="primary" @click="folderVisible = false">分享</el-button>
-      </span>
-    </el-dialog>
+  <div class="note-lists">
+    <template v-for="(item,index) in this.$store.state.myfiles">
+      <div
+        v-if="!item.folder"
+        class="flie-box"
+        @dblclick="openFile(item)"
+        :key="index+'file'"
+        @mousedown.right="showMenu1(item,index)"
+      >
+        <i class="iconfont icon-wenjian1"></i>
+        {{item.name}}
+        <div v-if="index==activeIndex" class="action" v-document-click="documentClick">
+          <ul>
+            <li @click="fileVisible = false">分享</li>
+            <!-- <li>复制</li>-->
+            <li @click="editMyFile(item)">编辑</li>
+            <li @click="deleteMyFile(item)">删除</li>
+          </ul>
+        </div>
       </div>
     </template>
-    
 
-    <div ref="menu" class="menu" style="display:none;position:absolute;">
-      <ul>
-        <li class="shareClick">分享</li>
-        <li>复制</li>
-        <li>编辑</li>
-        <li class="deleteClick">删除</li>
-      </ul>
+    <template v-for="(item,index) in this.$store.state.myfolders">
+      <div
+        v-if="item"
+        class="folder-box"
+        :key="index+'folder'"
+        @dblclick="openFolder(item)"
+        @mousedown.right="showMenu2(item,index)"
+      >
+        <i class="iconfont icon-wenjianjia"></i>
+        {{item}}
+        <div v-if="index==activeIndex2" class="action" v-document-click="documentClick">
+          <ul>
+            <li @click="folderVisible = false">分享</li>
+            <!-- <li>复制</li>-->
+            <li @click="editMyFolder(item)">编辑</li>
+            <li @click="deleteMyFolder(item)">删除</li>
+          </ul>
+        </div>
+      </div>
+    </template>
+    <div class="view-change-name" v-if="viewChangeName2">
+      <div class="name-box">
+        <div class="name-input">
+          <span>文件夹名称:</span>
+          <el-input v-model="myChangeName"></el-input>
+        </div>
+        <div class="fold-btn">
+          <el-button type="primary" @click="conFirmChangeFileName2">确定</el-button>
+          <el-button @click="cancelChangeFileName2">取消</el-button>
+        </div>
+      </div>
     </div>
-
-   
-  </div> 
+    <div class="view-change-name" v-if="viewChangeName">
+      <div class="name-box">
+        <div class="name-input">
+          <span>文本名称:</span>
+          <el-input v-model="myChangeName"></el-input>
+        </div>
+        <div class="fold-btn">
+          <el-button type="primary" @click="conFirmChangeFileName">确定</el-button>
+          <el-button @click="cancelChangeFileName">取消</el-button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -103,144 +76,130 @@ export default {
   components: {},
   data() {
     return {
+      activeIndex: -1,
+      activeIndex2: -1,
+      show: true,
       fileVisible: false,
       shareItem: "",
-      folderVisible:false,
-      deleteFolder:'',
+      folderVisible: false,
+      deleteFolder: "",
+      viewChangeName: false,
+      viewChangeName2: false,
+      myChangeName: "",
+      item: ""
     };
   },
-created(){
-  console.log(localStorage.username)
-},
   methods: {
+    conFirmChangeFileName() {
+      this.item.name = this.myChangeName;
+      this.$store.commit("editmyFile", this.item);
+      this.viewChangeName = !this.viewChangeName;
+    },
+    cancelChangeFileName() {
+      this.myChangeName = this.item.name;
+      this.viewChangeName = !this.viewChangeName;
+    },
+    conFirmChangeFileName2() {
+      this.item = this.item + "-" + this.myChangeName;
+      this.$store.commit("editmyFolder", this.item);
+      this.viewChangeName2 = !this.viewChangeName2;
+    },
+    cancelChangeFileName2() {
+      this.myChangeName = this.item.name;
+      this.viewChangeName2 = !this.viewChangeName2;
+    },
+    documentClick() {
+      this.activeIndex = -1;
+      this.activeIndex2 = -1;
+    },
     //删除文本
-    deleteMyFile(item){
-        this.fileVisible = false;
-        let files = {...item};
-        this.$store.commit('deleteMyFile',files)
-      console.log(files);
-
+    deleteMyFile(item) {
+       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+           this.fileVisible = false;
+      let files = { ...item };
+      this.$store.commit("deleteMyFile", files);
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+     
     },
     //弹出框，操作
-    showMenu1(item){
-       document.oncontextmenu = function(e){
-                e.preventDefault();
-          };
-    this.fileVisible = true
-    
-      console.log(item);
-      console.log("222");
+    showMenu1(item, index) {
+      document.oncontextmenu = function(e) {
+        e.preventDefault();
+      };
+      this.fileVisible = true;
+      this.activeIndex = index;
+      this.activeIndex2 = -1;
+      this.myChangeName = item.name;
     },
-     deleteMyFolder(){
-        this.folderVisible = false;
-        let folder = this.deleteFolder;
-        console.log(this.deleteFolder);
-        this.$store.commit('deleteMyFolder',folder);
-        // console.log(folder);
+    deleteMyFolder() {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+           this.folderVisible = false;
+      let folder = this.deleteFolder;
+      this.$store.commit("deleteMyFolder", folder);
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+      
     },
-    showMenu2(item){
-       document.oncontextmenu = function(e){
-                e.preventDefault();
-          };
+    showMenu2(item, index) {
+      document.oncontextmenu = function(e) {
+        e.preventDefault();
+      };
       this.folderVisible = true;
+      this.activeIndex2 = index;
+      this.activeIndex = -1;
+      this.myChangeName = item;
       this.deleteFolder = item;
-      console.log(item);
-      console.log("222");
     },
-    chooseShare(event) {
-      var menu = this.$refs.menu;
-      event = window.event || event;
-      if (
-        event.target.parentNode.classList.contains("flie-box") ||
-        event.target.parentNode.classList.contains("folder-box") ||
-        event.target.classList.contains("flie-box") ||
-        event.target.classList.contains("folder-box")
-      ) {
-        if (event.button == 2) {
-          if (
-            event.target.parentNode.classList.contains("flie-box") ||
-            event.target.parentNode.classList.contains("folder-box")
-          ) {
-            this.shareItem = event.target.parentNode;
-          } else {
-            this.shareItem = event.target;
-          }
-
-          document.oncontextmenu = function(ev) {
-            var ev = ev || event;
-            var scrollTop =
-              document.documentElement.scrollTop || document.body.scrollTop;
-            menu.style.display = "block";
-            menu.style.left = ev.clientX + "px";
-            menu.style.top = ev.clientY + scrollTop - 12 + "px";
-            return false;
-          };
-        } else {
-          menu.style.display = "none";
-        }
-      } else {
-        if (event.target.classList.contains("shareClick")) {
-          this.share();
-        }
-        if (event.target.classList.contains("deleteClick")) {
-          this.delete();
-        }
-        menu.style.display = "none";
-        document.oncontextmenu = function(ev) {
-          // 如果点击的是其他区域，恢复默认事件
-          return true;
-        };
-      }
+    editMyFile(item) {
+      this.item = item;
+      this.viewChangeName = !this.viewChangeName;
     },
-    // share() {
-    //   this.$store.commit("addShare", this.shareItem.outerText);
-    //   this.shareItem = "";
-    // },
+    editMyFolder(item) {
+      this.item = item;
+      this.viewChangeName2 = !this.viewChangeName2;
+    },
     share() {
       this.$store.commit("addMyShare", this.shareItem.outerText);
       console.log(this.shareItem);
       this.shareItem = "";
     },
-    delete() {
-      // console.log(this.shareItem.outerText);
-      this.$store.commit("delete", this.shareItem.outerText);
-      // console.log(this.shareItem.outerText);
-      //根据文本名称删除文本（或者文件夹名称删除文件夹）
-      this.shareItem = "";
-    },
     openFile(item) {
-      console.log(item);
-      console.log(item.content);//将内容添加到编辑器中
-  
-      // this.$router.push({path:'/content/addEdit',query:{item:item}});
-      this.$router.push({name:'addEdit',params:{item:item}});
-
-      // alert("跳转到打开文件页面，读取数据库中对应的文件的内容显示在页面");
+      this.$router.push({ name: "addEdit", params: { item: item } });
     },
     openFolder(item) {
-      // this.$router.push({name:'openFolder',params:{item:item}});
-      this.$router.push({name:'myFiles',params:{item}});
-
-      // 跳转到新路由，显示文件夹的文件
-      // this.$router.push({'name':'openFolder'});
+      this.$router.push({ name: "myFiles", params: { item } });
     }
-  },
-  // computed:{
-  //   item:function(){
-  //     console.log(this.$route);
-  //     return this.$route.query;
-  //         }
-  // },
-  // watch:{
-  // item(){
-  //   console.log(item);
-  // }
-  // },
+  }
 };
 </script>
 <style>
-.note-lists{
-  overflow:hidden;
+.note-lists {
+  overflow: hidden;
 }
 </style>
 
