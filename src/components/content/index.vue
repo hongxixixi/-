@@ -182,7 +182,8 @@ export default {
       name: "", //用户名
       myChangeName: "" ,//修改昵称
       files:[],
-      folders:[]
+      folders:[],
+      time:''
     };
   },
   store,
@@ -237,10 +238,12 @@ export default {
         name: this.fileName,
         folder:this.fileFolderName,
         content: this.fileContent,
+        time:this.time
       });
       this.viewConfirmMask = !this.viewConfirmMask;
       this.fileName = "";
       this.fileFolderName = "";
+      this.time = "";
       this.$router.push({ name: "notes" });
     },
     cancelSaveFile() {
@@ -262,10 +265,11 @@ export default {
       this.viewConfirmMask = !this.viewConfirmMask;
     },
     //获取编辑器文件内容和文件名称
-    FileContent(text, filename,foldername) {
+    FileContent(text, filename,foldername,time) {
       this.fileContent = text;
       this.fileName = filename;
       this.fileFolderName = foldername;
+      this.time = time;
     },
     cancelAddfile() {
       this.toggleFileMask();
@@ -315,14 +319,17 @@ export default {
         //   name: this.fileName,
         //   content: ""
         // });
+        this.getTime();
         this.$store.commit("addMyFiles", {
           name: this.fileName,
           folder:this.fileFolderName,
-          content: ""
+          content: "",
+          time:this.time
         });
         this.toggleFileMask();
         this.fileName = "";
         this.fileFolderName = "";
+        this.time ="";
         this.$router.push({ name: "notes" });
       } else {
         this.dialogVisible2 = true;
@@ -330,6 +337,22 @@ export default {
     },
     cancelAddFolder() {
       this.toggleFolderMask();
+    },
+    getTime(){
+      let myDate = new Date();
+    let [y,m,d,h,f,s] = 
+          [myDate.getFullYear(),
+          myDate.getMonth()+1,
+          myDate.getDate(),
+          myDate.getHours(),
+          myDate.getMinutes(),
+          myDate.getSeconds()];
+          m>=10?m:'0'+m;
+          d>=10?d:'0'+d;
+          h>=10?h:'0'+h;
+          f>=10?f:'0'+f;
+          s>=10?s:'0'+s;
+          this.time = y+'-'+m+'-'+d+' '+h+':'+f+':'+s;
     },
     //修改用户名
     changeName() {

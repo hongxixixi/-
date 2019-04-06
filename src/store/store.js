@@ -5,10 +5,6 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    username:'',
-    fileLists: [{name:'笔记1',content:'11'},{name: '笔记2',content:'33'}],
-    // folderLists: ['文件夹1', '文件夹2'],
-    folderLists:[{name:'文件夹1',files:[{name:'aa',content:'啊啊啊啊1'},{name: 'bb',content:'巴巴爸爸'}]},{name:'文件夹2',files:[{name:'bb',content:'bbbb1'},{name: 'cc',content:'asadas'}]}],
     // 新增的两行数据
     myfiles:[],
     myfolders:[],
@@ -23,66 +19,85 @@ const store = new Vuex.Store({
     deletefolders:[],
   },
   mutations: {
-    // addFile(state,file) {
-    //   state.fileLists.push({name:file.name,content:file.content});
-    // },
+    //获取文本。文件夹（查）
     getFiles(state,files){
       state.myfiles = files;
     },
     getFolders(state,folders){
       state.myfolders = folders;
     },
-    getUserName(state,name){
-      state.username = name;
-    },
-    // 新增的
+
+    // 添加文本。文件夹（增）
     addMyFiles(state,file){
-      // if(file.folder){
-        state.myfiles.push({name:file.name,folder:file.folder,content:file.content});
-      // }else{
-      //   state.myfiles.push({name:file.name,content:file.content});
-      // }
+      console.log(file);
+      state.myfiles.push({name:file.name,folder:file.folder,content:file.content});
+      // state.myfiles.push({name:file.name,folder:file.folder,content:file.content,time:file.time});
     },
+    addMyFolder(state, folder) {
+      state.myfolders.push(folder);
+    },
+
+    //修改文本内容（改）
     modifyMyFileContent(state,file){
-      if(file.folder){
+      console.log(file)
          for(var i = 0;i <state.myfiles.length;i++ ){
           if(state.myfiles[i].name == file.name &&state.myfiles[i].folder == file.folder){
             state.myfiles[i].content = file.content;
           }
         }
-      }else{
-        for(var i = 0;i <state.myfiles.length;i++ ){
-          if(state.myfiles[i].name == file.name && !state.myfiles[i].folder){
-            state.myfiles[i].content = file.content;
-          }
+    },
+     //删除文本
+    deleteMyFile(state,files){
+      for(let i = 0 ;i <state.myfiles.length;i++){
+          if(state.myfiles[i].folder == files.folder&&state.myfiles[i].name == files.name){
+            state.myfiles.splice(i,1);
+            state.deletefiles.push(files);
+          } 
+      }
+    },
+    //删除文件夹
+    deleteMyFolder(state,name){
+       var leftData = state.myfiles.filter(function(item){
+        return item.folder != name; 
+      })
+       state.myfiles = leftData.concat([]);
+      for(var i =0; i< state.myfolders.length;i++){
+        //删除文件夹中
+        if(state.myfolders[i]==name){
+          state.myfolders.splice(i,1);
+          state.deletefolders.push(name);
+        } 
+      }
+    },
+    //每次登陆清空回收站
+    clearDelete(state){
+      state.deletefiles = [];
+      state.deletefolders=[];
+    },
+    
+    //修改文件名
+    editmyFile(state,files){
+      for(let i = 0 ;i <state.myfiles.length;i++){
+          if(state.myfiles[i].folder == files.folder&&state.myfiles[i].name == files.name){
+            state.myfiles[i].name=files.name;
+          } 
+      }
+    },
+    //修改文件夹名称
+    editmyFolder(state,name){
+      let arr = name.split("-");
+      for(let i = 0 ;i <state.myfiles.length;i++){
+       if(state.myfiles[i].folder==arr[0]){
+        state.myfiles[i].folder = arr[1];
+       }
+      }
+      for(var i =0; i< state.myfolders.length;i++){
+        if(state.myfolders[i]==arr[0]){
+          state.myfolders[i] = arr[1];
         }
       }
     },
-    // modifyFileContent(state,file){
-    //   for(var i = 0;i <state.fileLists.length;i++ ){
-    //     if(state.fileLists[i].name == file.name){
-    //       state.fileLists[i].content = file.content;
-    //     }
-    //   }
-    // },
-    // addFolder(state, folder) {
-    //   state.folderLists.push({name:folder.name,files:folder.content});
-    // },
-    addMyFolder(state, folder) {
-      state.myfolders.push(folder);
-    },
-    // addShare(state, shareItem) {
-    //   let flag = true;
-    //   for (let i = 0; i < state.fileLists.length; i++) {
-    //     if (shareItem == state.fileLists[i].name) {
-    //       state.sharefiles.push(shareItem);
-    //       flag = false;
-    //     }
-    //   }
-    //   if (flag) {
-    //     state.sharefolders.push(shareItem);
-    //   }
-    // },
+
     addMyShare(state, shareItem) {
       let flag = true;
       for (let i = 0; i < state.myfiles.length; i++) {
@@ -95,74 +110,6 @@ const store = new Vuex.Store({
         state.shareMyfolders.push(shareItem);
       }
     },
-    //删除文本
-    deleteMyFile(state,files){
-      for(let i = 0 ;i <state.myfiles.length;i++){
-        if(files.folder){
-          if(state.myfiles[i].folder == files.folder&&state.myfiles[i].name == files.name){
-            state.myfiles.splice(i,1);
-            state.deletefiles.push(files);
-          } 
-        }else{
-          if(state.myfiles[i].name == files.name){
-            state.myfiles.splice(i,1);
-            state.deletefiles.push(files);
-          }
-        }
-      }
-    },
-    deleteMyFolder(state,name){
-       var leftData = state.myfiles.filter(function(item){
-        return item.folder != name; 
-      })
-       state.myfiles = leftData.concat([]);
-      for(var i =0; i< state.myfolders.length;i++){
-        //删除文件夹中的
-        if(state.myfolders[i]==name){
-          state.myfolders.splice(i,1);
-          state.deletefolders.push(name);
-        }
-        
-      }
-     
-    },
-    //每次登陆清空回收站
-    clearDelete(state){
-      state.deletefiles = [];
-      state.deletefolders=[];
-    },
-    editmyFile(state,files){
-      for(let i = 0 ;i <state.myfiles.length;i++){
-        if(files.folder){
-          if(state.myfiles[i].folder == files.folder&&state.myfiles[i].name == files.name){
-            state.myfiles[i].name=files.name;
-          } 
-        }else{
-          if(state.myfiles[i].name == files.name){
-            state.myfiles[i].name=files.name;;
-          }
-        }
-      }
-    },
-    editmyFolder(state,name){
-      let arr = name.split("-");
-      for(let i = 0 ;i <state.myfiles.length;i++){
-       if(state.myfiles[i].folder==arr[0]){
-        state.myfiles[i].folder = arr[1];
-       }
-      }
-      for(var i =0; i< state.myfolders.length;i++){
-        if(state.myfolders[i]==arr[0]){
-          state.myfolders[i] = arr[1];
-        }
-        
-      }
-      // var leftData = state.myfiles.filter(function(item){
-      //   return item.folder == name; 
-      // })
-      // leftData.folder = name;
-
-    }
   }
 })
 
