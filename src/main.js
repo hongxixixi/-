@@ -10,6 +10,12 @@ import '@/assets/icon/iconfont.css'; //加载样式入口文件
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
+
+Vue.directive('document-click', {
+  bind(el, binding, vnode) {
+    document.addEventListener('click', binding.value, false)
+  }
+}) 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

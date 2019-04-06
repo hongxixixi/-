@@ -32,9 +32,18 @@
           @click="submitForm('ruleForm2')"
         >登录</el-button>
       </el-form-item>
+      <el-form-item class="commitLogin">
+        <router-link
+      
+        :to="{'name':'register'}"
+      ><el-button
+          type="primary"
+        >注册新账号</el-button>
+      </router-link>
+      </el-form-item>
     </el-form>
 
-    <div class="login-footer">
+    <!-- <div class="login-footer">
       <router-link
         tag="li"
         to="/forgetCode"
@@ -58,7 +67,7 @@
         <a>意见反馈</a>
       </router-link>
 
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -104,23 +113,12 @@ export default {
                 userName: this.ruleForm2.username,
                 password: this.ruleForm2.pass
             }).then(res => {
-                console.log(res);
                 if (res.data.status == 'success') {
-                  console.log("success");
                 localStorage.setItem('username',this.ruleForm2.username);
-                  // console.log(localStorage.username);
-                  //将用户名传入store中的username;
-                  // store.commit('getUserName',this.ruleForm2.username);
-                  // console.log(store.state.username);
-                //  api.getName({userName:this.ruleForm2.username}).then(res2=>{
-                //     if (res2.data.status == 'success'){
-                //       store.commit('getName',res2.data.name);
-                //     }
-                  
-                //  })
-                    // this.$store.dispatch('setUser', this.username);
+                this.getFiles();
+                this.getFolders();
+               store.commit('clearDelete');
                     this.$router.push({name:"notes"});//跳转哪一个路由
-                    
                 }
                 if(res.data.status == 'fail'){
                   this.loginFlag = true;
@@ -135,7 +133,23 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    getFiles(){
+      let params =JSON.stringify({username:localStorage.username});
+      api.getFiles(
+        params
+      ).then(res=>{
+        store.commit('getFiles',res.data.data);
+      });
+    },
+    getFolders(){
+       let params = JSON.stringify({username:localStorage.username});
+      api.getFolders(params).then(res=>{
+        let data  = res.data.data.map(el=>el.name);
+         store.commit('getFolders',data);
+      });
     }
+
   }
 };
 </script>

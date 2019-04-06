@@ -59,7 +59,17 @@
           <div class="time"><span>{{timeNow.getFullYear() + '/' + ('0' + (timeNow.getMonth() + 1)).slice(-2) + '/' + ('0' + timeNow.getDate()).slice(-2)+' '+
               timeNow.getHours() + ':' + timeNow.getMinutes() + ':' + timeNow.getSeconds()
               }}</span></div>
-          <div class="say"><span>{{item.say}}</span></div>
+          <div
+            class="say"
+            v-if="item.say"
+          ><span>{{item.say}}</span></div>
+          <div
+            class="share"
+            v-if="item.share"
+          >
+            <span class="file-name"> {{item.share}}</span>
+            <i class="iconfont icon-wenjian1"></i>
+          </div>
         </div>
       </div>
       <div class="edit-message">
@@ -112,8 +122,8 @@ export default {
       messages: [
         { user: '往后', say: '早上好，努力做毕设', time: '2019 / 4 / 6 12: 16 ' },
         { partner: '小张(2132565323)', say: '其他好友说的话其他好友说的话', time: '2019 / 4 / 6 12: 18 ' },
-        { partner: '小张(2132565323)', say: '111', share: '文件夹或者文件夹名称', time: ' 2019 / 4 / 6 12: 22' },    //分享了文件或者文件夹
-        { user: '往后', say: '用户自己说的话', time: '2019 / 4 / 6 13: 11' },
+        { partner: '小张(2132565323)', share: '文件夹/文件夹名称', time: ' 2019 / 4 / 6 12: 22' },    //分享了文件或者文件夹
+        { user: '往后', share: '文件夹/文件夹名称', time: '2019 / 4 / 6 13: 11' },
         { user: '往后', say: '早上好，努力做毕设' },
         { partner: '小张(2132565323)', say: '其他好友说的话其他好友说的话' },
         { partner: '小张(2132565323)', say: '其他人其他好友说的话其他好友说的话' },

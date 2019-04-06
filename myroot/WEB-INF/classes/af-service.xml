@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!-- 示例
+	<service name="Hello" class="my.HelloApi" /> 
+	<upload name="BasicFile" class="my.my.BasicFileUpload" /> 
+	-->
+
+	<service name="refreshFiles" class="my.refreshFiles" />
+	<service name="refreshFolders" class="my.refreshFolders" />
+	<service name="getFolders" class="my.getFolders" />
+	<service name="getFiles" class="my.getFiles" />
+
+</config>
