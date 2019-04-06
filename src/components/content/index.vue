@@ -1,6 +1,9 @@
 <template>
   <div class="content-box">
-    <div class="left-side-box" @click="closeTheFolderOuter">
+    <div
+      class="left-side-box"
+      @click="closeTheFolderOuter"
+    >
       <div class="userAccount">
         <img src="@/assets/pic.png">
         <!-- <span>账户名</span> -->
@@ -38,60 +41,108 @@
         </el-dropdown>
       </div>
 
-      <div class="menuList">
+      <div
+        class="menuList"
+        @click='chooseIndex(1)'
+        :class="{clickStyle:index==1}"
+      >
         <router-link :to="{name:'notes'}">
           <i class="el-icon-document"></i>我的桌面
         </router-link>
       </div>
-      <div class="menuList">
+      <div
+        class="menuList"
+        @click='chooseIndex(2)'
+        :class="{clickStyle:index==2}"
+      >
         <router-link :to="{name:'myshare'}">
           <i class="el-icon-news"></i>我的分享
         </router-link>
       </div>
 
-      <div class="menuList">
+      <div
+        class="menuList"
+        @click='chooseIndex(3)'
+        :class="{clickStyle:index==3}"
+      >
         <router-link :to="{name:'shareList'}">
           <i class="el-icon-tickets"></i>分享给我的
         </router-link>
       </div>
 
-      <div class="menuList">
+      <div
+        class="menuList"
+        @click='chooseIndex(4)'
+        :class="{clickStyle:index==4}"
+      >
         <router-link :to="{name:'partner'}">
-          <i class="el-icon-goods"></i>笔记好友
+          <i class="el-icon-goods"></i>好友及群聊
         </router-link>
       </div>
-      <div class="menuList" style="display:none">
+      <div
+        class="menuList"
+        style="display:none"
+        @click='chooseIndex(5)'
+        :class="{clickStyle:index==5}"
+      >
         <router-link :to="{name:'myFiles'}">
           <i class="el-icon-goods"></i>我的文件
         </router-link>
       </div>
 
-      <div class="menuList">
+      <div
+        class="menuList"
+        @click='chooseIndex(6)'
+        :class="{clickStyle:index==6}"
+      >
         <router-link :to="{name:'recover'}">
           <i class="el-icon-delete"></i>回收站
         </router-link>
       </div>
       <div class="menuList">
-          <a href="javascript:void(0);" @click="Synch"> <i class="el-icon-refresh"></i>同步</a>
+        <a
+          href="javascript:void(0);"
+          @click="Synch"
+        > <i class="el-icon-refresh"></i>同步</a>
       </div>
     </div>
 
-    <div class="right-side-box" @click="closeTheFolderInner">
+    <div
+      class="right-side-box"
+      @click="closeTheFolderInner"
+    >
       <!-- 添加文件夹名弹出框 -->
-      <div class="view-add-folder" v-if="viewFolderMask">
+      <div
+        class="view-add-folder"
+        v-if="viewFolderMask"
+      >
         <div class="folder-box">
           <div class="fold-input">
             <span>文件夹名称：</span>
             <el-input v-model="foldName"></el-input>
           </div>
           <div class="fold-btn">
-            <el-button type="primary" @click="addFolder" class="addFolder-btn">确定</el-button>
+            <el-button
+              type="primary"
+              @click="addFolder"
+              class="addFolder-btn"
+            >确定</el-button>
             <el-button @click="cancelAddFolder">取消</el-button>
 
-            <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+            <el-dialog
+              title="提示"
+              :visible.sync="dialogVisible"
+              width="30%"
+            >
               <span>请填写文件夹名称</span>
-              <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+              <span
+                slot="footer"
+                class="dialog-footer"
+              >
+                <el-button
+                  type="primary"
+                  @click="dialogVisible = false"
+                >确 定</el-button>
               </span>
             </el-dialog>
           </div>
@@ -99,61 +150,98 @@
       </div>
 
       <!-- 添加文件名弹出框 -->
-      
-      <div class="view-add-folder" v-if="viewFileMask">
+
+      <div
+        class="view-add-folder"
+        v-if="viewFileMask"
+      >
         <div class="folder-box">
           <div class="fold-input">
-            
+
             <span>文件名称：</span>
             <el-input v-model="fileName"></el-input>
-           
+
           </div>
           <div class="select-fold">
-          <span>文件夹：</span>
-           <el-select v-model="fileFolderName" clearable placeholder="请选择文件夹">
+            <span>文件夹：</span>
+            <el-select
+              v-model="fileFolderName"
+              clearable
+              placeholder="请选择文件夹"
+            >
               <el-option
                 v-for="item in this.$store.state.myfolders"
                 :key="item"
                 :label="item"
                 :value="item"
-                >
+              >
               </el-option>
             </el-select>
-            </div>
+          </div>
           <div class="fold-btn">
-            <el-button type="primary" @click="addfile" class="addFolder-btn">确定</el-button>
+            <el-button
+              type="primary"
+              @click="addfile"
+              class="addFolder-btn"
+            >确定</el-button>
             <el-button @click="cancelAddfile">取消</el-button>
 
-            <el-dialog title="提示" :visible.sync="dialogVisible2" width="30%">
+            <el-dialog
+              title="提示"
+              :visible.sync="dialogVisible2"
+              width="30%"
+            >
               <span>请填写文件夹名称</span>
-              <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="dialogVisible2 = false">确定</el-button>
+              <span
+                slot="footer"
+                class="dialog-footer"
+              >
+                <el-button
+                  type="primary"
+                  @click="dialogVisible2 = false"
+                >确定</el-button>
               </span>
             </el-dialog>
           </div>
         </div>
       </div>
       <!-- 修改名字弹出框 -->
-      <div class="view-change-name" v-if="viewChangeName">
+      <div
+        class="view-change-name"
+        v-if="viewChangeName"
+      >
         <div class="name-box">
           <div class="name-input">
             <span>昵称：</span>
             <el-input v-model="myChangeName"></el-input>
           </div>
           <div class="fold-btn">
-            <el-button type="primary" @click="conFirmChangeName">确定</el-button>
+            <el-button
+              type="primary"
+              @click="conFirmChangeName"
+            >确定</el-button>
             <el-button @click="cancelChangeName">取消</el-button>
           </div>
         </div>
       </div>
-      <div class="view-confirm-save" v-if="viewConfirmMask">
+      <div
+        class="view-confirm-save"
+        v-if="viewConfirmMask"
+      >
         <div class="confirm-box">
           <h1>确认保存？</h1>
-          <el-button type="primary" @click="confirmSaveFile">确定</el-button>
+          <el-button
+            type="primary"
+            @click="confirmSaveFile"
+          >确定</el-button>
           <el-button @click="cancelSaveFile">取消</el-button>
         </div>
       </div>
-   <router-view @toggleConfirmSave="toggleConfirmSave" @FileContent="FileContent" v-if="!$route.meta.keepAlive"></router-view>
+      <router-view
+        @toggleConfirmSave="toggleConfirmSave"
+        @FileContent="FileContent"
+        v-if="!$route.meta.keepAlive"
+      ></router-view>
     </div>
   </div>
 </template>
@@ -177,53 +265,56 @@ export default {
       fileContent: "",
       foldName: "",
       fileName: "",
-      fileFolderName:'',
+      fileFolderName: '',
       // username: this.$store.state.username, //登录用户名
       name: "", //用户名
-      myChangeName: "" ,//修改昵称
-      files:[],
-      folders:[],
-      time:''
+      myChangeName: "",//修改昵称
+      files: [],
+      folders: [],
+      index: 0
     };
   },
   store,
-  watch:{
-    '$store.state.myfiles'(val){
+  watch: {
+    '$store.state.myfiles'(val) {
       this.files = val;
     },
-    '$store.state.myfolders'(val){
+    '$store.state.myfolders'(val) {
       this.folders = val;
     },
 
   },
   methods: {
+    chooseIndex(index) {
+      this.index = index;
+    },
     //同步功能
-    Synch(){
+    Synch() {
       this.files = this.$store.state.myfiles;
       this.folders = this.$store.state.myfolders;
       let username = localStorage.username;
-      let params1 = JSON.stringify({...{userName:username,files:this.files}});
-      let params2 = JSON.stringify({userName:username,folders:this.folders});
+      let params1 = JSON.stringify({ ...{ userName: username, files: this.files } });
+      let params2 = JSON.stringify({ userName: username, folders: this.folders });
       api.refreshfiles(
-      params1
-      ).then(res=>{
-        if(res.data.reason){
+        params1
+      ).then(res => {
+        if (res.data.reason) {
           this.$message({
-          showClose: true,
-          message: '文本同步成功',
-          duration:2000,
-          type: 'success'
-        });
+            showClose: true,
+            message: '文本同步成功',
+            duration: 2000,
+            type: 'success'
+          });
         }
       });
-      api.refreshfolders(params2).then(res=>{
-        if(res.data.reason){
+      api.refreshfolders(params2).then(res => {
+        if (res.data.reason) {
           this.$message({
-          showClose: true,
-          message: '文件夹同步成功',
-          duration:4000,
-          type: 'success'
-        });
+            showClose: true,
+            message: '文件夹同步成功',
+            duration: 4000,
+            type: 'success'
+          });
         }
       })
     },
@@ -236,7 +327,7 @@ export default {
       // });
       this.$store.commit("modifyMyFileContent", {
         name: this.fileName,
-        folder:this.fileFolderName,
+        folder: this.fileFolderName,
         content: this.fileContent,
         time:this.time
       });
@@ -265,7 +356,7 @@ export default {
       this.viewConfirmMask = !this.viewConfirmMask;
     },
     //获取编辑器文件内容和文件名称
-    FileContent(text, filename,foldername,time) {
+    FileContent(text, filename, foldername) {
       this.fileContent = text;
       this.fileName = filename;
       this.fileFolderName = foldername;
@@ -322,9 +413,8 @@ export default {
         this.getTime();
         this.$store.commit("addMyFiles", {
           name: this.fileName,
-          folder:this.fileFolderName,
-          content: "",
-          time:this.time
+          folder: this.fileFolderName,
+          content: ""
         });
         this.toggleFileMask();
         this.fileName = "";
