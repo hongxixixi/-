@@ -9,5 +9,12 @@
 	<service name="refreshFolders" class="my.refreshFolders" />
 	<service name="getFolders" class="my.getFolders" />
 	<service name="getFiles" class="my.getFiles" />
+	<service name ="addFriend" class="my.addFriend"/>
+	<service name ="deleteFriend" class="my.deleteFriend"/>
+	<service name ="isGetName" class="my.isGetName"/>
+	<service name ="getFriend" class="my.getFriend"/>
+	<service name ="creatCrowd" class="my.createCrowd"/>
+	<service name ="getCrowd" class="my.getCrowd"/>
+
 
 </config>

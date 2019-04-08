@@ -18,19 +18,25 @@
       background: #dfdddb;
       z-index: 9999;
       box-sizing: border-box;
+      font-size: 1.2rem;
 
       // position:fixed;定位的时候 只要不写top、left、top、right值，
       // 他就会默认居于父级进行定位，又不会失去fixed的不动特性，只是位置只能在左上角，
       // 要定位在其他地方就在加上margin值处理即可
       // top: 0;
       // left: 0;
-      .el-icon-plus {
-        font-size: 24px;
-        font-weight: 600;
-        float: right;
-        padding: 0 22px;
-        cursor: pointer;
-        z-index: 99999;
+
+      .el-dropdown {
+        position: absolute;
+        right: 12px;
+
+        .el-icon-plus {
+          font-size: 24px;
+          font-weight: 600;
+          float: right;
+          padding: 0 22px;
+          cursor: pointer;
+        }
       }
     }
 
@@ -59,6 +65,15 @@
           border-bottom: 1px solid black;
           font-size: 16px;
           width: 31%;
+          border-radius: 0;
+        }
+
+        .el-select {
+          padding-top: 16px;
+
+          input {
+            width: 92%;
+          }
         }
 
         input:focus {
@@ -77,7 +92,7 @@
       }
 
       .active {
-        background: #e7e8e9;
+        background: #e7e7e7;
       }
 
       .partner:hover {
@@ -87,15 +102,17 @@
 
   }
 
-  .send-message {
-    width: 40%;
+  .send-message,
+  .show-file {
+    width: 43%;
     height: 100%;
     box-sizing: border-box;
     overflow: hidden; // 清除兄弟节点的浮动
+    float: left;
 
     .send-message-title {
       position: fixed;
-      width: 34.4%;
+      width: 37%;
       padding: 1% 0;
       background: #fff;
       z-index: 9999;
@@ -104,9 +121,18 @@
       font-size: 20px;
       color: #000;
       border-bottom: 1px solid #e7e7e7;
+
+      .delete {
+        position: absolute;
+        color: red;
+        right: 4%;
+        font-size: 22px;
+        cursor: pointer;
+      }
     }
 
-    .show-message {
+    .show-message,
+    .show-flie-record {
       width: 100%;
       height: 84%;
       position: relative;
@@ -150,7 +176,7 @@
 
           span {
             padding: 4px 10px;
-            border-radius: 4px;
+            border-radius: 6px;
 
           }
         }
@@ -206,7 +232,8 @@
 
     .edit-message {
       width: 99%;
-      height: 14%;
+      height: 12%;
+      margin-top: 1%;
 
       .edit-content {
         height: 100%;
@@ -218,6 +245,7 @@
           height: 100%;
           padding: 8px 4px;
           box-sizing: border-box;
+          font-size: 18px;
         }
 
         .send-buton {
@@ -228,5 +256,19 @@
         }
       }
     }
+  }
+
+  .show-file {
+    width: 32%;
+    height: 100%;
+    float: left;
+
+    .show-file-title {
+      font-size: 16px;
+      height: 40px;
+      line-height: 40px;
+    }
+
+    .show-flie-record {}
   }
 }
