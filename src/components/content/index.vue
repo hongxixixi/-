@@ -252,6 +252,8 @@ import store from "@/store/store.js";
 export default {
   mounted() {
     this.getName();
+    this.getFiles();
+    this.getFolders();
     // this.Synch();
   },
   data() {
@@ -285,6 +287,21 @@ export default {
 
   },
   methods: {
+     getFiles(){
+      let params =JSON.stringify({username:localStorage.username});
+      api.getFiles(
+        params
+      ).then(res=>{
+        store.commit('getFiles',res.data.data);
+      });
+    },
+    getFolders(){
+       let params = JSON.stringify({username:localStorage.username});
+      api.getFolders(params).then(res=>{
+        let data  = res.data.data.map(el=>el.name);
+         store.commit('getFolders',data);
+      });
+    },
     chooseIndex(index) {
       this.index = index;
     },
@@ -356,7 +373,7 @@ export default {
       this.viewConfirmMask = !this.viewConfirmMask;
     },
     //获取编辑器文件内容和文件名称
-    FileContent(text, filename, foldername) {
+    FileContent(text, filename, foldername,time) {
       this.fileContent = text;
       this.fileName = filename;
       this.fileFolderName = foldername;
@@ -414,7 +431,8 @@ export default {
         this.$store.commit("addMyFiles", {
           name: this.fileName,
           folder: this.fileFolderName,
-          content: ""
+          content: "",
+          time:this.time
         });
         this.toggleFileMask();
         this.fileName = "";

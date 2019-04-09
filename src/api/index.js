@@ -9,7 +9,7 @@ const api = {
   register(params){
     return axios.get('/register',{params})
   },
-  // 获取昵称，返回20条数据
+  // 根据用户名获取昵称
   getName(params){
     return axios.get('/getName',{params})
   },
@@ -27,8 +27,25 @@ const api = {
   },
   getFolders(params){
     return axios.post('/getFolders.api',params)
-  }
-
+  },
+  addFriend(params){
+    return axios.post('/addFriend.api',params)
+  },
+  deleteFriend(params){
+    return axios.post('/deleteFriend.api',params)
+  },
+  isGetName(params){
+    return axios.post('/isGetName.api',params);
+  },
+  getFriend(params){
+    return axios.post('/getFriend.api',params);
+  },
+  createCrowd(params){
+    return axios.post('/creatCrowd.api',params);
+  },
+  getCrowd(params){
+    return axios.post('/getCrowd.api',params);
+  },
   
 
   

@@ -115,8 +115,8 @@ export default {
             }).then(res => {
                 if (res.data.status == 'success') {
                 localStorage.setItem('username',this.ruleForm2.username);
-                this.getFiles();
-                this.getFolders();
+                // this.getFiles();
+                // this.getFolders();
                store.commit('clearDelete');
                     this.$router.push({name:"notes"});//跳转哪一个路由
                 }
@@ -134,21 +134,21 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
-    getFiles(){
-      let params =JSON.stringify({username:localStorage.username});
-      api.getFiles(
-        params
-      ).then(res=>{
-        store.commit('getFiles',res.data.data);
-      });
-    },
-    getFolders(){
-       let params = JSON.stringify({username:localStorage.username});
-      api.getFolders(params).then(res=>{
-        let data  = res.data.data.map(el=>el.name);
-         store.commit('getFolders',data);
-      });
-    }
+    // getFiles(){
+    //   let params =JSON.stringify({username:localStorage.username});
+    //   api.getFiles(
+    //     params
+    //   ).then(res=>{
+    //     store.commit('getFiles',res.data.data);
+    //   });
+    // },
+    // getFolders(){
+    //    let params = JSON.stringify({username:localStorage.username});
+    //   api.getFolders(params).then(res=>{
+    //     let data  = res.data.data.map(el=>el.name);
+    //      store.commit('getFolders',data);
+    //   });
+    // }
 
   }
 };

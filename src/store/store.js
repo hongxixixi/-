@@ -30,8 +30,9 @@ const store = new Vuex.Store({
     // 添加文本。文件夹（增）
     addMyFiles(state,file){
       console.log(file);
-      state.myfiles.push({name:file.name,folder:file.folder,content:file.content});
-      // state.myfiles.push({name:file.name,folder:file.folder,content:file.content,time:file.time});
+      // state.myfiles.push({name:file.name,folder:file.folder,content:file.content});
+      state.myfiles.push({name:file.name,folder:file.folder,content:file.content,time:file.time});
+      console.log(state.myfiles);
     },
     addMyFolder(state, folder) {
       state.myfolders.push(folder);
@@ -43,6 +44,7 @@ const store = new Vuex.Store({
          for(var i = 0;i <state.myfiles.length;i++ ){
           if(state.myfiles[i].name == file.name &&state.myfiles[i].folder == file.folder){
             state.myfiles[i].content = file.content;
+            state.myfiles[i].time = file.time;
           }
         }
     },
