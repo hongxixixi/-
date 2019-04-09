@@ -27,13 +27,18 @@
             title=""
             :visible.sync="dialogVisible"
             width="30%"
-            :before-close="handleClose"
           >
             输入账号：
             <input
               type="text"
               v-model="partnersAccount"
+              @change='isGetName()'
             >
+            <i
+              class="el-icon-error"
+              style="color:red;"
+              v-if='!getNameSucc'
+            ></i>
             <span
               slot="footer"
               class="dialog-footer"
@@ -41,7 +46,7 @@
               <el-button @click="dialogVisible = false">取 消</el-button>
               <el-button
                 type="primary"
-                @click="addPartner()"
+                @click="addFriend()"
               >确 定</el-button>
             </span>
           </el-dialog>
@@ -50,7 +55,6 @@
             title=""
             :visible.sync="dialogVisible1"
             width="30%"
-            :before-close="handleClose"
           >
             输入群名：
             <input
@@ -90,10 +94,10 @@
       ref="sendBox"
     >
       <div class="send-message-title">
-        <span>{{partners[ind].name+'('+partners[ind].account+')'}}</span>
+        <span v-if="partners[ind]">{{partners[ind].name+'('+partners[ind].account+')'}} </span>
         <span
           class="delete"
-          @click="depletePartner(ind)"
+          @click="deleteFriend"
         >
           <i class="el-icon-delete"></i>
         </span>
@@ -190,6 +194,7 @@ export default {
       qunMember: '',
       qunName: '',
       partnersAccount: '',
+      getNameSucc: true,
       timeNow: new Date(),
       ind: 0,//选中的用户index
       fileRecord: [
@@ -240,7 +245,6 @@ export default {
   mounted() {
     let that = this;
     that.getFriend();
-    this.isGetName();
     this.scrollToBottom();
     document.onkeydown = function (event) {
       var e = event || window.event || arguments.callee.caller.arguments[0];
@@ -252,61 +256,54 @@ export default {
   },
   methods: {
     getFriend() {
-      let params = JSON.stringify({ username: 'xiao' });
+      let params = JSON.stringify({ username: localStorage.username });
+      let that = this;
       api.getFriend(params).then(res => {
-        if (res.data.data) {
-          this.partners = [];
-          let that = this;
-          res.data.data.forEach((item, index, array) => {
-            that.partners.push({ name: item.username, account: item.name })
+        if (res.data.reason == 'OK') {
+          that.partners = [];
+          let data = res.data.data;
+          data.forEach((item, index) => {
+            that.partners.push({ account: item.name, name: item.username })
           })
         }
       })
     },
 
     isGetName() {
-      let params = JSON.stringify({ username: '222' });
+      let params = JSON.stringify({ username: this.partnersAccount });
       api.isGetName(params).then(res => {
         console.log(res.data.data)
         if (res.data.data) {
-          let params1 = JSON.stringify({ username: 'xiao', fname: '222' });
-          this.addFriend(params1);
-          this.getFriend();
+          this.getNameSucc = true;
+        }
+        else {
+          this.getNameSucc = false;
         }
       })
     },
-    addFriend(params1) {
-      api.addFriend(params1).then(res => {
-        console.log(res);
-      });
-    },
 
-
-
-
-
-
-    addPartner() {
+    addFriend() {
       this.dialogVisible = false;
-      this.partners.unshift({ name: 'name', account: this.partnersAccount })
+      let params = JSON.stringify({ username: localStorage.username, fname: this.partnersAccount });
+      api.addFriend(params).then(res => {
+        console.log(params, res);
+      });
+      this.partnersAccount = ''
+      this.getFriend();
     },
-    addMember() {
-      this.dialogVisible1 = false;
-      this.partners.unshift({ name: this.qunName, account: this.qunMember.join(',') });
-    },
-    scrollToBottom() {
-      let sendHeight = this.$refs.showBox.scrollHeight;
-      this.$refs.showBox.scrollTo(0, sendHeight)
-    },
-    depletePartner() {
+
+    deleteFriend() {
       this.$confirm('此操作将删除该好友, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // 删除当前ind指向的好友，然后ind要-1
-        this.partners.splice(this.ind, 1);
+        let params = JSON.stringify({ username: localStorage.username, fname: this.partners[this.ind].account });
+        api.deleteFriend(params).then(res => {
+          console.log(res)
+        })
         this.ind--;
+        this.getFriend();
         this.$message({
           type: 'success',
           message: '删除成功!'
@@ -318,6 +315,16 @@ export default {
         });
       });
     },
+
+    addMember() {
+      this.dialogVisible1 = false;
+      this.partners.unshift({ name: this.qunName, account: this.qunMember.join(',') });
+    },
+    scrollToBottom() {
+      let sendHeight = this.$refs.showBox.scrollHeight;
+      this.$refs.showBox.scrollTo(0, sendHeight)
+    },
+
     changePartnerIndex(index) {
       this.ind = index;
     },
@@ -335,13 +342,6 @@ export default {
       }
 
     },
-    handleClose(done) {
-      this.$confirm('确认关闭？')
-        .then(_ => {
-          done();
-        })
-        .catch(_ => { });
-    }
   }
 }
 </script>
