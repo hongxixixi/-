@@ -1,7 +1,8 @@
 <template>
   <div class="note-partner">
     <div class="my-partner">
-      <div class="partner-title"><span>好友及群聊</span>
+      <div class="partner-title">
+        <span>好友及群聊</span>
         <el-dropdown>
           <span class=" el-dropdown-link">
             <i class="el-icon-plus"></i>
@@ -12,10 +13,11 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
+
       <div class="partner-list">
         <div
           class="partner"
-          v-for="(item,index) in partners"
+          v-for="(item,index) in partnerAndcrowds"
           :key="index"
           @click="changePartnerIndex(index)"
           :class="{'active':ind === index}"
@@ -23,81 +25,82 @@
           <span>{{item.name}}</span>
           <span v-if="item.account">({{item.account}})</span>
           <i class="el-icon-arrow-right"></i>
-          <el-dialog
-            title=""
-            :visible.sync="dialogVisible"
-            width="30%"
-          >
-            输入账号：
-            <input
-              type="text"
-              v-model="partnersAccount"
-              @change='isGetName()'
-            >
-            <i
-              class="el-icon-error"
-              style="color:red;"
-              v-if='!getNameSucc'
-            ></i>
-            <span
-              slot="footer"
-              class="dialog-footer"
-            >
-              <el-button @click="dialogVisible = false">取 消</el-button>
-              <el-button
-                type="primary"
-                @click="addFriend()"
-              >确 定</el-button>
-            </span>
-          </el-dialog>
-
-          <el-dialog
-            title=""
-            :visible.sync="dialogVisible1"
-            width="30%"
-          >
-            输入群名：
-            <input
-              type="text"
-              v-model="qunName"
-            >
-            <el-select
-              v-model="qunMember"
-              placeholder="请添加群成员"
-              multiple="multiple"
-            >
-              <el-option
-                v-for="item in partners"
-                :key="item.account"
-                :label="item.name"
-                :value="item.name"
-              >
-              </el-option>
-            </el-select>
-            <span
-              slot="footer"
-              class="dialog-footer"
-            >
-              <el-button @click="dialogVisible1 = false">取 消</el-button>
-              <el-button
-                type="primary"
-                @click="addMember()"
-              >确 定</el-button>
-            </span>
-          </el-dialog>
-
         </div>
+        <el-dialog
+          title=""
+          :visible.sync="dialogVisible"
+          width="30%"
+        >
+          输入账号：
+          <input
+            type="text"
+            v-model="partnersAccount"
+            @change='isGetName()'
+          >
+          <i
+            class="el-icon-warning"
+            style="color:red;"
+            v-if='!getNameSucc'
+          ></i>
+          <span
+            slot="footer"
+            class="dialog-footer"
+          >
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button
+              type="primary"
+              @click="addFriend()"
+            >确 定</el-button>
+          </span>
+        </el-dialog>
+
+        <el-dialog
+          title=""
+          :visible.sync="dialogVisible1"
+          width="30%"
+        >
+          输入群名：
+          <input
+            type="text"
+            v-model="qunName"
+          >
+          <el-select
+            v-model="qunMember"
+            placeholder="请添加群成员"
+            multiple="multiple"
+          >
+            <el-option
+              v-for="item in partners"
+              :key="item.account"
+              :label="item.name"
+              :value="item.account"
+            >
+            </el-option>
+          </el-select>
+          <span
+            slot="footer"
+            class="dialog-footer"
+          >
+            <el-button @click="dialogVisible1 = false">取 消</el-button>
+            <el-button
+              type="primary"
+              @click="createCrowd()"
+            >确 定</el-button>
+          </span>
+        </el-dialog>
       </div>
+
     </div>
+
     <div
       class="send-message"
       ref="sendBox"
     >
       <div class="send-message-title">
-        <span v-if="partners[ind]">{{partners[ind].name+'('+partners[ind].account+')'}} </span>
+        <span v-if="partnerAndcrowds[ind]">{{partnerAndcrowds[ind].name+'('+partnerAndcrowds[ind].account+')'}} </span>
         <span
           class="delete"
-          @click="deleteFriend"
+          @click="deleteFriendOrCrowd"
         >
           <i class="el-icon-delete"></i>
         </span>
@@ -191,7 +194,7 @@ export default {
     return {
       dialogVisible: false,
       dialogVisible1: false,
-      qunMember: '',
+      qunMember: [],
       qunName: '',
       partnersAccount: '',
       getNameSucc: true,
@@ -224,6 +227,7 @@ export default {
         { name: '小芳', account: '17565' },
         { name: '小明', account: '12343' },
       ],
+      crowds: [],
       messages: [
         { user: '往后', say: '早上好，努力做毕设', time: '2019 / 4 / 6 12: 16 ' },
         { partner: '小张(2132565323)', say: '其他好友说的话其他好友说的话', time: '2019 / 4 / 6 12: 18 ' },
@@ -242,28 +246,72 @@ export default {
       ],
     }
   },
+  computed: {
+    partnerAndcrowds() {
+      return this.partners.concat(this.crowds)
+    }
+  },
   mounted() {
     let that = this;
     that.getFriend();
+    that.getCrowd();
     this.scrollToBottom();
     document.onkeydown = function (event) {
       var e = event || window.event || arguments.callee.caller.arguments[0];
-      if (e && e.keyCode == 13) { // enter 键
-        //要做的事情
+      if (e && e.keyCode == 13) {
         that.sendMessage()
       }
     };
   },
   methods: {
-    getFriend() {
-      let params = JSON.stringify({ username: localStorage.username });
-      let that = this;
-      api.getFriend(params).then(res => {
+    createCrowd() {
+      if (this.qunName == '') {
+        this.$message({
+          type: 'warning',
+          message: '群名不能为空!'
+        });
+        return;
+      }
+      else if (this.qunMember.length < 1) {
+        this.$message({
+          type: 'warning',
+          message: '请至少添加一位群成员!'
+        });
+        return;
+      }
+      this.dialogVisible1 = false;
+      let menbs = JSON.parse(JSON.stringify(this.qunMember));
+      menbs.unshift(localStorage.username);      //第一个-群主
+      let params = JSON.stringify({ name: this.qunName, people: menbs.join(';') })
+      this.qunMember = [];
+      this.qunName = '';
+      api.createCrowd(params).then(res => {
         if (res.data.reason == 'OK') {
-          that.partners = [];
+          this.getCrowd();
+        }
+      })
+    },
+    getCrowd() {
+      let that = this;
+      let params = JSON.stringify({ username: localStorage.username })
+      api.getCrowd(params).then(res => {
+        if (res.data.reason == 'OK') {
+          that.crowds = [];
           let data = res.data.data;
           data.forEach((item, index) => {
-            that.partners.push({ account: item.name, name: item.username })
+            that.crowds.push({ account: item.people, name: item.name })
+          })
+        }
+      })
+    },
+    getFriend() {
+      let params = JSON.stringify({ username: localStorage.username });
+      api.getFriend(params).then(res => {
+        if (res.data.reason == 'OK') {
+          this.partners = [];
+          let data = res.data.data;
+          data.forEach((item, index) => {
+            this.partners.push({ account: item.username, name: item.name })
           })
         }
       })
@@ -271,39 +319,59 @@ export default {
 
     isGetName() {
       let params = JSON.stringify({ username: this.partnersAccount });
+      for (let i = 0; i < this.partners.length; i++) {
+        if (this.partnersAccount == this.partners[i].account) {     // 如果好友已经在列表，直接返回
+          this.$message({
+            type: 'warning',
+            message: '用户已在好友列表!'
+          });
+          return;
+        }
+      }
       api.isGetName(params).then(res => {
-        console.log(res.data.data)
         if (res.data.data) {
           this.getNameSucc = true;
         }
         else {
           this.getNameSucc = false;
+          this.partnersAccount = '';
+          this.$message({
+            type: 'warning',
+            message: '用户不存在!'
+          });
         }
       })
     },
 
     addFriend() {
+      if (this.partnersAccount == '') {
+        this.$message({
+          type: 'warning',
+          message: '用户账号不能为空!'
+        });
+        return;
+      }
       this.dialogVisible = false;
       let params = JSON.stringify({ username: localStorage.username, fname: this.partnersAccount });
       api.addFriend(params).then(res => {
-        console.log(params, res);
+        if (res.data.reason == 'OK') {
+
+          this.getFriend();
+        }
       });
       this.partnersAccount = ''
-      this.getFriend();
     },
 
-    deleteFriend() {
+    deleteFriend(params) {
       this.$confirm('此操作将删除该好友, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        let params = JSON.stringify({ username: localStorage.username, fname: this.partners[this.ind].account });
         api.deleteFriend(params).then(res => {
-          console.log(res)
+          this.ind--;
+          this.getFriend();
         })
-        this.ind--;
-        this.getFriend();
         this.$message({
           type: 'success',
           message: '删除成功!'
@@ -316,10 +384,40 @@ export default {
       });
     },
 
-    addMember() {
-      this.dialogVisible1 = false;
-      this.partners.unshift({ name: this.qunName, account: this.qunMember.join(',') });
+    deleteCrowd(params) {
+      this.$confirm('此操作将删除/退出该群, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        api.deleteCrowd(params).then(res => {
+          this.ind--;
+          this.getCrowd();
+        })
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
+
+    deleteFriendOrCrowd() {
+      let fnames = this.partnerAndcrowds[this.ind].account.split(';');
+      if (fnames.length > 1) {
+        let params = JSON.stringify({ username: localStorage.username, name: this.partnerAndcrowds[this.ind].name });
+        this.deleteCrowd(params)
+      }
+      else {
+        let params = JSON.stringify({ username: localStorage.username, fname: this.partnerAndcrowds[this.ind].account });
+        this.deleteFriend(params);
+      }
+    },
+
     scrollToBottom() {
       let sendHeight = this.$refs.showBox.scrollHeight;
       this.$refs.showBox.scrollTo(0, sendHeight)

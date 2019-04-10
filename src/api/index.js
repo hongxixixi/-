@@ -37,6 +37,7 @@ const api = {
     return axios.post('/getFolders.api', params)
   },
 
+
   addFriend(params) {
     return axios.post('/addFriend.api', params)
   },
@@ -55,7 +56,17 @@ const api = {
   getCrowd(params) {
     return axios.post('/getCrowd.api', params);
   },
-
+  deleteCrowd(params) {
+    return axios.post('/deleteCrowd.api', params);
+  },
+  // 删除群
+  // let params2 = JSON.stringify({
+  //   username: '222',
+  //   name: '22'
+  // })
+  // api.deleteCrowd(params2).then(res => {
+  //   console.log(res);
+  // });
   // 1.创建群 --->存了key值，应该存value值 这里要修改
   // let params =JSON.stringify({name:'22',people:"xiao;222"})
   // api.createCrowd(params).then(res=>{

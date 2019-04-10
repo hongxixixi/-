@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50725
 File Encoding         : 65001
 
-Date: 2019-04-08 14:36:10
+Date: 2019-04-09 22:31:52
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -24,7 +24,7 @@ CREATE TABLE `crowd_table` (
   `name` varchar(200) DEFAULT NULL,
   `people` varchar(20000) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=118 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of crowd_table
@@ -45,16 +45,16 @@ CREATE TABLE `files_table` (
   `content` varchar(5000) CHARACTER SET utf8 DEFAULT NULL,
   `time` varchar(40) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of files_table
 -- ----------------------------
 INSERT INTO `files_table` VALUES ('1', 'aaa', 'aaa', 'aaa', 'aaa', '2019-4-6 21:36:42');
 INSERT INTO `files_table` VALUES ('2', '22', '笔记1', '文件夹1', '啊啊啊啊1', '2019-4-6 21:36:42');
-INSERT INTO `files_table` VALUES ('86', 'xiao', '22', '', '<p>啊&nbsp; 的&nbsp;&nbsp;</p>', '2019-4-6 21:36:42');
-INSERT INTO `files_table` VALUES ('87', 'xiao', '我问问 ', '11', '<p>大把市场 等等&nbsp; 想嘻嘻嘻&nbsp; &nbsp;</p>', '2019-4-6 21:37:46');
-INSERT INTO `files_table` VALUES ('88', 'xiao', '666', '', '<p>啊啊女v&nbsp;&nbsp;</p>', '2019-4-6 21:38:4');
+INSERT INTO `files_table` VALUES ('92', 'xiao', '22', '', '<p>啊&nbsp; 的&nbsp; SCA 阿斯达&nbsp;&nbsp;</p>', '2019-4-9 11:7:28');
+INSERT INTO `files_table` VALUES ('93', 'xiao', '我问问 ', '11', '<p>大把市场 等等&nbsp; 想嘻嘻嘻&nbsp; &nbsp;</p>', '2019-4-6 21:37:46');
+INSERT INTO `files_table` VALUES ('94', 'xiao', '222', '', '<p>啊啊女v&nbsp;&nbsp;</p>', '2019-4-6 21:38:4');
 
 -- ----------------------------
 -- Table structure for folders_table
@@ -65,14 +65,14 @@ CREATE TABLE `folders_table` (
   `username` varchar(40) DEFAULT NULL,
   `name` varchar(40) NOT NULL,
   PRIMARY KEY (`id`,`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of folders_table
 -- ----------------------------
 INSERT INTO `folders_table` VALUES ('1', '2222', '2222');
-INSERT INTO `folders_table` VALUES ('33', 'xiao', '11');
-INSERT INTO `folders_table` VALUES ('34', 'xiao', '44');
+INSERT INTO `folders_table` VALUES ('37', 'xiao', '11');
+INSERT INTO `folders_table` VALUES ('38', 'xiao', '44');
 
 -- ----------------------------
 -- Table structure for user_table
@@ -90,7 +90,7 @@ CREATE TABLE `user_table` (
 -- ----------------------------
 -- Records of user_table
 -- ----------------------------
-INSERT INTO `user_table` VALUES ('1', '2262', '2666', '699', '222;xiao;');
-INSERT INTO `user_table` VALUES ('2', '222', '222', '666', '');
-INSERT INTO `user_table` VALUES ('3', '26342676572', '2666', '2', null);
-INSERT INTO `user_table` VALUES ('4', 'xiao', '22', 'xiao2', '');
+INSERT INTO `user_table` VALUES ('1', '2262', '2666', '699', '');
+INSERT INTO `user_table` VALUES ('2', '222', '222', '666', 'xiao;');
+INSERT INTO `user_table` VALUES ('3', '26342676572', '2666', '2', '');
+INSERT INTO `user_table` VALUES ('4', 'xiao', '22', 'xiao2', '222;');

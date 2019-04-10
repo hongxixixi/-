@@ -55,26 +55,6 @@
         @click='chooseIndex(2)'
         :class="{clickStyle:index==2}"
       >
-        <router-link :to="{name:'myshare'}">
-          <i class="el-icon-news"></i>我的分享
-        </router-link>
-      </div>
-
-      <div
-        class="menuList"
-        @click='chooseIndex(3)'
-        :class="{clickStyle:index==3}"
-      >
-        <router-link :to="{name:'shareList'}">
-          <i class="el-icon-tickets"></i>分享给我的
-        </router-link>
-      </div>
-
-      <div
-        class="menuList"
-        @click='chooseIndex(4)'
-        :class="{clickStyle:index==4}"
-      >
         <router-link :to="{name:'partner'}">
           <i class="el-icon-goods"></i>好友及群聊
         </router-link>
@@ -82,8 +62,8 @@
       <div
         class="menuList"
         style="display:none"
-        @click='chooseIndex(5)'
-        :class="{clickStyle:index==5}"
+        @click='chooseIndex(3)'
+        :class="{clickStyle:index==3}"
       >
         <router-link :to="{name:'myFiles'}">
           <i class="el-icon-goods"></i>我的文件
@@ -92,8 +72,8 @@
 
       <div
         class="menuList"
-        @click='chooseIndex(6)'
-        :class="{clickStyle:index==6}"
+        @click='chooseIndex(4)'
+        :class="{clickStyle:index==4}"
       >
         <router-link :to="{name:'recover'}">
           <i class="el-icon-delete"></i>回收站
@@ -271,7 +251,8 @@ export default {
       myChangeName: "",//修改昵称
       files: [],
       folders: [],
-      index: 0
+      index: 0,
+      partnerAndcrowds: [],
     };
   },
   store,
