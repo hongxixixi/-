@@ -122,6 +122,7 @@
 
 <script>
 import api from "@/api/index.js";
+import store from "@/store/store.js";
 
 export default {
   // mounted(){
@@ -156,8 +157,26 @@ export default {
     let params = JSON.stringify({ username: localStorage.username })
     this.getCrowd(params);
     this.getFriend(params);
+    this.getFiles();
+    this.getFolders();
   },
   methods: {
+    getFiles() {
+      let params = JSON.stringify({ username: localStorage.username });
+      api.getFiles(
+        params
+      ).then(res => {
+        store.commit('getFiles', res.data.data);
+      });
+    },
+    getFolders() {
+      let params = JSON.stringify({ username: localStorage.username });
+      api.getFolders(params).then(res => {
+        let data = res.data.data.map(el => el.name);
+        store.commit('getFolders', data);
+      });
+    },
+
     getCrowd(params) {
       api.getCrowd(params).then(res => {
         if (res.data.reason == 'OK') {

@@ -22,9 +22,20 @@
           @click="changePartnerIndex(index)"
           :class="{'active':ind === index}"
         >
+          <img
+            class="portraitlist"
+            src="@/assets/portraitlist.jpg"
+            alt=""
+          >
+          <img
+            class="message"
+            src="@/assets/message.png"
+            alt=""
+            v-if="item.hasNew"
+          >
           <span>{{item.name}}</span>
-          <span v-if="item.account">({{item.account}})</span>
-          <i class="el-icon-arrow-right"></i>
+          <!-- <span v-if="item.account">({{item.account}})</span> -->
+          <!-- <i class="el-icon-arrow-right"></i> -->
         </div>
         <el-dialog
           title=""
@@ -97,6 +108,7 @@
       ref="sendBox"
     >
       <div class="send-message-title">
+        <!-- <span v-if="partnerAndcrowds[ind]">{{partnerAndcrowds[ind].name+'('+partnerAndcrowds[ind].account+')'}} </span> -->
         <span v-if="partnerAndcrowds[ind]">{{partnerAndcrowds[ind].name+'('+partnerAndcrowds[ind].account+')'}} </span>
         <span
           class="delete"
@@ -117,11 +129,17 @@
           <div
             v-if="item.user"
             class="userName"
-          ><span>{{item.user}}</span></div>
+          ><img
+              src="@/assets/portrait.jpg"
+              alt=""
+            ><span>{{item.user}}</span></div>
           <div
             v-else-if="item.partner"
             class="partnerName"
-          ><span>{{item.partner}}</span></div>
+          ><img
+              src="@/assets/portrait.jpg"
+              alt=""
+            ><span>{{item.partner}}</span></div>
           <!-- 这里的时间历史部分从后台获取，新的部分自己new Date -->
           <div class="time"><span>{{timeNow.getFullYear() + '/' + ('0' + (timeNow.getMonth() + 1)).slice(-2) + '/' + ('0' + timeNow.getDate()).slice(-2)+' '+
               timeNow.getHours() + ':' + timeNow.getMinutes() + ':' + ('0' + timeNow.getSeconds()).slice(-2)
@@ -155,10 +173,7 @@
 
     <div class="show-file">
       <div class='show-file-title'><span>文件分享记录</span></div>
-      <div
-        class='show-flie-record'
-        ref="showBox"
-      >
+      <div class='show-flie-record'>
         <div
           v-for="(item,index) in fileRecord"
           :key="index"
@@ -205,27 +220,11 @@ export default {
         { user: '往后', share: '文件/文件夹名称', time: '2019 / 4 / 6 13: 11' },
       ],
       partners: [
-        { name: '小张', account: '2132565323' },
-        { name: '小敏一', account: '2132323' },
-        { name: '群聊1', account: '2323' },
-        { name: '群聊名字比较长', account: '111' },
-        { name: '小芳', account: '134343' },
-        { name: '小明', account: '12' },
-        { name: '小李', account: '13' },
-        { name: '小敏', account: '14' },
-        { name: '群聊2', account: '5' },
-        { name: '小芳', account: '16' },
-        { name: '小明', account: '17' },
-        { name: '小李', account: '18' },
-        { name: '小敏', account: '19' },
-        { name: '小俊', account: '10' },
-        { name: '小芳', account: '1343434' },
-        { name: '小明', account: '12322' },
-        { name: '小李', account: '145454' },
-        { name: '小敏', account: '1565' },
-        { name: '小俊', account: '1677' },
-        { name: '小芳', account: '17565' },
-        { name: '小明', account: '12343' },
+        // { name: '小张', account: '2132565323' },
+        // { name: '小敏一', account: '2132323' },
+        // { name: '群聊1', account: '2323' },
+        // { name: '群聊名字比较长', account: '111' },
+        // { name: '小芳', account: '134343' },
       ],
       crowds: [],
       messages: [
@@ -259,6 +258,7 @@ export default {
     document.onkeydown = function (event) {
       var e = event || window.event || arguments.callee.caller.arguments[0];
       if (e && e.keyCode == 13) {
+        event.preventDefault();
         that.sendMessage()
       }
     };
@@ -299,7 +299,7 @@ export default {
           that.crowds = [];
           let data = res.data.data;
           data.forEach((item, index) => {
-            that.crowds.push({ account: item.people, name: item.name })
+            that.crowds.push({ account: item.people, name: item.name, hasNew: false })
           })
         }
       })
@@ -311,7 +311,7 @@ export default {
           this.partners = [];
           let data = res.data.data;
           data.forEach((item, index) => {
-            this.partners.push({ account: item.username, name: item.name })
+            this.partners.push({ account: item.username, name: item.name, hasNew: true })
           })
         }
       })
@@ -347,7 +347,7 @@ export default {
       if (this.partnersAccount == '') {
         this.$message({
           type: 'warning',
-          message: '用户账号不能为空!'
+          message: '用户不存在!'
         });
         return;
       }
