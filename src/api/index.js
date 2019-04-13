@@ -51,6 +51,26 @@ const api = {
   deleteCrowd(params) {
     return axios.post('/deleteCrowd.api', params);
   },
+  //获取消息
+  getMessage(params){
+    return axios.post('/getMessage.api', params);
+  },
+  //发送消息
+  sendMessage(params){
+    return axios.post('/sendMessage.api', params);
+  },
+  // let params = JSON.stringify({sendPerson:"xiao",recPerson:"222"});
+  // // let params1 = JSON.stringify({sendPerson:"xiao",recPerson:"qunming"});
+  // api.getMessage(params).then(res=>{
+  //   console.log(res);
+  // })
+  // let params = JSON.stringify({sendPerson:"222",recPerson:"xiao",message:"222发给肖",time:"2019"});
+  // api.sendMessage(params).then(res=>{
+  //   console.log(res);
+  // })
+
+
+  
   // 删除群
   // let params2 = JSON.stringify({
   //   username: '222',
