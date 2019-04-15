@@ -160,7 +160,7 @@
         <div class="edit-content">
           <textarea
             class="text-area"
-            ref='message'
+            ref='messageText'
           ></textarea>
           <button
             class="send-buton"
