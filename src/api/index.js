@@ -51,64 +51,24 @@ const api = {
   deleteCrowd(params) {
     return axios.post('/deleteCrowd.api', params);
   },
+
   //获取消息
-  getMessage(params){
+  getMessage(params) {
     return axios.post('/getMessage.api', params);
   },
   //发送消息
-  sendMessage(params){
+  sendMessage(params) {
     return axios.post('/sendMessage.api', params);
   },
   // let params = JSON.stringify({sendPerson:"xiao",recPerson:"222"});
   // // let params1 = JSON.stringify({sendPerson:"xiao",recPerson:"qunming"});
   // api.getMessage(params).then(res=>{
-  //   console.log(res);
+  // console.log(res);
   // })
   // let params = JSON.stringify({sendPerson:"222",recPerson:"xiao",message:"222发给肖",time:"2019"});
   // api.sendMessage(params).then(res=>{
-  //   console.log(res);
-  // })
-
-
-  
-  // 删除群
-  // let params2 = JSON.stringify({
-  //   username: '222',
-  //   name: '22'
-  // })
-  // api.deleteCrowd(params2).then(res => {
-  //   console.log(res);
-  // });
-  // 1.创建群 --->存了key值，应该存value值 这里要修改
-  // let params =JSON.stringify({name:'22',people:"xiao;222"})
-  // api.createCrowd(params).then(res=>{
-  // console.log(res);
-  // });
-  // 2.获取群
-  // let params =JSON.stringify({username:'xiao'})
-  // api.getCrowd(params).then(res=>{
-  // console.log(res);
-  // });
-  //添加好友
-  // let params = JSON.stringify({username:'xiao',fname:'222'});
-  // api.addFriend(params).then(res=>{
-  // console.log(res);
-  // });
-  //删除好友
-  // api.deleteFriend(params).then(res=>{
-  // console.log(res);
-  // });
-  // let params1 = JSON.stringify({username:'222222'});
-  //判断是否账户是否纯在
-  // api.isGetName(params1).then(res=>{
-  // console.log(res); 
-  // })
-  //获取好友
-  // let params2 = JSON.stringify({username:'xiao'});
-  // api.getFriend(params2).then(res=>{
   // console.log(res);
   // })
-
 
 }
 

@@ -6,8 +6,8 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     // 新增的两行数据
-    myfiles:[],
-    myfolders:[],
+    myfiles: [],
+    myfolders: [],
     // myfiles:[{name:'笔记1',folder:'文件夹1',content:'啊啊啊啊1'},{name:'笔记2',folder:'文件夹1',content:'巴巴爸爸'},{name:'笔记3',folder:'文件夹2',content:'ccc'},{name:'笔记4',folder:'文件夹2',content:'4444'},{name:'笔记5',content:'555555'},{name:'笔记6',content:'66666'}],
     // myfolders:['文件夹1','文件夹2'],
     sharefiles: [],
@@ -15,15 +15,17 @@ const store = new Vuex.Store({
     // 添加的
     shareMyfiles: [],
     shareMyfolders: [],
-    deletefiles:[],
-    deletefolders:[],
+    deletefiles: [],
+    deletefolders: [],
   },
   mutations: {
-    //获取文本。文件夹（查）
-    getFiles(state,files){
+    // addFile(state,file) {
+    //   state.fileLists.push({name:file.name,content:file.content});
+    // },
+    getFiles(state, files) {
       state.myfiles = files;
     },
-    getFolders(state,folders){
+    getFolders(state, folders) {
       state.myfolders = folders;
     },
 
@@ -72,9 +74,9 @@ const store = new Vuex.Store({
       }
     },
     //每次登陆清空回收站
-    clearDelete(state){
+    clearDelete(state) {
       state.deletefiles = [];
-      state.deletefolders=[];
+      state.deletefolders = [];
     },
     
     //修改文件名
@@ -88,13 +90,13 @@ const store = new Vuex.Store({
     //修改文件夹名称
     editmyFolder(state,name){
       let arr = name.split("-");
-      for(let i = 0 ;i <state.myfiles.length;i++){
-       if(state.myfiles[i].folder==arr[0]){
-        state.myfiles[i].folder = arr[1];
-       }
+      for (let i = 0; i < state.myfiles.length; i++) {
+        if (state.myfiles[i].folder == arr[0]) {
+          state.myfiles[i].folder = arr[1];
+        }
       }
-      for(var i =0; i< state.myfolders.length;i++){
-        if(state.myfolders[i]==arr[0]){
+      for (var i = 0; i < state.myfolders.length; i++) {
+        if (state.myfolders[i] == arr[0]) {
           state.myfolders[i] = arr[1];
         }
       }

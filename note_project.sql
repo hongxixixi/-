@@ -31,7 +31,11 @@ CREATE TABLE `crowd_table` (
 -- ----------------------------
 INSERT INTO `crowd_table` VALUES ('111', 'qunming', 'xiao;2233');
 INSERT INTO `crowd_table` VALUES ('112', '12321', '223333');
+<<<<<<< HEAD
 INSERT INTO `crowd_table` VALUES ('113', 'ze', null);
+=======
+INSERT INTO `crowd_table` VALUES ('113', 'ze', 'xiao;2622');
+>>>>>>> a7e2ce2cee9adbbb8519ae2c7074a3c4f0316b23
 
 -- ----------------------------
 -- Table structure for files_table

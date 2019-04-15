@@ -141,18 +141,17 @@
               alt=""
             ><span>{{item.partner}}</span></div>
           <!-- 这里的时间历史部分从后台获取，新的部分自己new Date -->
-          <div class="time"><span>{{timeNow.getFullYear() + '/' + ('0' + (timeNow.getMonth() + 1)).slice(-2) + '/' + ('0' + timeNow.getDate()).slice(-2)+' '+
-              timeNow.getHours() + ':' + timeNow.getMinutes() + ':' + timeNow.getSeconds()
-              }}</span></div>
+          <div class="time"><span>{{item.time}}</span></div>
           <div
             class="say"
             v-if="item.say"
           ><span>{{item.say}}</span></div>
           <div
             class="share"
-            v-if="item.share"
+            v-if="item.share.name"
+            @dblclick="openFile(item.share)"
           >
-            <span class="file-name"> {{item.share}}</span>
+            <span class="file-name"> {{item.share.name}}</span>
             <i class="iconfont icon-wenjian1"></i>
           </div>
         </div>
@@ -188,9 +187,7 @@
             class="partnerName"
           ><span>{{item.partner}}</span></div>
           <!-- 这里的时间历史部分从后台获取，新的部分自己new Date -->
-          <div class="time"><span>{{timeNow.getFullYear() + '/' + ('0' + (timeNow.getMonth() + 1)).slice(-2) + '/' + ('0' + timeNow.getDate()).slice(-2)+' '+
-              timeNow.getHours() + ':' + timeNow.getMinutes() + ':' + ('0' + timeNow.getSeconds()).slice(-2)
-              }}</span></div>
+          <div class="time"><span>{{item.time}}</span></div>
           <div class="share">
             <span class="file-name"> {{item.share}}</span>
             <i class="iconfont icon-wenjian1"></i>
@@ -202,8 +199,9 @@
 </template>
 
 <script>
-import api from '@/api/index.js';
-// import moment from './moment'
+import api from "@/api/index.js";
+import store from "@/store/store.js";
+
 export default {
   data() {
     return {
@@ -215,31 +213,23 @@ export default {
       getNameSucc: true,
       timeNow: new Date(),
       ind: 0,//选中的用户index
+      fileRecord: [
+        { partner: '小张(2132565323)', share: '文件/文件夹名称', time: ' 2019/4/6 12: 22' },
+        { user: '往后', share: '文件/文件夹名称', time: '2019 / 4 / 6 13: 11' },
+      ],
       partners: [
         // { name: '小张', account: '2132565323' },
         // { name: '小敏一', account: '2132323' },
         // { name: '群聊1', account: '2323' },
-        // { name: '群聊名字比较长', account: '111' },
-        // { name: '小芳', account: '134343' },
       ],
       fileRecord:[],
       crowds: [],
       messages: [
-        { user: '往后', say: '早上好，努力做毕设', time: '2019 / 4 / 6 12: 16 ' },
-        { partner: '小张(2132565323)', say: '其他好友说的话其他好友说的话', time: '2019 / 4 / 6 12: 18 ' },
-        { partner: '小张(2132565323)', share: '文件夹/文件夹名称', time: ' 2019 / 4 / 6 12: 22' },    //分享了文件或者文件夹
-        { user: '往后', share: '文件夹/文件夹名称', time: '2019 / 4 / 6 13: 11' },
-        { user: '往后', say: '早上好，努力做毕设' },
-        { partner: '小张(2132565323)', say: '其他好友说的话其他好友说的话' },
-        { partner: '小张(2132565323)', say: '其他人其他好友说的话其他好友说的话' },
-        { user: '往后', say: '用户自己说的话' },
-        { partner: '小张(2132565323)', say: '还是其他人' },
-        { partner: '小张(2132565323)', say: '还是其他' },
-        { partner: '小张(2132565323)', say: '其他人' },
-        { user: '往后', say: '用户自己说的话' },
-        { partner: '小张(2132565323)', say: '还是其他人' },
-        { partner: '小张(2132565323)', say: '还是其他' },
-      ]
+        // { user: '往后', say: '早上好，努力做毕设', time: '2019/4/6 12: 16 ' },
+        // { partner: '小张(2132565323)', say: '其他好友说的话其他好友说的话', time: '2019/4/6 12: 18 ' },
+        // { partner: '小张(2132565323)', share: '文件/文件夹名称', time: ' 2019/4/6 12: 22' },    //分享了文件或者文件夹
+        // { user: '往后', share: '文件/文件夹名称', time: '2019/4/6 13: 11' },
+      ],
     }
   },
   computed: {
@@ -249,9 +239,17 @@ export default {
   },
   mounted() {
     let that = this;
-    that.getFriend();
-    that.getCrowd();
-    this.scrollToBottom();
+
+    new Promise(function (resolve, reject) {      // 这里用异步之后，可以不用计算属性的，懒得改
+      that.getFriend().then(resolve);
+    })
+      .then(function (resolve, reject) {
+        that.getCrowd().then(resolve);
+      })
+      .then(function (resolve, reject) {
+        that.getMessage().then(resolve);
+      });
+
     document.onkeydown = function (event) {
       var e = event || window.event || arguments.callee.caller.arguments[0];
       if (e && e.keyCode == 13) {
@@ -261,6 +259,19 @@ export default {
     };
   },
   methods: {
+    openFile(item) {
+      console.log("open");
+      console.log(item);
+      // 如果文件里面已经有这个内容，名字后面截图三位，如果是‘（num）’的格式，就把‘ （num+1） ’这个加在名字后面再保存
+      this.$store.commit("addMyFiles", item);
+      // console.log(this.$store.state.myfiles)
+      this.$message({
+        type: 'success',
+        message: '已保存到桌面!'
+      });
+      this.$router.push({ name: "addEdit", params: { item: item } });
+    },
+
     createCrowd() {
       if (this.qunName == '') {
         this.$message({
@@ -291,7 +302,7 @@ export default {
     getCrowd() {
       let that = this;
       let params = JSON.stringify({ username: localStorage.username })
-      api.getCrowd(params).then(res => {
+      return api.getCrowd(params).then(res => {
         if (res.data.reason == 'OK') {
           that.crowds = [];
           let data = res.data.data;
@@ -303,7 +314,7 @@ export default {
     },
     getFriend() {
       let params = JSON.stringify({ username: localStorage.username });
-      api.getFriend(params).then(res => {
+      return api.getFriend(params).then(res => {
         if (res.data.reason == 'OK') {
           this.partners = [];
           let data = res.data.data;
@@ -422,19 +433,66 @@ export default {
 
     changePartnerIndex(index) {
       this.ind = index;
+      this.getMessage();
     },
     sendMessage() {
-      let thisMessage = { user: '往后', say: '早上好，努力做毕设', time: '2019 / 4 / 6 12: 16 ' };
-      thisMessage.say = this.$refs.message.value
-      this.messages.push(thisMessage)
-      this.$refs.message.value = ''
+      let timeNow = new Date()
+      let time = timeNow.getFullYear() + '/' + ('0' + (timeNow.getMonth() + 1)).slice(-2) + '/' + ('0' + timeNow.getDate()).slice(-2) + '  ' +
+        timeNow.getHours() + ':' + timeNow.getMinutes() + ':' + ('0' + timeNow.getSeconds()).slice(-2);
+      let recP = this.partnerAndcrowds[this.ind];
+      let editMessage = JSON.stringify({ sendPerson: localStorage.username, recPerson: recP.account.split(';').length > 1 ? recP.name : recP.account, message: this.$refs.messageText.value, time: time })
+      if (editMessage.say == '') {
+        this.$message({
+          type: 'warning',
+          message: '不能发送空消息!'
+        });
+        return;
+      }
+      api.sendMessage(editMessage).then(res => {
+        if (res.data.reason == 'OK') {
+          this.getMessage();
+        }
+      });
+      this.$refs.messageText.value = ''
+      this.$nextTick(function () {
+        this.scrollToBottom();
+      })
     },
-    handleClose(done) {
-      this.$confirm('确认关闭？')
-        .then(_ => {
-          done();
+    getMessage() {
+      let recP = this.partnerAndcrowds[this.ind];
+      let params = JSON.stringify({ sendPerson: localStorage.username, recPerson: recP.account.split(';').length > 1 ? recP.name : recP.account }); // 个人
+      this.messages = [];
+      if (recP.account.split(';').length > 1) {         // 群 
+        return api.getMessage(params).then(res => {
+          res.data.data.forEach((item, index) => {
+            if (item.sendPerson == localStorage.username) {
+              this.messages.push({ user: item.sendPerson, say: item.message.startsWith("#") ? '' : item.message, share: item.message.startsWith("#") ? JSON.parse(item.message.slice(1)) : '', time: item.time })
+            }
+            else {
+              this.messages.push({ partner: item.sendPerson, say: item.message.startsWith("#") ? '' : item.message, share: item.message.startsWith("#") ? JSON.parse(item.message.slice(1)) : '', time: item.time })
+
+            }
+          })
+          this.$nextTick(function () {
+            this.scrollToBottom();
+          })
         })
-        .catch(_ => { });
+      }
+      else {                                          // 个人
+        return api.getMessage(params).then(res => {
+          res.data.data.forEach((item, index) => {
+            if (item.send == localStorage.username) {
+              this.messages.push({ user: item.send, say: item.mes.startsWith("#") ? '' : item.mes, share: item.mes.startsWith("#") ? JSON.parse(item.mes.slice(1)) : '', time: item.time })
+            }
+            else {
+              this.messages.push({ partner: item.send, say: item.mes.startsWith("#") ? '' : item.mes, share: item.mes.startsWith("#") ? JSON.parse(item.mes.slice(1)) : '', time: item.time })
+            }
+          })
+          this.$nextTick(function () {
+            this.scrollToBottom();
+          })
+        })
+      }
     }
   }
 }

@@ -16,8 +16,7 @@
           v-document-click="documentClick"
         >
           <ul>
-            <li @click="dialogVisible=true;fileVisible = false">分享</li>
-            <!-- <li>复制</li>-->
+            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li>
             <li @click="editMyFile(item)">编辑</li>
             <li @click="deleteMyFile(item)">删除</li>
           </ul>
@@ -41,7 +40,7 @@
           v-for="item in partnerAndcrowds"
           :key="item.account"
           :label="item.name"
-          :value="item.account"
+          :value="item.account.split(';').length>1?item.name:item.account"
         >
         </el-option>
       </el-select>
@@ -146,6 +145,7 @@ export default {
       shareMumber: [],
       crowds: [],
       partners: [],
+      shareItemName: '',
     };
   },
   computed: {
@@ -161,21 +161,24 @@ export default {
     // this.getFolders();
   },
   methods: {
-    // getFiles() {
-    //   let params = JSON.stringify({ username: localStorage.username });
-    //   api.getFiles(
-    //     params
-    //   ).then(res => {
-    //     store.commit('getFiles', res.data.data);
-    //   });
-    // },
-    // getFolders() {
-    //   let params = JSON.stringify({ username: localStorage.username });
-    //   api.getFolders(params).then(res => {
-    //     let data = res.data.data.map(el => el.name);
-    //     store.commit('getFolders', data);
-    //   });
-    // },
+    shareMyFile(item) {
+      this.shareItemName = item;
+    },
+    getFiles() {
+      let params = JSON.stringify({ username: localStorage.username });
+      api.getFiles(
+        params
+      ).then(res => {
+        store.commit('getFiles', res.data.data);
+      });
+    },
+    getFolders() {
+      let params = JSON.stringify({ username: localStorage.username });
+      api.getFolders(params).then(res => {
+        let data = res.data.data.map(el => el.name);
+        store.commit('getFolders', data);
+      });
+    },
 
     getCrowd(params) {
       api.getCrowd(params).then(res => {
@@ -201,10 +204,35 @@ export default {
     },
 
     confirmShareFlie() {
+      if (this.shareMumber.length <= 0) {
+        this.$message({
+          type: 'warning',
+          message: '至少选择一个好友/群!'
+        });
+        return;
+      }
       this.dialogVisible = false;
-      //  发起请求把文件名传给后台，后台添加消息记录，聊天页面内容刷新
+      this.sendMessage();
+    },
+
+    sendMessage() {
+      let timeNow = new Date()
+      let time = timeNow.getFullYear() + '/' + ('0' + (timeNow.getMonth() + 1)).slice(-2) + '/' + ('0' + timeNow.getDate()).slice(-2) + '  ' +
+        timeNow.getHours() + ':' + timeNow.getMinutes() + ':' + ('0' + timeNow.getSeconds()).slice(-2);
+      this.shareMumber.forEach((item, index) => {
+        let editMessage = JSON.stringify({ sendPerson: localStorage.username, recPerson: item, message: '#' + JSON.stringify(this.shareItemName), time: time })
+        api.sendMessage(editMessage).then(res => {
+          if (res.data.reason == 'OK') {
+            this.$message({
+              type: 'success',
+              message: '分享成功!'
+            });
+          }
+        });
+      })
       this.shareMumber = [];
     },
+
     conFirmChangeFileName() {
       this.item.name = this.myChangeName;
       this.$store.commit("editmyFile", this.item);
@@ -247,7 +275,6 @@ export default {
           message: '已取消删除'
         });
       });
-
     },
     //弹出框，操作
     showMenu1(item, index) {
@@ -300,7 +327,7 @@ export default {
     },
     share() {
       this.$store.commit("addMyShare", this.shareItem.outerText);
-      console.log(this.shareItem);
+      // console.log(this.shareItem);
       this.shareItem = "";
     },
     openFile(item) {
