@@ -15,7 +15,7 @@
         v-document-click="documentClick"
       >
         <ul>
-          <li @click="dialogVisible=true;fileVisible = false">分享</li>
+          <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li>
           <!-- <li>复制</li>-->
           <li @click="editMyFile(item)">编辑</li>
           <li @click="deleteMyFile(item)">删除</li>
@@ -39,7 +39,7 @@
           v-for="item in partnerAndcrowds"
           :key="item.account"
           :label="item.name"
-          :value="item.account"
+          :value="item.account.split(';').length>1?item.name:item.account"
         >
         </el-option>
       </el-select>
@@ -90,6 +90,8 @@ export default {
       shareMumber: [],
       crowds: [],
       partners: [],
+      shareItemName: '',
+
     };
   },
   computed: {
@@ -109,6 +111,41 @@ export default {
 
   },
   methods: {
+    shareMyFile(item) {
+      this.shareItemName = item.name;
+    },
+
+    confirmShareFlie() {
+      if (this.shareMumber.length <= 0) {
+        this.$message({
+          type: 'warning',
+          message: '至少选择一个好友/群!'
+        });
+        return;
+      }
+      this.dialogVisible = false;
+      this.sendMessage();
+    },
+
+    sendMessage() {
+      let timeNow = new Date()
+      let time = timeNow.getFullYear() + '/' + ('0' + (timeNow.getMonth() + 1)).slice(-2) + '/' + ('0' + timeNow.getDate()).slice(-2) + '  ' +
+        timeNow.getHours() + ':' + timeNow.getMinutes() + ':' + ('0' + timeNow.getSeconds()).slice(-2);
+      console.log(this.shareMumber)
+      this.shareMumber.forEach((item, index) => {
+        let editMessage = JSON.stringify({ sendPerson: localStorage.username, recPerson: item, message: '#' + this.shareItemName, time: time })
+        api.sendMessage(editMessage).then(res => {
+          if (res.data.reason == 'OK') {
+            this.$message({
+              type: 'success',
+              message: '分享成功!'
+            });
+          }
+        });
+      })
+      this.shareMumber = [];
+    },
+
     getCrowd(params) {
       api.getCrowd(params).then(res => {
         if (res.data.reason == 'OK') {
@@ -130,11 +167,6 @@ export default {
           })
         }
       })
-    },
-    confirmShareFlie() {
-      this.dialogVisible = false;
-      //  发起请求把文件名传给后台，后台添加消息记录，聊天页面内容刷新
-      this.shareMumber = [];
     },
     conFirmChangeFileName() {
       this.item.name = this.myChangeName;

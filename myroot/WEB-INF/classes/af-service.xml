@@ -5,17 +5,17 @@
 	<upload name="BasicFile" class="my.my.BasicFileUpload" /> 
 	-->
 
-	<service name="refreshFiles" class="my.finish.refreshFiles" />
-	<service name="refreshFolders" class="my.finish.refreshFolders" />
-	<service name="getFolders" class="my.finish.getFolders" />
-	<service name="getFiles" class="my.finish.getFiles" />
-	<service name ="addFriend" class="my.finish.addFriend"/>
-	<service name ="deleteFriend" class="my.finish.deleteFriend"/>
-	<service name ="isGetName" class="my.finish.isGetName"/>
-	<service name ="getFriend" class="my.finish.getFriend"/>
-	<service name ="creatCrowd" class="my.finish.createCrowd"/>
-	<service name ="getCrowd" class="my.finish.getCrowd"/>
-	<service name ="deleteCrowd" class="my.developing.deleteCrowd"/>
-
-
+	<service name="refreshFiles" class="my.API.RefreshFiles" />
+	<service name="refreshFolders" class="my.API.refreshFolders" />
+	<service name="getFolders" class="my.API.getFolders" />
+	<service name="getFiles" class="my.API.getFiles" />
+	<service name ="addFriend" class="my.API.addFriend"/>
+	<service name ="deleteFriend" class="my.API.deleteFriend"/>
+	<service name ="isGetName" class="my.API.isGetName"/>
+	<service name ="getFriend" class="my.API.getFriend"/>
+	<service name ="creatCrowd" class="my.API.createCrowd"/>
+	<service name ="getCrowd" class="my.API.getCrowd"/>
+	<service name ="deleteCrowd" class="my.API.deleteCrowd"/>
+	<service name ="getMessage" class="my.API.GetMessage"/>
+	<service name ="sendMessage" class="my.API.SendMessage"/>
 </config>
