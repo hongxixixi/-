@@ -288,7 +288,8 @@ export default {
       this.getMessage();
     },
     selectDate() {
-      if (this.datePicker == '') {                              // 不选择时间的时候全部显示
+      console.log(this.datePicker)
+      if (this.datePicker == null) {                              // 不选择时间的时候全部显示
         this.messages.forEach((item, index) => {
           if (item.share != '' && item.user) {
             this.fileRecord.push({ user: item.user, share: item.share, time: item.time })
