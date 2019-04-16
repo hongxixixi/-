@@ -425,7 +425,7 @@ export default {
           h=h>=10?h:'0'+h;
           f=f>=10?f:'0'+f;
           s=s>=10?s:'0'+s;
-          this.time = y+'-'+m+'-'+d+' '+h+':'+f+':'+s;
+          this.time = y+'/'+m+'/'+d+' '+h+':'+f+':'+s;
     },
     //修改用户名
     changeName() {

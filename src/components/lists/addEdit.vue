@@ -63,7 +63,7 @@ export default {
       h=h>=10?h:'0'+h;
       f=f>=10?f:'0'+f;
       s=s>=10?s:'0'+s;
-      this.time = y+'-'+m+'-'+d+' '+h+':'+f+':'+s;
+      this.time = y+'/'+m+'/'+d+' '+h+':'+f+':'+s;
       // console.log(y,m,d,h,f,s);
       console.log(this.time);
     this.$emit('FileContent',text,this.filename,this.foldername,this.time);
