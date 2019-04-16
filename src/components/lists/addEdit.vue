@@ -3,10 +3,10 @@
     <div class="file-title">  
       文件名:{{filename}}</div>
     <div class="sava-edit">
-      <i class="el-icon-edit"></i>
+      <!-- <i class="el-icon-edit"></i>
       <i class="el-icon-upload"></i>
       <i class="el-icon-share"></i>
-      <i class="el-icon-delete"></i>
+      <i class="el-icon-delete"></i> -->
       <span>上次更新时间 : {{time}}</span>
       <el-button
         type="primary"
@@ -58,11 +58,11 @@ export default {
       myDate.getHours(),
       myDate.getMinutes(),
       myDate.getSeconds()];
-      m>=10?m:'0'+m;
-      d>=10?d:'0'+d;
-      h>=10?h:'0'+h;
-      f>=10?f:'0'+f;
-      s>=10?s:'0'+s;
+      m=m>=10?m:'0'+m;
+      d=d>=10?d:'0'+d;
+      h=h>=10?h:'0'+h;
+      f=f>=10?f:'0'+f;
+      s=s>=10?s:'0'+s;
       this.time = y+'-'+m+'-'+d+' '+h+':'+f+':'+s;
       // console.log(y,m,d,h,f,s);
       console.log(this.time);

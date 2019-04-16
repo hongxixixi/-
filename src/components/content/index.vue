@@ -19,7 +19,7 @@
               <div @click="changeName">修改昵称</div>
             </el-dropdown-item>
             <el-dropdown-item divided>
-              <router-link :to="{path:'/'}">退出登录</router-link>
+              <router-link :to="{path:'/'}" >退出登录</router-link>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -420,11 +420,11 @@ export default {
           myDate.getHours(),
           myDate.getMinutes(),
           myDate.getSeconds()];
-          m>=10?m:'0'+m;
-          d>=10?d:'0'+d;
-          h>=10?h:'0'+h;
-          f>=10?f:'0'+f;
-          s>=10?s:'0'+s;
+          m=m>=10?m:'0'+m;
+          d=d>=10?d:'0'+d;
+          h=h>=10?h:'0'+h;
+          f=f>=10?f:'0'+f;
+          s=s>=10?s:'0'+s;
           this.time = y+'-'+m+'-'+d+' '+h+':'+f+':'+s;
     },
     //修改用户名

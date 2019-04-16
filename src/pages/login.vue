@@ -146,7 +146,7 @@ export default {
        let params = JSON.stringify({username:localStorage.username});
       api.getFolders(params).then(res=>{
         let data  = res.data.data.map(el=>el.name);
-         store.commit('getFolders',data);
+        store.commit('getFolders',data);
       });
     }
 

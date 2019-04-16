@@ -1,7 +1,15 @@
 .note-lists {
   width: 100%;
   height: 100%;
-
+  position:relative;
+  .block{
+    position:absolute;
+    left:0;
+    top:10px;
+    .demonstration{
+      padding-left:10px;
+    }
+  }
   .share-file-dialog {
     input {
       border: none;
@@ -27,6 +35,7 @@
   .flie-box,
   .folder-box {
     position: relative;
+    top:20px;
     float: left;
     height: 10%;
     margin: 4% 2%;

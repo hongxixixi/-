@@ -17,6 +17,7 @@
         <ul>
           <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li>
           <!-- <li>复制</li>-->
+          <li @click="moreDetail(item)">查看</li>
           <li @click="editMyFile(item)">编辑</li>
           <li @click="deleteMyFile(item)">删除</li>
         </ul>
@@ -111,6 +112,11 @@ export default {
 
   },
   methods: {
+    moreDetail(item){
+      this.$alert(item.content, '文件名：'+item.name, {
+          dangerouslyUseHTMLString: true
+        });
+    },
     shareMyFile(item) {
       this.shareItemName = item.name;
     },
@@ -131,7 +137,6 @@ export default {
       let timeNow = new Date()
       let time = timeNow.getFullYear() + '/' + ('0' + (timeNow.getMonth() + 1)).slice(-2) + '/' + ('0' + timeNow.getDate()).slice(-2) + '  ' +
         timeNow.getHours() + ':' + timeNow.getMinutes() + ':' + ('0' + timeNow.getSeconds()).slice(-2);
-      console.log(this.shareMumber)
       this.shareMumber.forEach((item, index) => {
         let editMessage = JSON.stringify({ sendPerson: localStorage.username, recPerson: item, message: '#' + this.shareItemName, time: time })
         api.sendMessage(editMessage).then(res => {
