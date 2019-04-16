@@ -3,18 +3,37 @@
     <div class="block">
       <el-button @click="back">返回主页面</el-button>
       <span class="demonstration">根据时间筛选文本:</span>
-      <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
+      <el-date-picker v-model="value1" type="date" placeholder="选择日期" value-format="yyyy/MM/dd"></el-date-picker>
       <el-button @click="filterTime">确定</el-button>
     </div>
-    <template v-for="(item,index) in myFiles">
+    <template v-for="(item,index) in myFiles"  >
       <div
-        v-if="!item.folder&&!FolderFile"
+        v-if="flag"
+        v-show="!item.folder&&!FolderFile"
         class="flie-box"
         @dblclick="openFile(item)"
-        :key="index+'file'"
+        :key="index+'file1'"
         @mousedown.right="showMenu1(item,index)"
       >
         <i class="iconfont icon-wenjian1"></i>
+        {{item.name}}
+        <div v-if="index==activeIndex" class="action" v-document-click="documentClick">
+          <ul>
+            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li>
+            <li @click="moreDetail(item)">查看</li>
+            <li @click="editMyFile(item)">编辑</li>
+            <li @click="deleteMyFile(item)">删除</li>
+          </ul>
+        </div>
+      </div>
+      <div
+        v-if="!flag"
+        class="flie-box"
+        @dblclick="openFile(item)"
+        :key="index+'file2'"
+        @mousedown.right="showMenu1(item,index)"
+      >
+        <i class="iconfont icon-wenjian1" :title="item.folder"></i>
         {{item.name}}
         <div v-if="index==activeIndex" class="action" v-document-click="documentClick">
           <ul>
@@ -49,7 +68,7 @@
         :key="index+'file'"
         @mousedown.right="showMenu1(item,index)"
       >
-        <i class="iconfont icon-wenjian1"></i>
+        <i class="iconfont icon-wenjian1" :title="item.folder"></i>
         {{item.name}}
         <div v-if="index==activeIndex" class="action" v-document-click="documentClick">
           <ul>
@@ -136,7 +155,8 @@ export default {
       shareItemName: "",
       timeFile: "",
       myFiles: "",
-      myFolders: ""
+      myFolders: "",
+      flag:true
     };
   },
   computed: {
@@ -151,12 +171,14 @@ export default {
       this.getFriend(params);
       this.myFiles = this.$store.state.myfiles;
       this.myFolders = this.$store.state.myfolders;
+      this.flag=true
   },
   methods: {
     back() {
       this.value1 = "";
       this.FolderFile = "";
       this.filterTime();
+      this.flag = true;
     },
     filterTime() {
       if (!this.value1) {
@@ -172,7 +194,7 @@ export default {
         m = m >= 10 ? m : "0" + m;
         d = d >= 10 ? d : "0" + d;
 
-        let time = y + "-" + m + "-" + d;
+        let time = y + "/" + m + "/" + d;
         let timeFile = [];
         for (let i = 0; i < this.$store.state.myfiles.length; i++) {
           if (this.$store.state.myfiles[i].time.slice(0, 10) == time) {
@@ -180,6 +202,7 @@ export default {
           }
         }
         this.myFiles = [...timeFile];
+        console.log(this.myFiles);
         if (this.myFiles.length == 0) {
           this.$notify({
             title: "提示",
@@ -189,6 +212,7 @@ export default {
         }
         this.myFolders = "";
         this.FolderFile = "";
+        this.flag=false;
       }
     },
 
