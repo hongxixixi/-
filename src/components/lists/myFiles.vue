@@ -112,13 +112,13 @@ export default {
 
   },
   methods: {
-    moreDetail(item){
-      this.$alert(item.content, '文件名：'+item.name, {
-          dangerouslyUseHTMLString: true
-        });
+    moreDetail(item) {
+      this.$alert(item.content, '文件名：' + item.name, {
+        dangerouslyUseHTMLString: true
+      });
     },
     shareMyFile(item) {
-      this.shareItemName = item.name;
+      this.shareItemName = item;
     },
 
     confirmShareFlie() {

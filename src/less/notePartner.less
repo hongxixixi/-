@@ -219,9 +219,37 @@
           background: #fff;
           border-radius: 6px;
           cursor: pointer;
+          position: relative;
 
           .icon-wenjian1 {
             font-size: 2rem;
+          }
+
+          .action {
+            position: absolute;
+            left: 160px;
+            top: 0px;
+            width: 120px;
+            z-index: 999;
+
+            ul {
+              background: #ffffff;
+              box-shadow: 2px 2px 2px #888888;
+              padding: 0;
+              border: 1px solid #d5dae0;
+              color: #333;
+              font-size: 12px;
+
+              li {
+                cursor: pointer;
+                list-style: none;
+                padding: 10px;
+              }
+
+              li:hover {
+                background: #d5dae0;
+              }
+            }
           }
         }
 

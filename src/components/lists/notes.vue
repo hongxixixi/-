@@ -3,7 +3,11 @@
     <div class="block">
       <el-button @click="back">返回主页面</el-button>
       <span class="demonstration">根据时间筛选文本:</span>
-      <el-date-picker v-model="value1" type="date" placeholder="选择日期"></el-date-picker>
+      <el-date-picker
+        v-model="value1"
+        type="date"
+        placeholder="选择日期"
+      ></el-date-picker>
       <el-button @click="filterTime">确定</el-button>
     </div>
     <template v-for="(item,index) in myFiles">
@@ -16,7 +20,11 @@
       >
         <i class="iconfont icon-wenjian1"></i>
         {{item.name}}
-        <div v-if="index==activeIndex" class="action" v-document-click="documentClick">
+        <div
+          v-if="index==activeIndex"
+          class="action"
+          v-document-click="documentClick"
+        >
           <ul>
             <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li>
             <li @click="moreDetail(item)">查看</li>
@@ -27,9 +35,18 @@
       </div>
     </template>
     <!-- 分享文件的弹出框 -->
-    <el-dialog title :visible.sync="dialogVisible" width="40%" class="share-file-dialog">
+    <el-dialog
+      title
+      :visible.sync="dialogVisible"
+      width="40%"
+      class="share-file-dialog"
+    >
       分享至：
-      <el-select v-model="shareMumber" placeholder multiple="multiple">
+      <el-select
+        v-model="shareMumber"
+        placeholder
+        multiple="multiple"
+      >
         <el-option
           v-for="item in partnerAndcrowds"
           :key="item.account"
@@ -37,9 +54,15 @@
           :value="item.account.split(';').length>1?item.name:item.account"
         ></el-option>
       </el-select>
-      <span slot="footer" class="dialog-footer">
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmShareFlie()">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="confirmShareFlie()"
+        >确 定</el-button>
       </span>
     </el-dialog>
     <template v-for="(item,index) in FolderFile">
@@ -51,7 +74,11 @@
       >
         <i class="iconfont icon-wenjian1"></i>
         {{item.name}}
-        <div v-if="index==activeIndex" class="action" v-document-click="documentClick">
+        <div
+          v-if="index==activeIndex"
+          class="action"
+          v-document-click="documentClick"
+        >
           <ul>
             <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li>
             <li @click="moreDetail(item)">查看</li>
@@ -71,36 +98,50 @@
       >
         <i class="iconfont icon-wenjianjia"></i>
         {{item}}
-        <div v-if="index==activeIndex2" class="action" v-document-click="documentClick">
+        <div
+          v-if="index==activeIndex2"
+          class="action"
+          v-document-click="documentClick"
+        >
           <ul>
-            <!-- <li @click="folderVisible = false">分享</li> -->
-            <!-- <li>复制</li>-->
             <li @click="editMyFolder(item)">编辑</li>
             <li @click="deleteMyFolder(item)">删除</li>
           </ul>
         </div>
       </div>
     </template>
-    <div class="view-change-name" v-if="viewChangeName2">
+    <div
+      class="view-change-name"
+      v-if="viewChangeName2"
+    >
       <div class="name-box">
         <div class="name-input">
           <span>文件夹名称:</span>
           <el-input v-model="myChangeName"></el-input>
         </div>
         <div class="fold-btn">
-          <el-button type="primary" @click="conFirmChangeFileName2">确定</el-button>
+          <el-button
+            type="primary"
+            @click="conFirmChangeFileName2"
+          >确定</el-button>
           <el-button @click="cancelChangeFileName2">取消</el-button>
         </div>
       </div>
     </div>
-    <div class="view-change-name" v-if="viewChangeName">
+    <div
+      class="view-change-name"
+      v-if="viewChangeName"
+    >
       <div class="name-box">
         <div class="name-input">
           <span>文本名称:</span>
           <el-input v-model="myChangeName"></el-input>
         </div>
         <div class="fold-btn">
-          <el-button type="primary" @click="conFirmChangeFileName">确定</el-button>
+          <el-button
+            type="primary"
+            @click="conFirmChangeFileName"
+          >确定</el-button>
           <el-button @click="cancelChangeFileName">取消</el-button>
         </div>
       </div>
@@ -146,11 +187,11 @@ export default {
   },
   mounted() {
     //每次进来这个页面都获取一次当前的群列表和好友列表
-      let params = JSON.stringify({ username: localStorage.username });
-      this.getCrowd(params);
-      this.getFriend(params);
-      this.myFiles = this.$store.state.myfiles;
-      this.myFolders = this.$store.state.myfolders;
+    let params = JSON.stringify({ username: localStorage.username });
+    this.getCrowd(params);
+    this.getFriend(params);
+    this.myFiles = this.$store.state.myfiles;
+    this.myFolders = this.$store.state.myfolders;
   },
   methods: {
     back() {
@@ -329,7 +370,7 @@ export default {
     },
     //弹出框，操作
     showMenu1(item, index) {
-      document.oncontextmenu = function(e) {
+      document.oncontextmenu = function (e) {
         e.preventDefault();
       };
       this.fileVisible = true;
@@ -360,7 +401,7 @@ export default {
         });
     },
     showMenu2(item, index) {
-      document.oncontextmenu = function(e) {
+      document.oncontextmenu = function (e) {
         e.preventDefault();
       };
       this.folderVisible = true;
@@ -385,7 +426,7 @@ export default {
       this.$router.push({ name: "addEdit", params: { item: item } });
     },
     openFolder(item) {
-      let files = this.$store.state.myfiles.filter(function(file) {
+      let files = this.$store.state.myfiles.filter(function (file) {
         // console.log(file);
         return file.folder == item;
       });

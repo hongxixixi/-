@@ -108,7 +108,6 @@
       ref="sendBox"
     >
       <div class="send-message-title">
-        <!-- <span v-if="partnerAndcrowds[ind]">{{partnerAndcrowds[ind].name+'('+partnerAndcrowds[ind].account+')'}} </span> -->
         <span v-if="partnerAndcrowds[ind]">{{partnerAndcrowds[ind].name+'('+partnerAndcrowds[ind].account+')'}} </span>
         <span
           class="delete"
@@ -150,7 +149,17 @@
             class="share"
             v-if="item.share.name"
             @dblclick="openFile(item.share)"
+            @mousedown.right="showMenu1(item,index)"
           >
+            <div
+              class="action"
+              v-document-click="documentClick"
+              v-if="index==activeIndex"
+            >
+              <ul>
+                <li @click="openFile(item.share)">保存到桌面并打开</li>
+              </ul>
+            </div>
             <span class="file-name"> {{item.share.name}}</span>
             <i class="iconfont icon-wenjian1"></i>
           </div>
@@ -200,7 +209,19 @@
             class="partnerName"
           ><span>{{item.partner}}</span></div>
           <div class="time"><span>{{item.time}}</span></div>
-          <div class="share">
+          <div
+            class="share"
+            @mousedown.right="showMenu2(item,index)"
+          >
+            <div
+              class="action"
+              v-document-click="documentClick"
+              v-if="index==activeIndex2"
+            >
+              <ul>
+                <li @click="openFile(item.share)">保存到桌面并打开</li>
+              </ul>
+            </div>
             <span class="file-name"> {{item.share.name}}</span>
             <i class="iconfont icon-wenjian1"></i>
           </div>
@@ -225,6 +246,8 @@ export default {
       partnersAccount: '',
       getNameSucc: true,
       timeNow: new Date(),
+      activeIndex: -1,
+      activeIndex2: -1,
       pickerOptions1: {
         disabledDate(time) {
           return time.getTime() > new Date();
@@ -277,6 +300,23 @@ export default {
   },
 
   methods: {
+    documentClick() {
+      this.activeIndex = -1;
+      this.activeIndex2 = -1;
+
+    },
+    showMenu1(item, index) {
+      document.oncontextmenu = function (e) {
+        e.preventDefault();
+      };
+      this.activeIndex = index;
+    },
+    showMenu2(item, index) {
+      document.oncontextmenu = function (e) {
+        e.preventDefault();
+      };
+      this.activeIndex2 = index;
+    },
     scrollToBottom() {
       let sendHeight = this.$refs.showBox.scrollHeight;
       this.$refs.showBox.scrollTo(0, sendHeight)
@@ -312,7 +352,6 @@ export default {
 
     },
     openFile(item) {
-      console.log(item);
       // 如果文件里面已经有这个内容，名字后面截图三位，如果是‘（num）’的格式，就把‘ （num+1） ’这个加在名字后面再保存
       let flag = true;
       this.$store.state.myfiles.forEach((itemFile, index) => {        //如果列表中已经保存过这个文件，则不弹出信息，且不添加文件
@@ -321,6 +360,7 @@ export default {
         }
       })
       if (flag) {
+        item.folder = '';
         this.$store.commit("addMyFiles", item);
         this.$message({
           type: 'success',
