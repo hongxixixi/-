@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 var instance = axios.create({
-  // baseURL: 'http://127.0.0.1:8080/myroot'
+  baseURL: 'http://120.78.188.192/'
   // baseURL: 'http://localhost:8090'
 })
 
