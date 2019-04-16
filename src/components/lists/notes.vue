@@ -216,6 +216,9 @@ export default {
       return this.partners.concat(this.crowds);
     }
   },
+  beforeDestroy() {
+    // 这里最好有个离开之前询问是否需要保存当前文件的，不然忘记同步文件不就没有了
+  },
   mounted() {
     //每次进来这个页面都获取一次当前的群列表和好友列表
     let params = JSON.stringify({ username: localStorage.username });

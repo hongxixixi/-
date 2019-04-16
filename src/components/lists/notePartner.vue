@@ -240,6 +240,7 @@ export default {
     return {
       dialogVisible: false,
       dialogVisible1: false,
+      timer: '',
       datePicker: '',
       qunMember: [],
       qunName: '',
@@ -270,12 +271,18 @@ export default {
         // { partner: "222", say: "早上好", share: "", time: "2019/04/15  14:38:34"}
         // { user: "222" , say: "早上好", share: { content: "<p>大大&nbsp;&nbsp;</p>", folder: "",name: "111",time: "2019-4-11 20:55:36"}, time: "2019/04/15  14:38:34" }
       ],
+      preAllMessages: [], //对比新旧消息的数组
+      allMessages: [],
     }
   },
   computed: {
     partnerAndcrowds() {
       return this.partners.concat(this.crowds)
     }
+  },
+  beforeDestroy() {
+    // 卸载定时器
+    clearInterval(this.timer)
   },
   mounted() {
     let that = this;
@@ -289,7 +296,7 @@ export default {
       .then(function (resolve, reject) {
         that.getMessage().then(resolve);
       });
-
+    // that.rollPoling();
     document.onkeydown = function (event) {
       var e = event || window.event || arguments.callee.caller.arguments[0];
       if (e && e.keyCode == 13) {
@@ -300,6 +307,38 @@ export default {
   },
 
   methods: {
+    rollPoling() {    // 轮询访问数据库
+      let that = this;
+      that.timer = setInterval(() => {
+        that.getAllMessage().then(function (resolve, reject) {
+          if (that.allMessages.length > that.preAllMessages.length) {
+            let newMes = that.allMessages.slice(that.preAllMessages.length);
+            console.log(newMes)
+            let nowPartnerHasNew = false;
+            newMes.forEach((itemMes, indexMes) => {
+              that.partnerAndcrowds.forEach((item, index) => {
+                if (item.name == itemMes.send || item.name == itemMes.sendPerson) {
+                  if (that.ind == index) {                          // 若当前ind指向的好友有新消息，标记一下
+                    nowPartnerHasNew = true;
+                  }
+                  else {
+                    that.partnerAndcrowds[index].hasNew = true;     // 点击的时候再把新消息去掉
+                  }
+                }
+              })
+            })
+            if (nowPartnerHasNew) {                                 // 当前ind指向的好友有新消息，不显示新消息提示，但消息列表刷新
+              that.getMessage()
+            }
+            resolve();
+          }
+        })      }, 1000)
+
+    },
+    getAllMessage() {
+      // 发起请求获取全部消息 --- 保存进allMessages
+      // return promise对象
+    },
     documentClick() {
       this.activeIndex = -1;
       this.activeIndex2 = -1;
@@ -324,6 +363,7 @@ export default {
 
     changePartnerIndex(index) {
       this.ind = index;
+      this.partnerAndcrowds[index].hasNew = false;
       this.datePicker = '';
       this.getMessage();
     },
@@ -357,6 +397,7 @@ export default {
       this.$store.state.myfiles.forEach((itemFile, index) => {        //如果列表中已经保存过这个文件，则不弹出信息，且不添加文件
         if (itemFile.name == item.name) {
           flag = false;
+
         }
       })
       if (flag) {
