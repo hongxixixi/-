@@ -144,16 +144,16 @@ export default {
       return this.partners.concat(this.crowds);
     }
   },
-  mounted() {
+  created() {
     //每次进来这个页面都获取一次当前的群列表和好友列表
 
-    setTimeout(el => {
+    // setTimeout(el => {
       let params = JSON.stringify({ username: localStorage.username });
       this.getCrowd(params);
       this.getFriend(params);
       this.myFiles = this.$store.state.myfiles;
       this.myFolders = this.$store.state.myfolders;
-    }, 0);
+    // }, 0);
   },
   methods: {
     back() {

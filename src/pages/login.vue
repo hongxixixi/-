@@ -118,7 +118,7 @@ export default {
                 this.getFiles();
                 this.getFolders();
                store.commit('clearDelete');
-                    this.$router.push({name:"notes"});//跳转哪一个路由
+                    //跳转哪一个路由
                 }
                 if(res.data.status == 'fail'){
                   this.loginFlag = true;
@@ -147,7 +147,9 @@ export default {
       api.getFolders(params).then(res=>{
         let data  = res.data.data.map(el=>el.name);
         store.commit('getFolders',data);
+         this.$router.push({name:"notes"});
       });
+     
     }
 
   }
