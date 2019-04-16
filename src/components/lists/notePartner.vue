@@ -171,12 +171,25 @@
     </div>
 
     <div class="show-file">
-      <div class='show-file-title'><span>文件分享记录</span></div>
+      <div class='show-file-title'>
+        <span>文件分享记录</span>
+      </div>
+      <el-date-picker
+        v-model="datePicker"
+        type="date"
+        placeholder="点击选择日期"
+        @change="selectDate"
+        value-format="yyyy/MM/dd"
+        :picker-options="pickerOptions1"
+      >
+        >
+      </el-date-picker>
       <div class='show-flie-record'>
         <div
           v-for="(item,index) in fileRecord"
           :key="index"
           :class="item.user?'user-style':'partner-style'"
+          @dblclick="openFile(item.share)"
         >
           <div
             v-if="item.user"
@@ -186,10 +199,9 @@
             v-else-if="item.partner"
             class="partnerName"
           ><span>{{item.partner}}</span></div>
-          <!-- 这里的时间历史部分从后台获取，新的部分自己new Date -->
           <div class="time"><span>{{item.time}}</span></div>
           <div class="share">
-            <span class="file-name"> {{item.share}}</span>
+            <span class="file-name"> {{item.share.name}}</span>
             <i class="iconfont icon-wenjian1"></i>
           </div>
         </div>
@@ -207,28 +219,33 @@ export default {
     return {
       dialogVisible: false,
       dialogVisible1: false,
+      datePicker: '',
       qunMember: [],
       qunName: '',
       partnersAccount: '',
       getNameSucc: true,
       timeNow: new Date(),
+      pickerOptions1: {
+        disabledDate(time) {
+          return time.getTime() > new Date();
+        }
+      },
       ind: 0,//选中的用户index
       fileRecord: [
-        { partner: '小张(2132565323)', share: '文件/文件夹名称', time: ' 2019/4/6 12: 22' },
-        { user: '往后', share: '文件/文件夹名称', time: '2019 / 4 / 6 13: 11' },
+        // { user: "222" , say: "早上好", share: { content: "<p>大大&nbsp;&nbsp;</p>", folder: "",name: "111",time: "2019-4-11 20:55:36"}, time: "2019/04/15  14:38:34"}
+        // { partner: "222" ,say: "早上好", share: { content: "<p>大大&nbsp;&nbsp;</p>", folder: "",name: "111",time: "2019-4-11 20:55:36"}, time: "2019/04/15  14:38:34"}
+
       ],
       partners: [
-        // { name: '小张', account: '2132565323' },
-        // { name: '小敏一', account: '2132323' },
-        // { name: '群聊1', account: '2323' },
+        // { name: '小张', account: '3434;2132565323' },
+        // { name: '小敏一', account: '3434;2132323' },
+        // { name: '群聊1', account: '3434;2323' },
       ],
-      fileRecord:[],
       crowds: [],
       messages: [
-        // { user: '往后', say: '早上好，努力做毕设', time: '2019/4/6 12: 16 ' },
-        // { partner: '小张(2132565323)', say: '其他好友说的话其他好友说的话', time: '2019/4/6 12: 18 ' },
-        // { partner: '小张(2132565323)', share: '文件/文件夹名称', time: ' 2019/4/6 12: 22' },    //分享了文件或者文件夹
-        // { user: '往后', share: '文件/文件夹名称', time: '2019/4/6 13: 11' },
+        // { user: "222", say: "早上好", share: "", time: "2019/04/15  14:38:34", user: "222"}
+        // { partner: "222", say: "早上好", share: "", time: "2019/04/15  14:38:34"}
+        // { user: "222" , say: "早上好", share: { content: "<p>大大&nbsp;&nbsp;</p>", folder: "",name: "111",time: "2019-4-11 20:55:36"}, time: "2019/04/15  14:38:34" }
       ],
     }
   },
@@ -240,7 +257,7 @@ export default {
   mounted() {
     let that = this;
 
-    new Promise(function (resolve, reject) {      // 这里用异步之后，可以不用计算属性的，懒得改
+    new Promise(function (resolve, reject) {
       that.getFriend().then(resolve);
     })
       .then(function (resolve, reject) {
@@ -258,17 +275,57 @@ export default {
       }
     };
   },
+
   methods: {
+    scrollToBottom() {
+      let sendHeight = this.$refs.showBox.scrollHeight;
+      this.$refs.showBox.scrollTo(0, sendHeight)
+    },
+
+    changePartnerIndex(index) {
+      this.ind = index;
+      this.datePicker = '';
+      this.getMessage();
+    },
+    selectDate() {
+      if (this.datePicker == '') {                              // 不选择时间的时候全部显示
+        this.messages.forEach((item, index) => {
+          if (item.share != '' && item.user) {
+            this.fileRecord.push({ user: item.user, share: item.share, time: item.time })
+          }
+          else if (item.share != '' && item.partner) {
+            this.fileRecord.push({ partner: item.partner, share: item.share, time: item.time })
+          }
+        })
+        return;
+      }
+      this.fileRecord = [];
+      this.messages.forEach((item, index) => {                   // 把消息遍历一遍，如果是分享文件的而且日期对的上，就push进去
+        if (item.time.slice(0, 10) == this.datePicker && item.share != '' && item.user) {
+          this.fileRecord.push({ user: item.user, share: item.share, time: item.time })
+        }
+        else if (item.time.slice(0, 10) == this.datePicker && item.share != '' && item.partner) {
+          this.fileRecord.push({ partner: item.partner, share: item.share, time: item.time })
+        }
+      })
+
+    },
     openFile(item) {
-      console.log("open");
       console.log(item);
       // 如果文件里面已经有这个内容，名字后面截图三位，如果是‘（num）’的格式，就把‘ （num+1） ’这个加在名字后面再保存
-      this.$store.commit("addMyFiles", item);
-      // console.log(this.$store.state.myfiles)
-      this.$message({
-        type: 'success',
-        message: '已保存到桌面!'
-      });
+      let flag = true;
+      this.$store.state.myfiles.forEach((itemFile, index) => {        //如果列表中已经保存过这个文件，则不弹出信息，且不添加文件
+        if (itemFile.name == item.name) {
+          flag = false;
+        }
+      })
+      if (flag) {
+        this.$store.commit("addMyFiles", item);
+        this.$message({
+          type: 'success',
+          message: '已保存到我的桌面!'
+        });
+      }
       this.$router.push({ name: "addEdit", params: { item: item } });
     },
 
@@ -359,6 +416,13 @@ export default {
         });
         return;
       }
+      if (this.partnersAccount == localStorage.username) {
+        this.$message({
+          type: 'warning',
+          message: '不能添加自己为好友!'
+        });
+        return;
+      }
       this.dialogVisible = false;
       let params = JSON.stringify({ username: localStorage.username, fname: this.partnersAccount });
       api.addFriend(params).then(res => {
@@ -425,16 +489,6 @@ export default {
         this.deleteFriend(params);
       }
     },
-
-    scrollToBottom() {
-      let sendHeight = this.$refs.showBox.scrollHeight;
-      this.$refs.showBox.scrollTo(0, sendHeight)
-    },
-
-    changePartnerIndex(index) {
-      this.ind = index;
-      this.getMessage();
-    },
     sendMessage() {
       let timeNow = new Date()
       let time = timeNow.getFullYear() + '/' + ('0' + (timeNow.getMonth() + 1)).slice(-2) + '/' + ('0' + timeNow.getDate()).slice(-2) + '  ' +
@@ -462,15 +516,21 @@ export default {
       let recP = this.partnerAndcrowds[this.ind];
       let params = JSON.stringify({ sendPerson: localStorage.username, recPerson: recP.account.split(';').length > 1 ? recP.name : recP.account }); // 个人
       this.messages = [];
+      this.fileRecord = [];
       if (recP.account.split(';').length > 1) {         // 群 
         return api.getMessage(params).then(res => {
           res.data.data.forEach((item, index) => {
             if (item.sendPerson == localStorage.username) {
               this.messages.push({ user: item.sendPerson, say: item.message.startsWith("#") ? '' : item.message, share: item.message.startsWith("#") ? JSON.parse(item.message.slice(1)) : '', time: item.time })
+              if (item.message.startsWith("#")) {
+                this.fileRecord.push({ user: item.sendPerson, share: JSON.parse(item.message.slice(1)), time: item.time })
+              }
             }
             else {
               this.messages.push({ partner: item.sendPerson, say: item.message.startsWith("#") ? '' : item.message, share: item.message.startsWith("#") ? JSON.parse(item.message.slice(1)) : '', time: item.time })
-
+              if (item.message.startsWith("#")) {
+                this.fileRecord.push({ partner: item.sendPerson, share: JSON.parse(item.message.slice(1)), time: item.time })
+              }
             }
           })
           this.$nextTick(function () {
@@ -483,9 +543,16 @@ export default {
           res.data.data.forEach((item, index) => {
             if (item.send == localStorage.username) {
               this.messages.push({ user: item.send, say: item.mes.startsWith("#") ? '' : item.mes, share: item.mes.startsWith("#") ? JSON.parse(item.mes.slice(1)) : '', time: item.time })
+              if (item.mes.startsWith("#")) {
+                this.fileRecord.push({ user: item.send, share: JSON.parse(item.mes.slice(1)), time: item.time })
+              }
+
             }
             else {
               this.messages.push({ partner: item.send, say: item.mes.startsWith("#") ? '' : item.mes, share: item.mes.startsWith("#") ? JSON.parse(item.mes.slice(1)) : '', time: item.time })
+              if (item.mes.startsWith("#")) {
+                this.fileRecord.push({ partner: item.send, share: JSON.parse(item.mes.slice(1)), time: item.time })
+              }
             }
           })
           this.$nextTick(function () {
