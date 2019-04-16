@@ -2,7 +2,7 @@ import axios from 'axios'
 
 var instance = axios.create({
   // baseURL: 'http://127.0.0.1:8080/myroot'
-  baseURL: 'http://localhost:8090'
+  // baseURL: 'http://localhost:8090'
 })
 
 instance.interceptors.request.use(function (config) {
