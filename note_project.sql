@@ -141,4 +141,4 @@ INSERT INTO `user_table` VALUES ('1', '111', '111', '小张', '222;333;444;555')
 INSERT INTO `user_table` VALUES ('2', '222', '222', '小明', '111;333;444;555');
 INSERT INTO `user_table` VALUES ('3', '333', '333', '小李', '111;444;555');
 INSERT INTO `user_table` VALUES ('4', '444', '444', '小肖', '222;333;555');
-INSERT INTO `user_table` VALUES ('5', '555', '555', '小陈', null);
+INSERT INTO `user_table` VALUES ('5', '555', '555', '小陈', '111');
