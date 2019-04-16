@@ -19,7 +19,7 @@
               <div @click="changeName">修改昵称</div>
             </el-dropdown-item>
             <el-dropdown-item divided>
-              <router-link :to="{path:'/'}" >退出登录</router-link>
+              <router-link :to="{path:'/'}" >注销</router-link>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>

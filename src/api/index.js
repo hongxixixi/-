@@ -60,6 +60,12 @@ const api = {
   sendMessage(params) {
     return axios.post('/sendMessage.api', params);
   },
+  getAllMessage(params){
+    return axios.post('/getAllMessage.api', params);
+  }
+//   api.getAllMessage(JSON.stringify({username:localStorage.username})).then(res=>{
+// console.log(res);
+// })
   // let params = JSON.stringify({sendPerson:"xiao",recPerson:"222"});
   // // let params1 = JSON.stringify({sendPerson:"xiao",recPerson:"qunming"});
   // api.getMessage(params).then(res=>{

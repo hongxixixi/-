@@ -279,8 +279,8 @@ export default {
   },
   mounted() {
     let that = this;
-
-    new Promise(function (resolve, reject) {
+  
+  new Promise(function (resolve, reject) {
       that.getFriend().then(resolve);
     })
       .then(function (resolve, reject) {
@@ -289,7 +289,7 @@ export default {
       .then(function (resolve, reject) {
         that.getMessage().then(resolve);
       });
-
+  
     document.onkeydown = function (event) {
       var e = event || window.event || arguments.callee.caller.arguments[0];
       if (e && e.keyCode == 13) {
