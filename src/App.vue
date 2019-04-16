@@ -1,13 +1,15 @@
 <template>
   <div id="app">
-    <video
+    <!-- <div></div> -->
+    <img src="@/assets/background/phone.jpg" alt="">
+    <!-- <video
       id="video"
       ref="video"
       muted
       src="@/assets/login.mp4"
       autoplay
       loop
-    >您的浏览器不支持\&lt; video&gt;元素</video>
+    >您的浏览器不支持\&lt; video&gt;元素</video> -->
     <router-view></router-view>
   </div>
 </template>
@@ -28,5 +30,10 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less" scoped> 
+img{
+      width: 100%;
+    height: 100%;
+    position: absolute
+}
 </style>
