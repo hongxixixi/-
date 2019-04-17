@@ -19,7 +19,7 @@
               <div @click="changeName">修改昵称</div>
             </el-dropdown-item>
             <el-dropdown-item divided>
-              <router-link :to="{path:'/'}" >退出登录</router-link>
+              <router-link :to="{path:'/'}">注销</router-link>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -232,7 +232,7 @@ import store from "@/store/store.js";
 export default {
   mounted() {
     this.getName();
-  
+
     // this.Synch();
   },
   data() {
@@ -311,7 +311,7 @@ export default {
         name: this.fileName,
         folder: this.fileFolderName,
         content: this.fileContent,
-        time:this.time
+        time: this.time
       });
       this.viewConfirmMask = !this.viewConfirmMask;
       this.fileName = "";
@@ -338,7 +338,7 @@ export default {
       this.viewConfirmMask = !this.viewConfirmMask;
     },
     //获取编辑器文件内容和文件名称
-    FileContent(text, filename, foldername,time) {
+    FileContent(text, filename, foldername, time) {
       this.fileContent = text;
       this.fileName = filename;
       this.fileFolderName = foldername;
@@ -397,12 +397,12 @@ export default {
           name: this.fileName,
           folder: this.fileFolderName,
           content: "",
-          time:this.time
+          time: this.time
         });
         this.toggleFileMask();
         this.fileName = "";
         this.fileFolderName = "";
-        this.time ="";
+        this.time = "";
         this.$router.push({ name: "notes" });
       } else {
         this.dialogVisible2 = true;
@@ -411,21 +411,21 @@ export default {
     cancelAddFolder() {
       this.toggleFolderMask();
     },
-    getTime(){
+    getTime() {
       let myDate = new Date();
-    let [y,m,d,h,f,s] = 
-          [myDate.getFullYear(),
-          myDate.getMonth()+1,
-          myDate.getDate(),
-          myDate.getHours(),
-          myDate.getMinutes(),
-          myDate.getSeconds()];
-          m=m>=10?m:'0'+m;
-          d=d>=10?d:'0'+d;
-          h=h>=10?h:'0'+h;
-          f=f>=10?f:'0'+f;
-          s=s>=10?s:'0'+s;
-          this.time = y+'/'+m+'/'+d+' '+h+':'+f+':'+s;
+      let [y, m, d, h, f, s] =
+        [myDate.getFullYear(),
+        myDate.getMonth() + 1,
+        myDate.getDate(),
+        myDate.getHours(),
+        myDate.getMinutes(),
+        myDate.getSeconds()];
+      m = m >= 10 ? m : '0' + m;
+      d = d >= 10 ? d : '0' + d;
+      h = h >= 10 ? h : '0' + h;
+      f = f >= 10 ? f : '0' + f;
+      s = s >= 10 ? s : '0' + s;
+      this.time = y + '/' + m + '/' + d + ' ' + h + ':' + f + ':' + s;
     },
     //修改用户名
     changeName() {

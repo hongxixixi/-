@@ -258,7 +258,6 @@ export default {
       fileRecord: [
         // { user: "222" , say: "早上好", share: { content: "<p>大大&nbsp;&nbsp;</p>", folder: "",name: "111",time: "2019-4-11 20:55:36"}, time: "2019/04/15  14:38:34"}
         // { partner: "222" ,say: "早上好", share: { content: "<p>大大&nbsp;&nbsp;</p>", folder: "",name: "111",time: "2019-4-11 20:55:36"}, time: "2019/04/15  14:38:34"}
-
       ],
       partners: [
         // { name: '小张', account: '3434;2132565323' },
@@ -283,9 +282,12 @@ export default {
   beforeDestroy() {
     // 卸载定时器
     clearInterval(this.timer);
-    localStorage.setItem('preMessPerson', that.messPerson);           // 离开之前更新一下这个，下次回来可以继续显示新消息
-
+    localStorage.setItem('preMessPerson', this.messPerson);           // 离开之前更新一下这个，下次回来可以继续显示新消息
   },
+  //   beforeDestroy() {
+  //   localStorage.setItem('preMessPerson', '');                     // 注销账号之前,把这个清空，这段代码暂时放这里
+  // },
+
   mounted() {
     let that = this;
 
@@ -299,17 +301,19 @@ export default {
         that.getMessage().then(resolve);
       });
 
-    // that.getAllMessagePers().then(function (resolve, reject) {      // mount的时候，是让新旧消息相等，后面有新消息才有提示
-    //   if (localStorage.preMessPerson) {
-    //     that.preMessPerson = localStorage.preMessPerson;
-    //     that.findNewMessPers();
-    //   }
-    //   else {
-    //     localStorage.setItem('preMessPerson', that.messPerson);
-    //     that.preMessPerson = that.messPerson;
-    //   }
-    // })
-    // that.rollPoling();
+    that.getAllMessagePers().then(function (resolve, reject) {      // mount的时候，是让新旧消息相等，后面有新消息才有提示
+      // if (localStorage.preMessPerson) {
+      //   that.preMessPerson = localStorage.preMessPerson;
+      // }
+      // else {
+      //   that.preMessPerson = [];
+      //   this.preMessPerson = this.messPerson;
+      //   that.preMessPerson.push(that.messPerson);
+      //   localStorage.setItem('preMessPerson', that.preMessPerson);
+      // }
+      that.findNewMessPers();
+    })
+    that.rollPoling();
 
     document.onkeydown = function (event) {
       var e = event || window.event || arguments.callee.caller.arguments[0];
@@ -324,16 +328,18 @@ export default {
     rollPoling() {    // 轮询访问数据库
       let that = this;
       that.timer = setInterval(() => {
-        that.getAllMessagePers().then(function (resolve, reject) {
-          that.findNewMessPers.call(that);
-          resolve();
-        })      }, 1000)
+        new Promise((resolve, reject) => {
+          that.getAllMessagePers().then(resolve);
+        })
+          .then((resolve, reject) => {
+            that.findNewMessPers();
+          })
+      }, 6000)
 
     },
     findNewMessPers() {
-      if (this.messPerson.length > this.preMessPerson.length) {
+      if (this.messPerson.length >= this.preMessPerson.length) {
         let newMesPers = this.messPerson.slice(this.preMessPerson.length);
-        console.log(newMesPers)
         let nowPartnerHasNew = false;
         newMesPers.forEach((itemPers, indexMes) => {
           this.partnerAndcrowds.forEach((item, index) => {
@@ -342,20 +348,22 @@ export default {
                 nowPartnerHasNew = true;
               }
               else {
-                this.partnerAndcrowds[index].hasNew = true;     // 点击的时候再把新消息去掉
+                this.partnerAndcrowds[index].hasNew = true;            // 点击的时候再把新消息去掉
               }
             }
           })
         })
-        if (nowPartnerHasNew) {                                 // 当前ind指向的好友有新消息，不显示新消息提示，但消息列表刷新
+        if (nowPartnerHasNew) {                                        // 当前ind指向的好友有新消息，不显示新消息提示，但消息列表刷新
           this.getMessage()
         }
+        this.preMessPerson = [];
         this.preMessPerson = this.messPerson;
       }
     },
     getAllMessagePers() {
       // 发起请求获取全部的好友/或者群 --- 就是每一条消息，只要是发给username的，都把好友/群返回保存进数组
-      return api.getAllMessagePers(res => {
+      let params = JSON.stringify({ username: localStorage.username });
+      return api.getAllMessage(params).then(res => {
         if (res.data.reason == 'OK') {
           this.messPerson = res.data.data;
         }
@@ -365,17 +373,16 @@ export default {
     documentClick() {
       this.activeIndex = -1;
       this.activeIndex2 = -1;
-
     },
     showMenu1(item, index) {
       document.oncontextmenu = function (e) {
-        // e.preventDefault();
+        e.preventDefault();
       };
       this.activeIndex = index;
     },
     showMenu2(item, index) {
       document.oncontextmenu = function (e) {
-        // e.preventDefault();
+        e.preventDefault();
       };
       this.activeIndex2 = index;
     },
@@ -386,12 +393,11 @@ export default {
 
     changePartnerIndex(index) {
       this.ind = index;
-      this.partnerAndcrowds[index].hasNew = false;
+      this.partnerAndcrowds[this.ind].hasNew = false;
       this.datePicker = '';
       this.getMessage();
     },
     selectDate() {
-      console.log(this.datePicker)
       if (this.datePicker == null) {                              // 不选择时间的时候全部显示
         this.messages.forEach((item, index) => {
           if (item.share != '' && item.user) {
@@ -481,7 +487,7 @@ export default {
           this.partners = [];
           let data = res.data.data;
           data.forEach((item, index) => {
-            this.partners.push({ account: item.username, name: item.name, hasNew: true })
+            this.partners.push({ account: item.username, name: item.name, hasNew: false })
           })
         }
       })
