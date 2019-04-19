@@ -131,6 +131,15 @@
     overflow: hidden; // 清除兄弟节点的浮动
     float: left;
 
+    .el-dialog {
+      input {
+        border: none;
+        border-bottom: 1px solid black;
+        font-size: 16px;
+        border-radius: 0;
+      }
+    }
+
     .send-message-title {
       position: fixed;
       width: 37%;
@@ -144,6 +153,12 @@
       color: #000;
       border-bottom: 1px solid #dededf;
       padding-left: 2%;
+
+      .addMember,
+      .removeMember {
+        font-size: 20px;
+        cursor: pointer;
+      }
 
       .delete {
         position: absolute;

@@ -107,8 +107,87 @@
       class="send-message"
       ref="sendBox"
     >
+      <el-dialog
+        title=""
+        :visible.sync="dialogVisible2"
+        width="30%"
+      >
+        <el-select
+          v-model="qunMember"
+          placeholder="添加群成员"
+          multiple="multiple"
+        >
+          <el-option
+            v-for="item in partners"
+            :key="item.account"
+            :label="item.name"
+            :value="item.account"
+            :disabled="(partnerAndcrowds[ind].account.split(';')).indexOf(item.account)>=0"
+          >
+          </el-option>
+        </el-select>
+        <span
+          slot="footer"
+          class="dialog-footer"
+        >
+          <el-button @click="dialogVisible2 = false">取 消</el-button>
+          <el-button
+            type="primary"
+            @click="confirmAddMember()"
+          >确 定</el-button>
+        </span>
+      </el-dialog>
+
+      <el-dialog
+        title=""
+        :visible.sync="dialogVisible3"
+        width="30%"
+      >
+        <el-select
+          v-model="qunMember"
+          placeholder="移除群成员"
+          multiple="multiple"
+        >
+          <el-option
+            v-for="item in partners"
+            :key="item.account"
+            :label="item.name"
+            :value="item.account"
+            :disabled="(partnerAndcrowds[ind].account.split(';')).indexOf(item.account)<0"
+          >
+          </el-option>
+        </el-select>
+        <span
+          slot="footer"
+          class="dialog-footer"
+        >
+          <el-button @click="dialogVisible3 = false">取 消</el-button>
+          <el-button
+            type="primary"
+            @click="confirmRemoveMember()"
+          >确 定</el-button>
+        </span>
+      </el-dialog>
+
       <div class="send-message-title">
-        <span v-if="partnerAndcrowds[ind]">{{partnerAndcrowds[ind].name+'('+partnerAndcrowds[ind].account+')'}} </span>
+        <span v-if="partnerAndcrowds[ind]">{{partnerAndcrowds[ind].name+'('+partnerAndcrowds[ind].account+')'}}
+          <span
+            class="addMember"
+            @click="addMember"
+            v-if="partnerAndcrowds[ind].account.split(';').length>1"
+          >
+            <i class="el-icon-circle-plus"></i>
+          </span>
+
+          <span
+            class="removeMember"
+            @click="removeMember"
+            v-if="partnerAndcrowds[ind].account.split(';').length>1"
+          >
+            <i class="el-icon-remove"></i>
+          </span>
+
+        </span>
         <span
           class="delete"
           @click="deleteFriendOrCrowd"
@@ -240,6 +319,8 @@ export default {
     return {
       dialogVisible: false,
       dialogVisible1: false,
+      dialogVisible2: false,
+      dialogVisible3: false,
       timer: '',
       datePicker: '',
       qunMember: [],
@@ -279,6 +360,10 @@ export default {
       return this.partners.concat(this.crowds)
     }
   },
+  watch: {
+    partnerAndcrowds() {
+    }
+  },
   beforeDestroy() {
     // 卸载定时器
     clearInterval(this.timer);
@@ -302,15 +387,15 @@ export default {
       });
 
     that.getAllMessagePers().then(function (resolve, reject) {      // mount的时候，是让新旧消息相等，后面有新消息才有提示
-      // if (localStorage.preMessPerson) {
-      //   that.preMessPerson = localStorage.preMessPerson;
-      // }
-      // else {
-      //   that.preMessPerson = [];
-      //   this.preMessPerson = this.messPerson;
-      //   that.preMessPerson.push(that.messPerson);
-      //   localStorage.setItem('preMessPerson', that.preMessPerson);
-      // }
+      if (localStorage.preMessPerson) {
+        that.preMessPerson = localStorage.preMessPerson;
+      }
+      else {
+        that.preMessPerson = [];
+        this.preMessPerson = this.messPerson;
+        that.preMessPerson.push(that.messPerson);
+        localStorage.setItem('preMessPerson', that.preMessPerson);
+      }
       that.findNewMessPers();
     })
     that.rollPoling();
@@ -325,6 +410,52 @@ export default {
   },
 
   methods: {
+    addMember() {
+      if (localStorage.username == (this.partnerAndcrowds[this.ind].account.split(';'))[0]) {
+        this.dialogVisible2 = true;
+      }
+      else {
+        this.$message({
+          type: 'warning',
+          message: '您不是群主不能修改群成员!',
+          duration: 2000
+        });
+      }
+    },
+    removeMember() {
+      if (localStorage.username == (this.partnerAndcrowds[this.ind].account.split(';'))[0]) {
+        this.dialogVisible3 = true;
+      }
+      else {
+        this.$message({
+          type: 'warning',
+          message: '您不是群主不能修改群成员!',
+          duration: 2000
+        });
+      }
+    },
+    confirmAddMember() {
+      this.dialogVisible2 = false;
+      let menbs = (this.partnerAndcrowds[this.ind].account.split(';'));
+      menbs.shift();
+      this.qunMember = menbs.concat(this.qunMember);
+      this.qunName = this.partnerAndcrowds[this.ind].name;
+      this.createCrowd();
+    },
+    confirmRemoveMember() {
+      this.dialogVisible3 = false;
+      let menbs = (this.partnerAndcrowds[this.ind].account.split(';'));
+      menbs.shift();
+      console.log(menbs)
+      this.qunMember.forEach((item, index) => {
+        if (menbs.indexOf(item) >= 0) {
+          menbs.splice(menbs.indexOf(item), menbs.indexOf(item) + 1);
+        }
+      })
+      this.qunMember = menbs;
+      this.qunName = this.partnerAndcrowds[this.ind].name;
+      this.createCrowd();
+    },
     rollPoling() {    // 轮询访问数据库
       let that = this;
       that.timer = setInterval(() => {
@@ -334,7 +465,7 @@ export default {
           .then((resolve, reject) => {
             that.findNewMessPers();
           })
-      }, 6000)
+      }, 10000)
 
     },
     findNewMessPers() {
@@ -444,14 +575,16 @@ export default {
       if (this.qunName == '') {
         this.$message({
           type: 'warning',
-          message: '群名不能为空!'
+          message: '群名不能为空!',
+          duration: 2000
         });
         return;
       }
       else if (this.qunMember.length < 1) {
         this.$message({
           type: 'warning',
-          message: '请至少添加一位群成员!'
+          message: '请至少添加一位群成员!',
+          duration: 2000
         });
         return;
       }
@@ -624,7 +757,6 @@ export default {
           this.scrollToBottom();
         })
       }
-
     },
     getMessage() {
       let recP = this.partnerAndcrowds[this.ind];
