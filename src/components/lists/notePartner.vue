@@ -227,21 +227,58 @@
           <div
             class="share"
             v-if="item.share.name"
-            @dblclick="openFile(item.share)"
             @mousedown.right="showMenu1(item,index)"
+            @click="openFileDialog(item.share)"
           >
             <div
-              class="action"
+              class="actionFile"
+              ref="fileAction"
               v-document-click="documentClick"
               v-if="index==activeIndex"
             >
               <ul>
-                <li @click="openFile(item.share)">保存到桌面并打开</li>
+                <li @click="openFileDialog(item.share)">保存到桌面并打开</li>
               </ul>
             </div>
             <span class="file-name"> {{item.share.name}}</span>
             <i class="iconfont icon-wenjian1"></i>
           </div>
+
+          <el-dialog
+            :visible.sync="viewFileMask"
+            class="add-file-dialog"
+          >
+            <div class="folder-box">
+              <div class="fold-input">
+                <span>笔记名称：</span>
+                <el-input v-model="item.share.name"></el-input>
+              </div>
+              <div class="select-fold">
+                <span>笔记本：</span>
+                <el-select
+                  v-model="fileFolderName"
+                  clearable
+                  placeholder="请选择笔记本"
+                >
+                  <el-option
+                    v-for="item in folders"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  ></el-option>
+                </el-select>
+              </div>
+              <div class="fold-btn">
+                <el-button
+                  type="primary"
+                  @click="addFile(item.share)"
+                  class="addFolder-btn"
+                >确定</el-button>
+                <el-button @click="cancelAddfile">取消</el-button>
+              </div>
+            </div>
+          </el-dialog>
+
         </div>
       </div>
       <div class="edit-message">
@@ -277,7 +314,6 @@
           v-for="(item,index) in fileRecord"
           :key="index"
           :class="item.user?'user-style':'partner-style'"
-          @dblclick="openFile(item.share)"
         >
           <div
             v-if="item.user"
@@ -291,14 +327,15 @@
           <div
             class="share"
             @mousedown.right="showMenu2(item,index)"
+            @click="addFile(item.share)"
           >
             <div
-              class="action"
+              class="actionFile"
               v-document-click="documentClick"
               v-if="index==activeIndex2"
             >
               <ul>
-                <li @click="openFile(item.share)">保存到桌面并打开</li>
+                <li @click="addFile(item.share)">保存到桌面并打开</li>
               </ul>
             </div>
             <span class="file-name"> {{item.share.name}}</span>
@@ -321,6 +358,12 @@ export default {
       dialogVisible1: false,
       dialogVisible2: false,
       dialogVisible3: false,
+      viewFileMask: false,
+      folders: [],
+      files: [],
+      fileFolderName: '',
+      fileName: '',
+      time: '',
       timer: '',
       datePicker: '',
       qunMember: [],
@@ -412,6 +455,80 @@ export default {
   },
 
   methods: {
+    cancelAddfile() {
+      this.toggleFileMask();
+      this.fileName = "";
+      this.fileFolderName = "";
+      this.time = "";
+    },
+    getFolders() {
+      let params = JSON.stringify({ username: localStorage.username });
+      return api.getFolders(params).then(res => {
+        let data = res.data.data.map(el => el.name);
+        this.folders = data;
+      });
+    },
+    openFileDialog() {
+      this.viewFileMask = true;
+      let that = this;
+      new Promise(function (resolve, reject) {
+        that.getFolders().then(resolve);
+      })
+        .then(function (resolve, reject) {
+          that.getFiles()
+        })
+    },
+    addFile(item) {
+      this.fileName = item.name;
+      if (this.fileName != "") {
+        this.getTime();
+        if (!this.fileFolderName) {
+          this.$message({
+            showClose: true,
+            message: "请选择笔记本",
+            type: "error"
+          });
+          return;
+        }
+        let file = this.files;
+        for (let i = 0; i < file.length; i++) {
+          if (file[i].name == this.fileName && file[i].folder == this.fileFolderName) {
+            this.$message({
+              showClose: true,
+              message: "该文件夹已有相同的文本名称，请修改名称",
+              type: "error"
+            });
+            return
+          }
+        }
+        let params = JSON.stringify({ username: localStorage.username, name: this.fileName, folder: this.fileFolderName, content: '', time: this.time });
+        api.addFile(params).then(res => {
+          this.getFiles();
+        })
+        this.toggleFileMask();
+        this.fileName = "";
+        this.fileFolderName = "";
+        this.time = "";
+        this.$router.push({ name: "notes" });
+      }
+    },
+    getTime() {
+      let myDate = new Date();
+      let [y, m, d, h, f, s] = [
+        myDate.getFullYear(),
+        myDate.getMonth() + 1,
+        myDate.getDate(),
+        myDate.getHours(),
+        myDate.getMinutes(),
+        myDate.getSeconds()
+      ];
+      m = m >= 10 ? m : "0" + m;
+      d = d >= 10 ? d : "0" + d;
+      h = h >= 10 ? h : "0" + h;
+      f = f >= 10 ? f : "0" + f;
+      s = s >= 10 ? s : "0" + s;
+      this.time = y + "/" + m + "/" + d + " " + h + ":" + f + ":" + s;
+    },
     addMember() {
       if (localStorage.username == (this.partnerAndcrowds[this.ind].account.split(';'))[0]) {
         this.dialogVisible2 = true;
@@ -501,7 +618,6 @@ export default {
         }
       })
     },
-
     documentClick() {
       this.activeIndex = -1;
       this.activeIndex2 = -1;
@@ -552,45 +668,15 @@ export default {
       })
 
     },
-    openFile(item) {
-      if (this.fileName != "") {
-        this.getTime();
-        if (!this.fileFolderName) {
-          this.$message({
-            showClose: true,
-            message: "请选择笔记本",
-            type: "error"
-          });
-          return;
-        }
-        console.log("2222");
-        let file = this.files;
-        for (let i = 0; i < file.length; i++) {
-          if (file[i].name == this.fileName && file[i].folder == this.fileFolderName) {
-
-            this.$message({
-              showClose: true,
-              message: "该文件夹已有相同的文本名称，请修改名称",
-              type: "error"
-            });
-            return
-          }
-        }
-        JSON.stringify({ username: localStorage.username, name: this.fileName, folder: this.fileFolderName, content: '', time: this.time });
-        api.addFile(params).then(res => {
-
-          this.getFiles();
-        })
-        this.toggleFileMask();
-        this.fileName = "";
-        this.fileFolderName = "";
-        this.time = "";
-        this.$router.push({ name: "notes" });
-      } else {
-        this.dialogVisible2 = true;
-      }
+    getFiles() {
+      let params = JSON.stringify({ username: localStorage.username });
+      api.getFiles(params).then(res => {
+        this.files = res.data.data;
+      });
     },
-
+    toggleFileMask() {
+      this.viewFileMask = !this.viewFileMask;
+    },
     createCrowd() {
       if (this.qunName == '') {
         this.$message({
@@ -604,7 +690,7 @@ export default {
         this.$message({
           type: 'warning',
           message: '请至少添加一位群成员!',
-          duration: 2000
+          duration: 1000
         });
         return;
       }
