@@ -1,5 +1,8 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper1">
+        <img src="@/assets/background/phone.jpg" alt="">
+    <div class="wrapper">
+
     <!-- <div style="width：100%;text-align:center;padding:10px 0;">在线笔记系统</div> -->
     <el-form
       :model="ruleForm2"
@@ -68,6 +71,7 @@
       </router-link>
 
     </div> -->
+    </div>
   </div>
 </template>
 
