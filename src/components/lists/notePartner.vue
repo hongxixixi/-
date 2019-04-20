@@ -387,15 +387,16 @@ export default {
       });
 
     that.getAllMessagePers().then(function (resolve, reject) {      // mount的时候，是让新旧消息相等，后面有新消息才有提示
-      if (localStorage.preMessPerson) {
-        that.preMessPerson = localStorage.preMessPerson;
-      }
-      else {
-        that.preMessPerson = [];
-        this.preMessPerson = this.messPerson;
-        that.preMessPerson.push(that.messPerson);
-        localStorage.setItem('preMessPerson', that.preMessPerson);
-      }
+      // if (localStorage.preMessPerson) {
+      //   that.preMessPerson = localStorage.preMessPerson;
+      // }
+      // else {
+      //   that.preMessPerson = [];
+      //   this.preMessPerson = this.messPerson;
+      //   that.preMessPerson.push(that.messPerson);
+      //   localStorage.setItem('preMessPerson', that.preMessPerson);
+      // }
+      //  this.preMessPerson = 接口拿到的长度;     
       that.findNewMessPers();
     })
     that.rollPoling();
@@ -446,7 +447,6 @@ export default {
       this.dialogVisible3 = false;
       let menbs = (this.partnerAndcrowds[this.ind].account.split(';'));
       menbs.shift();
-      console.log(menbs)
       this.qunMember.forEach((item, index) => {
         if (menbs.indexOf(item) >= 0) {
           menbs.splice(menbs.indexOf(item), menbs.indexOf(item) + 1);
@@ -465,7 +465,7 @@ export default {
           .then((resolve, reject) => {
             that.findNewMessPers();
           })
-      }, 10000)
+      }, 6000)
 
     },
     findNewMessPers() {
