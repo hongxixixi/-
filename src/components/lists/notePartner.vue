@@ -396,7 +396,8 @@ export default {
       //   that.preMessPerson.push(that.messPerson);
       //   localStorage.setItem('preMessPerson', that.preMessPerson);
       // }
-      //  this.preMessPerson = 接口拿到的长度;     
+      //  this.preMessPerson = 接口拿到的长度;    
+      that.preMessPerson = that.messPerson;
       that.findNewMessPers();
     })
     that.rollPoling();
@@ -552,23 +553,42 @@ export default {
 
     },
     openFile(item) {
-      // 如果文件里面已经有这个内容，名字后面截图三位，如果是‘（num）’的格式，就把‘ （num+1） ’这个加在名字后面再保存
-      let flag = true;
-      this.$store.state.myfiles.forEach((itemFile, index) => {        //如果列表中已经保存过这个文件，则不弹出信息，且不添加文件
-        if (itemFile.name == item.name) {
-          flag = false;
-
+      if (this.fileName != "") {
+        this.getTime();
+        if (!this.fileFolderName) {
+          this.$message({
+            showClose: true,
+            message: "请选择笔记本",
+            type: "error"
+          });
+          return;
         }
-      })
-      if (flag) {
-        item.folder = '';
-        this.$store.commit("addMyFiles", item);
-        this.$message({
-          type: 'success',
-          message: '已保存到我的桌面!'
-        });
+        console.log("2222");
+        let file = this.files;
+        for (let i = 0; i < file.length; i++) {
+          if (file[i].name == this.fileName && file[i].folder == this.fileFolderName) {
+
+            this.$message({
+              showClose: true,
+              message: "该文件夹已有相同的文本名称，请修改名称",
+              type: "error"
+            });
+            return
+          }
+        }
+        JSON.stringify({ username: localStorage.username, name: this.fileName, folder: this.fileFolderName, content: '', time: this.time });
+        api.addFile(params).then(res => {
+
+          this.getFiles();
+        })
+        this.toggleFileMask();
+        this.fileName = "";
+        this.fileFolderName = "";
+        this.time = "";
+        this.$router.push({ name: "notes" });
+      } else {
+        this.dialogVisible2 = true;
       }
-      this.$router.push({ name: "addEdit", params: { item: item } });
     },
 
     createCrowd() {
