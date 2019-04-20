@@ -38,25 +38,25 @@ const api = {
   },
 
   //新添加的7个接口
-  addFolder(params){
+  addFolder(params) {
     return axios.post('/addFolder.api', params)
   },
-  addFile(params){
+  addFile(params) {
     return axios.post('/addFile.api', params)
   },
-  editFolderName(params){
+  editFolderName(params) {
     return axios.post('/editFolderName.api', params)
   },
-  deleteFolder(params){
+  deleteFolder(params) {
     return axios.post('/deleteFolder.api', params)
   },
-  deleteFile(params){
+  deleteFile(params) {
     return axios.post('/deleteFile.api', params)
   },
-  modifyContent(params){
+  modifyContent(params) {
     return axios.post('/modifyContent.api', params)
   },
-  editFileName(params){
+  editFileName(params) {
     return axios.post('/editFileName.api', params)
   },
 
@@ -94,21 +94,42 @@ const api = {
   },
   getAllMessage(params) {
     return axios.post('/getAllMessage.api', params);
-  }
+  },
 
-  //   api.getAllMessage(JSON.stringify({username:localStorage.username})).then(res=>{
-  // console.log(res);
-  // })
-  // let params = JSON.stringify({sendPerson:"xiao",recPerson:"222"});
-  // // let params1 = JSON.stringify({sendPerson:"xiao",recPerson:"qunming"});
-  // api.getMessage(params).then(res=>{
-  // console.log(res);
-  // })
-  // let params = JSON.stringify({sendPerson:"222",recPerson:"xiao",message:"222发给肖",time:"2019"});
-  // api.sendMessage(params).then(res=>{
-  // console.log(res);
-  // })
 
+  saveMessageLen(params) {
+    return axios.post('/saveMessageLen.api', params);
+  },
+  getMessageLen(params) {
+    return axios.post('/getMessageLen.api', params);
+  },
+
+  getAuthFiles(params) {
+    return axios.post('/getAuthFiles.api', params);
+  },
+  shareFile(params) {
+    return axios.post('/shareFile.api', params);
+  },
+  changeState(params) {
+    return axios.post('/changeState.api', params);
+  },
+  getState(params) {
+    return axios.post('/getState.api', params);
+  },
+  // api.saveMessageLen(JSON.stringify({username:localStorage.username,preMessageLen:66})).then(res=>{
+  // api.getMessageLen(JSON.stringify({username:localStorage.username}))
+  // })
+  // let params=JSON.stringify({username:'111',name:'bb',folder:'物理',beshareUser:'222',authority:'writeAble'})
+  // api.shareFile(params);
+  // api.getAuthFiles(JSON.stringify({username:localStorage.username}));
+
+  // let params = JSON.stringify({
+  //   username: '111',
+  //   name: 'bb',
+  //   folder: '物理'
+  // });
+  // api.getState(params);
+  // api.changeState(params)
 }
 
 export default api

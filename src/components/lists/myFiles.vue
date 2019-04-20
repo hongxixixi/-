@@ -16,7 +16,7 @@
       >
         <ul>
           <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li>
-          <!-- <li>复制</li>-->
+          <li @click="shareFile(item)">共享</li>
           <li @click="moreDetail(item)">查看</li>
           <li @click="editMyFile(item)">编辑</li>
           <li @click="deleteMyFile(item)">删除</li>
@@ -120,7 +120,10 @@ export default {
     shareMyFile(item) {
       this.shareItemName = item;
     },
-
+    shareFile(item) {
+      // {username：‘aa’，name:'笔记1'，beshareUser：‘bb’，authority：‘readAble’}
+      // this.sendMessage();
+    },
     confirmShareFlie() {
       if (this.shareMumber.length <= 0) {
         this.$message({

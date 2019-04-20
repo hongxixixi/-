@@ -1,5 +1,8 @@
 <template>
-  <div class="editor-box" ref="editor">
+  <div
+    class="editor-box"
+    ref="editor"
+  >
     <div class="file-title">笔记名:{{filename}}</div>
     <div class="sava-edit">
       <!-- <i class="el-icon-edit"></i>
@@ -7,9 +10,16 @@
       <i class="el-icon-share"></i>
       <i class="el-icon-delete"></i>-->
       <span>上次更新时间 : {{time}}</span>
-      <el-button type="primary" @click="addFile">本地保存</el-button>
+      <el-button
+        type="primary"
+        @click="addFile"
+      >本地保存</el-button>
     </div>
-    <div id="editorElem" class="editor" style="text-align:left"></div>
+    <div
+      id="editorElem"
+      class="editor"
+      style="text-align:left"
+    ></div>
   </div>
 </template>
 
@@ -27,11 +37,13 @@ export default {
       foldername: "",
       time: "",
       editor: "",
+      editName: '',
       flag: false
     };
   },
 
   mounted() {
+
     if (!this.flag) {
       this.init();
       Bus.$on("change-content", this.change);
@@ -88,6 +100,20 @@ export default {
         this.filename = this.$route.params.item.name;
         this.foldername = this.$route.params.item.folder;
         this.time = this.$route.params.item.time;
+        this.editName = this.$route.params.item.editName;
+        if (this.$route.params.item.auth == 'readAble') {
+          let that = this;
+          document.onkeydown = function (event) {
+            var e = event || window.event || arguments.callee.caller.arguments[0];
+            e.returnvalue = false;                  //return false应该只是不冒泡什么的 ,e.returnvalue = false;才是输入无效
+            that.$message({
+              showClose: true,
+              message: "您没有权限修改文件",
+              type: "error"
+            });
+            return false;
+          }
+        }
       }
     },
     addFile() {
@@ -112,11 +138,12 @@ export default {
         text,
         this.filename,
         this.foldername,
-        this.time
+        this.time,
+        this.editName,
       );
       this.$emit("toggleConfirmSave");
     },
-    
+
     // beforeDestroy(){
     //    Bus.$off("change-content");
     // }
@@ -126,12 +153,12 @@ export default {
       this.flag = true;
       this.init();
     },
-    foldername(val){
-     console.log(val);
-     //调用
-   }
+    foldername(val) {
+      console.log(val);
+      //调用
+    }
   },
-    beforeDestroy(){
+  beforeDestroy() {
     //调用
     console.log("33333");
   }
@@ -141,15 +168,13 @@ export default {
 .w-e-text-container {
   z-index: 100 !important;
   height: 92% !important; /*!important是重点，因为原div是行内样式设置的高度300px*/
-
-} 
-  .w-e-toolbar{
-      .w-e-menu {
-        // position: relative;
-        // text-align:center;
-        padding: 5px 14px;
-        // cursor: pointer;
-    }
+}
+.w-e-toolbar {
+  .w-e-menu {
+    // position: relative;
+    // text-align:center;
+    padding: 5px 14px;
+    // cursor: pointer;
   }
-
+}
 </style>

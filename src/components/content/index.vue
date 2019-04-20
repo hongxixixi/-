@@ -71,12 +71,11 @@
       </div>
       <div
         class="menuList"
-        style="display:none"
         @click="chooseIndex(3)"
         :class="{clickStyle:index==3}"
       >
-        <router-link :to="{name:'myFiles'}">
-          <i class="el-icon-goods"></i>我的文件
+        <router-link :to="{name:'shareToMe'}">
+          <i class="el-icon-document"></i>共享给我的
         </router-link>
       </div>
 
@@ -100,7 +99,8 @@
         v-document-click="documentClick"
       >
         <ul>
-          <li @click="dialogVisible3=true;fileVisible = false;shareMyFile()">分享</li>
+          <li @click="dialogVisible3=true;fileVisible = false;shareMyFile('分享')">分享</li>
+          <li @click="dialogVisible3=true;fileVisible = false;shareMyFile('共享')">共享</li>
           <li @click="moreDetail()">查看</li>
           <li @click="editMyFile()">重命名</li>
           <li @click="deleteMyFile()">删除</li>
@@ -220,7 +220,7 @@
         width="40%"
         class="share-file-dialog"
       >
-        分享至：
+        <span>{{type}}至：</span>
         <el-select
           v-model="shareMumber"
           placeholder
@@ -231,13 +231,28 @@
             :key="item.account"
             :label="item.name"
             :value="item.account.split(';').length>1?item.name:item.account"
+            :disabled="type=='共享' && item.account.split(';').length>1"
           ></el-option>
         </el-select>
+        <div v-if="type=='共享'">
+          <span>共享权限：</span>
+          <el-select
+            v-model="shareAuth"
+            placeholder
+          >
+            <el-option
+              v-for="item in auths"
+              :key="item.auth"
+              :label="item.label"
+              :value="item.auth"
+            ></el-option>
+          </el-select>
+        </div>
         <span
           slot="footer"
           class="dialog-footer"
         >
-          <el-button @click="dialogVisible3 = false">取 消</el-button>
+          <el-button @click="dialogVisible3 = false;">取 消</el-button>
           <el-button
             type="primary"
             @click="confirmShareFlie()"
@@ -334,9 +349,7 @@ export default {
     this.getName();
     this.getFiles();//获取文本
     this.getFolders();//获取文件夹
-
-
-    // console.log(this.data);
+    console.log(this.data);
     let params = JSON.stringify({ username: localStorage.username });
     this.getCrowd(params);
     this.getFriend(params);
@@ -358,7 +371,8 @@ export default {
       foldName: "",
       fileName: "",
       fileFolderName: "",
-
+      shareAuth: '',
+      auths: [{ auth: 'readAble', label: '可查看' }, { auth: 'writeAble', label: '可编辑' }],
       // username: this.$store.state.username, //登录用户名
       name: "", //用户名
       myChangeName: "", //修改昵称
@@ -373,7 +387,9 @@ export default {
       shareMumber: [],
       shareItemName: "",
       crowds: [],
-      partners: []
+      partners: [],
+      editName: '',
+      type: '分享',
     };
   },
   computed: {
@@ -391,6 +407,15 @@ export default {
     folders(val) {
       // this.folders = val;
       // this.data = this.handleData(this.files);
+    },
+    $route(to, from) {
+      let params = JSON.stringify({ username: localStorage.username });
+      if (to.path == '/content/notes' && from.path == '/content/partner') {
+        this.getFiles();//获取文本
+        this.getFolders();//获取文件夹
+        this.getCrowd(params);
+        this.getFriend(params);
+      }
     }
   },
   methods: {
@@ -447,8 +472,9 @@ export default {
       });
     },
     //分享笔记
-    shareMyFile() {
+    shareMyFile(type) {
       this.shareItemName = this.rightItem;
+      this.type = type;
     },
     //确定分享
     confirmShareFlie() {
@@ -486,13 +512,28 @@ export default {
         });
         api.sendMessage(editMessage).then(res => {
           if (res.data.reason == "OK") {
+            let that = this;
             this.$message({
               type: "success",
-              message: "分享成功!"
+              message: that.type + "成功!"
             });
           }
         });
+        if (this.type == '共享') {
+          let param = JSON.stringify({ username: localStorage.username, folder: this.shareItemName.folder, name: this.shareItemName.name, beshareUser: item, authority: this.shareAuth })
+          console.log(param)
+          api.shareFile(param).then(res => {
+            if (res.data.reason != "OK") {
+              let that = this;
+              this.$message({
+                type: "error",
+                message: that.type + "失败!"
+              });
+            }
+          });
+        }
       });
+      this.shareAuth = '';
       this.shareMumber = [];
     },
     //重命名笔记本
@@ -749,11 +790,12 @@ export default {
     confirmSaveFile() {
       // 1-6修改文本内容
       let params = JSON.stringify({
-        username: localStorage.username,
+        username: this.editName ? this.editName : localStorage.username,
         name: this.fileName,
         folder: this.fileFolderName,
         content: this.fileContent,
         time: this.time      });
+      console.log(params)
       api.modifyContent(params).then(res => {
         this.getFiles();
         //  this.data = this.handleData(this.files);
@@ -790,11 +832,12 @@ export default {
       this.viewConfirmMask = !this.viewConfirmMask;
     },
     //获取编辑器文件内容和文件名称
-    FileContent(text, filename, foldername, time) {
+    FileContent(text, filename, foldername, time, editName) {
       this.fileContent = text;
       this.fileName = filename;
       this.fileFolderName = foldername;
       this.time = time;
+      this.editName = editName;
     },
     cancelAddfile() {
       this.toggleFileMask();

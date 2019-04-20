@@ -3,7 +3,12 @@
     <div class="block">
       <el-button @click="back">返回主页面</el-button>
       <span class="demonstration">根据时间筛选文本:</span>
-      <el-date-picker v-model="value1" type="date" placeholder="选择日期" value-format="yyyy/MM/dd"></el-date-picker>
+      <el-date-picker
+        v-model="value1"
+        type="date"
+        placeholder="选择日期"
+        value-format="yyyy/MM/dd"
+      ></el-date-picker>
       <el-button @click="filterTime">确定</el-button>
     </div>
     <template v-for="(item,index) in myFiles">
@@ -17,9 +22,14 @@
       >
         <i class="iconfont icon-wenjian1"></i>
         {{item.name}}
-        <div v-if="index==activeIndex" class="action" v-document-click="documentClick">
+        <div
+          v-if="index==activeIndex"
+          class="action"
+          v-document-click="documentClick"
+        >
           <ul>
-            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li>
+            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item,'分享')">分享</li>
+            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item,'共享')">共享</li>
             <li @click="moreDetail(item)">查看</li>
             <li @click="editMyFile(item)">编辑</li>
             <li @click="deleteMyFile(item)">删除</li>
@@ -33,11 +43,19 @@
         :key="index+'file2'"
         @mousedown.right="showMenu1(item,index)"
       >
-        <i class="iconfont icon-wenjian1" :title="item.folder"></i>
+        <i
+          class="iconfont icon-wenjian1"
+          :title="item.folder"
+        ></i>
         {{item.name}}
-        <div v-if="index==activeIndex" class="action" v-document-click="documentClick">
+        <div
+          v-if="index==activeIndex"
+          class="action"
+          v-document-click="documentClick"
+        >
           <ul>
-            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li>
+            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item,'分享')">分享</li>
+            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item,'共享')">共享</li>
             <li @click="moreDetail(item)">查看</li>
             <li @click="editMyFile(item)">编辑</li>
             <li @click="deleteMyFile(item)">删除</li>
@@ -45,9 +63,18 @@
         </div>
       </div>
     </template>
-    <el-dialog title :visible.sync="dialogVisible" width="40%" class="share-file-dialog">
-      分享至：
-      <el-select v-model="shareMumber" placeholder multiple="multiple">
+    <el-dialog
+      title
+      :visible.sync="dialogVisible"
+      width="40%"
+      class="share-file-dialog"
+    >
+      {{type}}至：
+      <el-select
+        v-model="shareMumber"
+        placeholder
+        multiple="multiple"
+      >
         <el-option
           v-for="item in partnerAndcrowds"
           :key="item.account"
@@ -55,9 +82,15 @@
           :value="item.account.split(';').length>1?item.name:item.account"
         ></el-option>
       </el-select>
-      <span slot="footer" class="dialog-footer">
+      <span
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmShareFlie()">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="confirmShareFlie()"
+        >确 定</el-button>
       </span>
     </el-dialog>
     <template v-for="(item,index) in FolderFile">
@@ -67,11 +100,19 @@
         :key="index+'file'"
         @mousedown.right="showMenu1(item,index)"
       >
-        <i class="iconfont icon-wenjian1" :title="item.folder"></i>
+        <i
+          class="iconfont icon-wenjian1"
+          :title="item.folder"
+        ></i>
         {{item.name}}
-        <div v-if="index==activeIndex" class="action" v-document-click="documentClick">
+        <div
+          v-if="index==activeIndex"
+          class="action"
+          v-document-click="documentClick"
+        >
           <ul>
-            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li>
+            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item,'分享')">分享</li>
+            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item,'共享')">共享</li>
             <li @click="moreDetail(item)">查看</li>
             <li @click="editMyFile(item)">编辑</li>
             <li @click="deleteMyFile(item)">删除</li>
@@ -89,7 +130,11 @@
       >
         <i class="iconfont icon-wenjianjia"></i>
         {{item}}
-        <div v-if="index==activeIndex2" class="action" v-document-click="documentClick">
+        <div
+          v-if="index==activeIndex2"
+          class="action"
+          v-document-click="documentClick"
+        >
           <ul>
             <li @click="editMyFolder(item)">编辑</li>
             <li @click="deleteMyFolder(item)">删除</li>
@@ -97,26 +142,38 @@
         </div>
       </div>
     </template>
-    <div class="view-change-name" v-if="viewChangeName2">
+    <div
+      class="view-change-name"
+      v-if="viewChangeName2"
+    >
       <div class="name-box">
         <div class="name-input">
           <span>文件夹名称:</span>
           <el-input v-model="myChangeName"></el-input>
         </div>
         <div class="fold-btn">
-          <el-button type="primary" @click="conFirmChangeFileName2">确定</el-button>
+          <el-button
+            type="primary"
+            @click="conFirmChangeFileName2"
+          >确定</el-button>
           <el-button @click="cancelChangeFileName2">取消</el-button>
         </div>
       </div>
     </div>
-    <div class="view-change-name" v-if="viewChangeName">
+    <div
+      class="view-change-name"
+      v-if="viewChangeName"
+    >
       <div class="name-box">
         <div class="name-input">
           <span>文本名称:</span>
           <el-input v-model="myChangeName"></el-input>
         </div>
         <div class="fold-btn">
-          <el-button type="primary" @click="conFirmChangeFileName">确定</el-button>
+          <el-button
+            type="primary"
+            @click="conFirmChangeFileName"
+          >确定</el-button>
           <el-button @click="cancelChangeFileName">取消</el-button>
         </div>
       </div>
@@ -154,9 +211,10 @@ export default {
       files: "",
       folders: "",
       flag: true,
-      myFiles:'',
-      myFolders:'',
-      time:''
+      myFiles: '',
+      myFolders: '',
+      time: '',
+      type: '分享',
     };
   },
   computed: {
@@ -169,12 +227,12 @@ export default {
     // 这里最好有个离开之前询问是否需要保存当前文件的，不然忘记同步文件不就没有了
   },
   mounted() {
-    console.log("222");
+    // console.log("222");
     //每次进来这个页面都获取一次当前的群列表和好友列表
     let params = JSON.stringify({ username: localStorage.username });;
     // this.getCrowd(params);
     // this.getFriend(params);
-   this.getFiles();//获取文本
+    this.getFiles();//获取文本
     this.getFolders();//获取文件夹
     this.flag = true;
     // this.time=setInterval(el=>{
@@ -189,23 +247,23 @@ export default {
     //     this.myFolders = this.folders;
     // console.log(this.myFiles);
     // console.log(this.myFloders);
-    setTimeout(el=>{
-          this.myFiles = this.files;
-    this.myFolders = this.folders;
-    },200)
+    setTimeout(el => {
+      this.myFiles = this.files;
+      this.myFolders = this.folders;
+    }, 200)
   },
   methods: {
-     getFiles() {
+    getFiles() {
       let params = JSON.stringify({ username: localStorage.username });
       api.getFiles(params).then(res => {
         console.log(res);
         this.files = res.data.data;
-         
-        console.log(this.files );
+
+        console.log(this.files);
         // this.data = this.handleData(this.files);
         //1-1.vuex==>获取之后处理
-       // store.commit("getFiles", res.data.data);
-      //  console.log(this.myFiles)
+        // store.commit("getFiles", res.data.data);
+        //  console.log(this.myFiles)
       });
     },
     //获取笔记本
@@ -215,10 +273,10 @@ export default {
         let data = res.data.data.map(el => el.name);
         // 1-2.vuex==>获取之后处理
         // store.commit("getFolders", data);
-        
+
         this.folders = data;
         // this.data = this.handleData(this.files);
-        console.log(this.folders)
+        // console.log(this.folders)
       });
     },
     back() {
@@ -249,7 +307,7 @@ export default {
           }
         }
         this.myFiles = [...timeFile];
-        console.log(this.myFiles);
+        // console.log(this.myFiles);
         if (this.myFiles.length == 0) {
           this.$notify({
             title: "提示",
@@ -268,8 +326,9 @@ export default {
         dangerouslyUseHTMLString: true
       });
     },
-    shareMyFile(item) {
+    shareMyFile(item, type) {
       this.shareItemName = item;
+      this.type = type
     },
 
 
@@ -326,17 +385,21 @@ export default {
         let editMessage = JSON.stringify({
           sendPerson: localStorage.username,
           recPerson: item,
-          message: "#" + JSON.stringify(this.shareItemName),
+          message: this.type == '分享' ? "#" + JSON.stringify(this.shareItemName) : "&" + JSON.stringify(this.shareItemName),
           time: time
         });
         api.sendMessage(editMessage).then(res => {
           if (res.data.reason == "OK") {
             this.$message({
               type: "success",
-              message: "分享成功!"
+              message: "操作成功!"
             });
           }
         });
+        if (this.type == '共享') {
+          console.log('添加分享记录')
+          // shareFile() -- {username：‘aa’，name:'笔记1'，beshareUser：‘bb’，authority：‘readAble’}
+        }
       });
       this.shareMumber = [];
     },
@@ -344,11 +407,11 @@ export default {
     conFirmChangeFileName() {
       // this.item.name = this.myChangeName;
       // this.$store.commit("editmyFile", this.item);
-      let params=JSON.stringify({username:localStorage.username,pre:this.item.name,folder:this.item.folder,now:this.myChangeName});
-    this.item.name = this.myChangeName;
-    api.editFileName(params).then(res=>{
-      this.getFiles();
-    })
+      let params = JSON.stringify({ username: localStorage.username, pre: this.item.name, folder: this.item.folder, now: this.myChangeName });
+      this.item.name = this.myChangeName;
+      api.editFileName(params).then(res => {
+        this.getFiles();
+      })
       this.viewChangeName = !this.viewChangeName;
     },
     cancelChangeFileName() {
@@ -393,7 +456,7 @@ export default {
     },
     //弹出框，操作
     showMenu1(item, index) {
-      document.oncontextmenu = function(e) {
+      document.oncontextmenu = function (e) {
         e.preventDefault();
       };
       this.fileVisible = true;
@@ -424,7 +487,7 @@ export default {
         });
     },
     showMenu2(item, index) {
-      document.oncontextmenu = function(e) {
+      document.oncontextmenu = function (e) {
         e.preventDefault();
       };
       this.folderVisible = true;
@@ -450,7 +513,7 @@ export default {
       // this.$router.push({ name: "addEdit", params: { item: item } });
     },
     openFolder(item) {
-      let files = this.files.filter(function(file) {
+      let files = this.files.filter(function (file) {
         // console.log(file);
         return file.folder == item;
       });

@@ -91,6 +91,13 @@ const router = new Router({
           },
         },
         {
+          path: '/content/shareToMe',
+          name: 'shareToMe',
+          component: resolve => {
+            require(['@/components/lists/shareToMe.vue'], resolve)
+          }
+        },
+        {
           path: '/content/myFiles',
           name: 'myFiles',
           component: resolve => {

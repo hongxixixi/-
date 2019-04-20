@@ -237,7 +237,7 @@
               v-if="index==activeIndex"
             >
               <ul>
-                <li @click="openFileDialog(item.share)">保存到桌面并打开</li>
+                <li @click="openFileDialog(item.share)">保存到桌面</li>
               </ul>
             </div>
             <span class="file-name"> {{item.share.name}}</span>
@@ -251,7 +251,7 @@
             <div class="folder-box">
               <div class="fold-input">
                 <span>笔记名称：</span>
-                <el-input v-model="item.share.name"></el-input>
+                <el-input v-model="fileName"></el-input>
               </div>
               <div class="select-fold">
                 <span>笔记本：</span>
@@ -324,18 +324,15 @@
             class="partnerName"
           ><span>{{item.partner}}</span></div>
           <div class="time"><span>{{item.time}}</span></div>
-          <div
-            class="share"
-            @mousedown.right="showMenu2(item,index)"
-            @click="addFile(item.share)"
-          >
+          <div class="share">
+            <!-- @mousedown.right="showMenu2(item,index)" -->
             <div
               class="actionFile"
               v-document-click="documentClick"
               v-if="index==activeIndex2"
             >
               <ul>
-                <li @click="addFile(item.share)">保存到桌面并打开</li>
+                <li>保存到桌面</li>
               </ul>
             </div>
             <span class="file-name"> {{item.share.name}}</span>
@@ -410,11 +407,12 @@ export default {
   beforeDestroy() {
     // 卸载定时器
     clearInterval(this.timer);
-    localStorage.setItem('preMessPerson', this.messPerson);           // 离开之前更新一下这个，下次回来可以继续显示新消息
+    let that = this;
+    // 离开之前更新一下这个，下次回来可以继续显示新消息
+    that.getAllMessagePers().then(function (resolve, reject) {
+      api.saveMessageLen(JSON.stringify({ username: localStorage.username, preMessageLen: that.messPerson.length })).then();
+    })
   },
-  //   beforeDestroy() {
-  //   localStorage.setItem('preMessPerson', '');                     // 注销账号之前,把这个清空，这段代码暂时放这里
-  // },
 
   mounted() {
     let that = this;
@@ -430,25 +428,21 @@ export default {
       });
 
     that.getAllMessagePers().then(function (resolve, reject) {      // mount的时候，是让新旧消息相等，后面有新消息才有提示
-      // if (localStorage.preMessPerson) {
-      //   that.preMessPerson = localStorage.preMessPerson;
-      // }
-      // else {
-      //   that.preMessPerson = [];
-      //   this.preMessPerson = this.messPerson;
-      //   that.preMessPerson.push(that.messPerson);
-      //   localStorage.setItem('preMessPerson', that.preMessPerson);
-      // }
-      //  this.preMessPerson = 接口拿到的长度;    
-      that.preMessPerson = that.messPerson;
-      that.findNewMessPers();
+      api.getMessageLen(JSON.stringify({ username: localStorage.username })).then((res) => {
+        if (res.data.reason == 'OK') {
+          for (var i = 0; i < res.data.data.preMessageLen; i++) {
+            that.preMessPerson[i] = i;
+          }
+        }
+        that.findNewMessPers();
+      });
     })
     that.rollPoling();
 
     document.onkeydown = function (event) {
       var e = event || window.event || arguments.callee.caller.arguments[0];
       if (e && e.keyCode == 13) {
-        event.preventDefault();
+        e.preventDefault();
         that.sendMessage()
       }
     };
@@ -468,7 +462,7 @@ export default {
         this.folders = data;
       });
     },
-    openFileDialog() {
+    openFileDialog(item) {
       this.viewFileMask = true;
       let that = this;
       new Promise(function (resolve, reject) {
@@ -476,10 +470,10 @@ export default {
       })
         .then(function (resolve, reject) {
           that.getFiles()
+          that.fileName = item.name;
         })
     },
     addFile(item) {
-      this.fileName = item.name;
       if (this.fileName != "") {
         this.getTime();
         if (!this.fileFolderName) {
@@ -501,7 +495,7 @@ export default {
             return
           }
         }
-        let params = JSON.stringify({ username: localStorage.username, name: this.fileName, folder: this.fileFolderName, content: '', time: this.time });
+        let params = JSON.stringify({ username: localStorage.username, name: this.fileName, folder: this.fileFolderName, content: item.content, time: this.time });
         api.addFile(params).then(res => {
           this.getFiles();
         })
@@ -611,10 +605,27 @@ export default {
     },
     getAllMessagePers() {
       // 发起请求获取全部的好友/或者群 --- 就是每一条消息，只要是发给username的，都把好友/群返回保存进数组
+      let that = this;
       let params = JSON.stringify({ username: localStorage.username });
       return api.getAllMessage(params).then(res => {
         if (res.data.reason == 'OK') {
-          this.messPerson = res.data.data;
+          this.messPerson = res.data.data.data;
+          if (res.data.data.hasNewFriOrCrowd == 1) {
+            this.$message({
+              showClose: true,
+              message: "有新好友/群添加,已刷新列表",
+              type: "success"
+            });
+            new Promise(function (resolve, reject) {
+              that.getFriend().then(resolve);
+            })
+              .then(function (resolve, reject) {
+                that.getCrowd().then(resolve);
+              })
+              .then(function (resolve, reject) {
+                that.getMessage().then(resolve);
+              });
+          }
         }
       })
     },
@@ -638,7 +649,6 @@ export default {
       let sendHeight = this.$refs.showBox.scrollHeight;
       this.$refs.showBox.scrollTo(0, sendHeight)
     },
-
     changePartnerIndex(index) {
       this.ind = index;
       this.partnerAndcrowds[this.ind].hasNew = false;
