@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- <div></div> -->
-    <img src="@/assets/background/phone.jpg" alt="">
+
     <!-- <video
       id="video"
       ref="video"

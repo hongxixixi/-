@@ -37,6 +37,30 @@ const api = {
     return axios.post('/getFolders.api', params)
   },
 
+  //新添加的7个接口
+  addFolder(params){
+    return axios.post('/addFolder.api', params)
+  },
+  addFile(params){
+    return axios.post('/addFile.api', params)
+  },
+  editFolderName(params){
+    return axios.post('/editFolderName.api', params)
+  },
+  deleteFolder(params){
+    return axios.post('/deleteFolder.api', params)
+  },
+  deleteFile(params){
+    return axios.post('/deleteFile.api', params)
+  },
+  modifyContent(params){
+    return axios.post('/modifyContent.api', params)
+  },
+  editFileName(params){
+    return axios.post('/editFileName.api', params)
+  },
+
+
 
   addFriend(params) {
     return axios.post('/addFriend.api', params)
