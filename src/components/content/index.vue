@@ -592,13 +592,16 @@ export default {
         if (this.folders.indexOf(dropNode.data.label) == -1) {
           return type !== "inner";
         } else {
+          if(dropNode.data.children){
           let labels = dropNode.data.children.map(el=>el.label);
           // 文本同名不允许拖拽
           if(labels.indexOf(draggingNode.data.label)!=-1){
              return type !== "inner";
           }else{
              return true;
-          }     
+          } 
+          }
+              
         }
       }
     },
@@ -612,7 +615,6 @@ export default {
       // let myData = [{label:'我的笔记本',children:[]},{label:'全部笔记',children:[]}];
       let myData = [{ label: "我的笔记本", children: [] }];
       let bb = this.folders;
-      console.log(bb);
 
       for (let i = 0; i < bb.length; i++) {
         let cc = data.filter(el => {
