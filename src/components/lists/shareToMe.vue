@@ -18,6 +18,7 @@
 
 <script>
 import api from "@/api/index.js";
+import Bus from "@/pages/common/eventBus.js";
 
 export default {
   components: {},
@@ -34,9 +35,14 @@ export default {
   },
   mounted() {
     this.getAuthFiles();
+    Bus.$on('synch')
   },
   methods: {
     //获取笔记
+    synch() {
+      alert('a')
+      this.getAuthFiles();
+    },
     getAuthFiles() {
       let params = JSON.stringify({ username: localStorage.username });
       api.getAuthFiles(params).then(res => {

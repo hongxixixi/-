@@ -12,8 +12,13 @@
         style="font-size:16px;"
         v-if="auth"
       >(由用户{{sharePers}}共享)</span>
+      <span style="margin-left:28px;font-size:16px;">当前共享的用户：
+        <span v-if="editPerson">可编辑:{{editPerson}}</span>
+        <span v-if="readPerson">可查看:{{readPerson}}</span>
+      </span>
     </div>
-    <div class="sava-edit">
+    <div class="
+          sava-edit">
       <!-- <i class="el-icon-edit"></i>
       <i class="el-icon-upload"></i>
       <i class="el-icon-share"></i>
@@ -56,12 +61,13 @@ export default {
       auth: '',
       sharePers: '',
       mark: false,
-      showSavaBotton: true
+      showSavaBotton: true,
+      editPerson: '',
+      readPerson: '',
     };
   },
 
   mounted() {
-
     if (!this.flag) {
       this.init();
       Bus.$on("change-content", this.change);
@@ -78,6 +84,8 @@ export default {
       this.filename = item.name;
       this.foldername = item.folder;
       this.time = item.time;
+      this.readPerson = item.readPerson;
+      this.editPerson = item.editPerson;
     },
     init() {
       this.editor = new E("#editorElem");
@@ -125,6 +133,9 @@ export default {
         this.editName = this.$route.params.item.editName;
         this.auth = this.$route.params.item.auth ? this.$route.params.item.auth : '';
         this.sharePers = this.$route.params.item.username;
+        this.readPerson = this.$route.params.item.readPerson;
+        this.editPerson = this.$route.params.item.editPerson;
+
         if (this.auth && this.auth == 'readAble') {
           this.showSavaBotton = false;
           let that = this;
@@ -176,6 +187,9 @@ export default {
 
   },
   watch: {
+    mark(val) {
+      console.log(val)
+    },
     $route(to, from) {
       this.flag = true;
       this.init();
@@ -183,7 +197,6 @@ export default {
     foldername(val) {
     },
     forState(val, oldval) {
-
       if (!this.auth || this.auth.indexOf('writeAble') != -1) {
         let params1 = JSON.stringify({                   // 无论是不是第一次切换进来都要改变当前编辑的文件的状态
           username: val.sharePers,
@@ -192,12 +205,15 @@ export default {
         });
         api.getState(params1).then(res => {
           this.state = res.data.data.status;
-          console.log(this.state + '拿到的当前文件的状态')
+          console.log(this.state + params1 + '拿到的当前文件的状态')
           if (this.state == 0) {
             api.changeState(params1).then(res => {
               this.mark = true;
+              localStorage.setItem('sharePers', this.sharePers);
+              localStorage.setItem('filename', this.filename);
+              localStorage.setItem('foldername', this.foldername);
               api.getState(params1).then((res) => {
-                console.log(res.data.data.status + '拿到的修改后的当前的文件状态')
+                console.log(res.data.data.status + params1 + '拿到的修改后的当前的文件状态')
               })
             });
           }
@@ -211,7 +227,7 @@ export default {
           }
         });
 
-        if (oldval) {                                    // 不是第一次切换进来，要把原来编辑的文件的状态改变     
+        if (oldval.sharePers) {                                    // 不是第一次切换进来，要把原来编辑的文件的状态改变     
           let params = JSON.stringify({
             username: oldval.sharePers,
             name: oldval.filename,
@@ -219,22 +235,25 @@ export default {
           });
           api.changeState(params).then(res => {
             api.getState(params).then((res) => {
-              console.log(res.data.data.status + '旧的文件状态')
+              console.log(res.data.data.status + params + '旧的文件状态')
             })
           });
         }
       }
     },
   },
+
   beforeDestroy() {
-    if (!this.auth || this.auth.indexOf('writeAble') != -1 && this.mark) {
+    if ((!this.auth || this.auth.indexOf('writeAble') != -1) && this.mark) {
       let params = JSON.stringify({
         username: this.sharePers,
         name: this.filename,
         folder: this.foldername
       });
       api.changeState(params).then(res => {
-        console.log(res.data.data.status + '销毁之后的文件状态')
+        api.getState(params).then((res) => {
+          console.log(res.data.data.status + params + '销毁之后的文件状态')
+        })
       });
     }
   }

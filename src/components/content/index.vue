@@ -334,7 +334,6 @@
       <router-view
         @toggleConfirmSave="toggleConfirmSave"
         @FileContent="FileContent"
-        v-if="!$route.meta.keepAlive"
       ></router-view>
     </div>
   </div>
@@ -371,7 +370,7 @@ export default {
       foldName: "",
       fileName: "",
       fileFolderName: "",
-      shareAuth: '',
+      shareAuth: 'readAble',
       auths: [{ auth: 'readAble', label: '可查看' }, { auth: 'writeAble', label: '可编辑' }],
       // username: this.$store.state.username, //登录用户名
       name: "", //用户名
@@ -417,6 +416,26 @@ export default {
         this.getFriend(params);
       }
     }
+  },
+  beforeCreate() {
+    console.log(localStorage.sharePers);
+    console.log(localStorage.filename);
+    console.log(localStorage.foldername);
+    let params = JSON.stringify({
+      username: localStorage.sharePers,
+      name: localStorage.filename,
+      folder: localStorage.foldername
+    })
+    api.changeState(params).then(res => {
+      api.getState(params).then((res) => {
+        console.log(res.data.data.status + params + '销毁之后的文件状态')
+      })
+    });
+  },
+  beforeDestroy() {
+    localStorage.setItem('sharePers', '');
+    localStorage.setItem('filename', '');
+    localStorage.setItem('foldername', '');
   },
   methods: {
 
@@ -568,7 +587,7 @@ export default {
             });
           })
           // this.$store.commit("deleteMyFolder", folder);
-           Bus.$emit("fresh");
+          Bus.$emit("fresh");
         })
         .catch(() => {
           this.$message({
@@ -581,14 +600,14 @@ export default {
     conFirmChangeFileName2() {
       // this.rightItem = this.rightItem + "-" + this.myChangeName;
       //1-4修改文件夹名称=>获取文本
-      let params = JSON.stringify({username:localStorage.username,pre:this.rightItem,now:this.myChangeName});
-       api.editFolderName(params).then(res=>{
-         
-         this.getFiles();
-         this.getFolders();
+      let params = JSON.stringify({ username: localStorage.username, pre: this.rightItem, now: this.myChangeName });
+      api.editFolderName(params).then(res => {
+
+        this.getFiles();
+        this.getFolders();
         Bus.$emit("fresh");
-       })
-      
+      })
+
       // this.$store.commit("editmyFolder", this.rightItem);
       this.viewChangeName2 = !this.viewChangeName2;
       this.data = this.handleData(this.files);
@@ -627,7 +646,7 @@ export default {
       this.viewFileName = !this.viewFileName;
       this.data = this.handleData(this.files);
       Bus.$emit("change-content", this.rightItem);
-       Bus.$emit("fresh");
+      Bus.$emit("fresh");
       // this.$router.push({ name: "addEdit", params: { item: this.rightItem } });
     },
     cancelChangeFileName() {
@@ -657,7 +676,7 @@ export default {
             type: "success",
             message: "删除成功!"
           });
-           Bus.$emit("fresh");
+          Bus.$emit("fresh");
           this.$router.push({ name: "notes" });
         })
         .catch(() => {
@@ -927,9 +946,9 @@ export default {
           }
         }
         // 1-8-添加文本
-        let params=  JSON.stringify({username:localStorage.username,name:this.fileName,folder:this.fileFolderName,content:'',time:this.time});
-        api.addFile(params).then(res=>{
-          
+        let params = JSON.stringify({ username: localStorage.username, name: this.fileName, folder: this.fileFolderName, content: '', time: this.time });
+        api.addFile(params).then(res => {
+
           this.getFiles();
 
 
@@ -940,7 +959,7 @@ export default {
         //   content: "",
         //   time: this.time
         // });
-         Bus.$emit("fresh");
+        Bus.$emit("fresh");
         this.toggleFileMask();
         this.fileName = "";
         this.fileFolderName = "";
@@ -997,6 +1016,7 @@ export default {
       // console.log("同步");
       this.getFiles();
       this.getFolders();
+      Bus.$emit('synch')
       this.$message({
         showClose: true,
         message: "同步成功",
