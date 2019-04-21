@@ -107,8 +107,87 @@
       class="send-message"
       ref="sendBox"
     >
+      <el-dialog
+        title=""
+        :visible.sync="dialogVisible2"
+        width="30%"
+      >
+        <el-select
+          v-model="qunMember"
+          placeholder="添加群成员"
+          multiple="multiple"
+        >
+          <el-option
+            v-for="item in partners"
+            :key="item.account"
+            :label="item.name"
+            :value="item.account"
+            :disabled="(partnerAndcrowds[ind].account.split(';')).indexOf(item.account)>=0"
+          >
+          </el-option>
+        </el-select>
+        <span
+          slot="footer"
+          class="dialog-footer"
+        >
+          <el-button @click="dialogVisible2 = false">取 消</el-button>
+          <el-button
+            type="primary"
+            @click="confirmAddMember()"
+          >确 定</el-button>
+        </span>
+      </el-dialog>
+
+      <el-dialog
+        title=""
+        :visible.sync="dialogVisible3"
+        width="30%"
+      >
+        <el-select
+          v-model="qunMember"
+          placeholder="移除群成员"
+          multiple="multiple"
+        >
+          <el-option
+            v-for="item in partners"
+            :key="item.account"
+            :label="item.name"
+            :value="item.account"
+            :disabled="(partnerAndcrowds[ind].account.split(';')).indexOf(item.account)<0"
+          >
+          </el-option>
+        </el-select>
+        <span
+          slot="footer"
+          class="dialog-footer"
+        >
+          <el-button @click="dialogVisible3 = false">取 消</el-button>
+          <el-button
+            type="primary"
+            @click="confirmRemoveMember()"
+          >确 定</el-button>
+        </span>
+      </el-dialog>
+
       <div class="send-message-title">
-        <span v-if="partnerAndcrowds[ind]">{{partnerAndcrowds[ind].name+'('+partnerAndcrowds[ind].account+')'}} </span>
+        <span v-if="partnerAndcrowds[ind]">{{partnerAndcrowds[ind].name+'('+partnerAndcrowds[ind].account+')'}}
+          <span
+            class="addMember"
+            @click="addMember"
+            v-if="partnerAndcrowds[ind].account.split(';').length>1"
+          >
+            <i class="el-icon-circle-plus"></i>
+          </span>
+
+          <span
+            class="removeMember"
+            @click="removeMember"
+            v-if="partnerAndcrowds[ind].account.split(';').length>1"
+          >
+            <i class="el-icon-remove"></i>
+          </span>
+
+        </span>
         <span
           class="delete"
           @click="deleteFriendOrCrowd"
@@ -148,21 +227,58 @@
           <div
             class="share"
             v-if="item.share.name"
-            @dblclick="openFile(item.share)"
             @mousedown.right="showMenu1(item,index)"
+            @click="openFileDialog(item.share)"
           >
             <div
-              class="action"
+              class="actionFile"
+              ref="fileAction"
               v-document-click="documentClick"
               v-if="index==activeIndex"
             >
               <ul>
-                <li @click="openFile(item.share)">保存到桌面并打开</li>
+                <li @click="openFileDialog(item.share)">保存到桌面</li>
               </ul>
             </div>
             <span class="file-name"> {{item.share.name}}</span>
             <i class="iconfont icon-wenjian1"></i>
           </div>
+
+          <el-dialog
+            :visible.sync="viewFileMask"
+            class="add-file-dialog"
+          >
+            <div class="folder-box">
+              <div class="fold-input">
+                <span>笔记名称：</span>
+                <el-input v-model="fileName"></el-input>
+              </div>
+              <div class="select-fold">
+                <span>笔记本：</span>
+                <el-select
+                  v-model="fileFolderName"
+                  clearable
+                  placeholder="请选择笔记本"
+                >
+                  <el-option
+                    v-for="item in folders"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  ></el-option>
+                </el-select>
+              </div>
+              <div class="fold-btn">
+                <el-button
+                  type="primary"
+                  @click="addFile(item.share)"
+                  class="addFolder-btn"
+                >确定</el-button>
+                <el-button @click="cancelAddfile">取消</el-button>
+              </div>
+            </div>
+          </el-dialog>
+
         </div>
       </div>
       <div class="edit-message">
@@ -198,7 +314,6 @@
           v-for="(item,index) in fileRecord"
           :key="index"
           :class="item.user?'user-style':'partner-style'"
-          @dblclick="openFile(item.share)"
         >
           <div
             v-if="item.user"
@@ -209,17 +324,15 @@
             class="partnerName"
           ><span>{{item.partner}}</span></div>
           <div class="time"><span>{{item.time}}</span></div>
-          <div
-            class="share"
-            @mousedown.right="showMenu2(item,index)"
-          >
+          <div class="share">
+            <!-- @mousedown.right="showMenu2(item,index)" -->
             <div
-              class="action"
+              class="actionFile"
               v-document-click="documentClick"
               v-if="index==activeIndex2"
             >
               <ul>
-                <li @click="openFile(item.share)">保存到桌面并打开</li>
+                <li>保存到桌面</li>
               </ul>
             </div>
             <span class="file-name"> {{item.share.name}}</span>
@@ -240,6 +353,14 @@ export default {
     return {
       dialogVisible: false,
       dialogVisible1: false,
+      dialogVisible2: false,
+      dialogVisible3: false,
+      viewFileMask: false,
+      folders: [],
+      files: [],
+      fileFolderName: '',
+      fileName: '',
+      time: '',
       timer: '',
       datePicker: '',
       qunMember: [],
@@ -279,14 +400,19 @@ export default {
       return this.partners.concat(this.crowds)
     }
   },
+  watch: {
+    partnerAndcrowds() {
+    }
+  },
   beforeDestroy() {
     // 卸载定时器
     clearInterval(this.timer);
-    localStorage.setItem('preMessPerson', this.messPerson);           // 离开之前更新一下这个，下次回来可以继续显示新消息
+    let that = this;
+    // 离开之前更新一下这个，下次回来可以继续显示新消息
+    that.getAllMessagePers().then(function (resolve, reject) {
+      api.saveMessageLen(JSON.stringify({ username: localStorage.username, preMessageLen: that.messPerson.length })).then();
+    })
   },
-  //   beforeDestroy() {
-  //   localStorage.setItem('preMessPerson', '');                     // 注销账号之前,把这个清空，这段代码暂时放这里
-  // },
 
   mounted() {
     let that = this;
@@ -302,29 +428,146 @@ export default {
       });
 
     that.getAllMessagePers().then(function (resolve, reject) {      // mount的时候，是让新旧消息相等，后面有新消息才有提示
-      // if (localStorage.preMessPerson) {
-      //   that.preMessPerson = localStorage.preMessPerson;
-      // }
-      // else {
-      //   that.preMessPerson = [];
-      //   this.preMessPerson = this.messPerson;
-      //   that.preMessPerson.push(that.messPerson);
-      //   localStorage.setItem('preMessPerson', that.preMessPerson);
-      // }
-      that.findNewMessPers();
+      api.getMessageLen(JSON.stringify({ username: localStorage.username })).then((res) => {
+        if (res.data.reason == 'OK') {
+          for (var i = 0; i < res.data.data.preMessageLen; i++) {
+            that.preMessPerson[i] = i;
+          }
+        }
+        that.findNewMessPers();
+      });
     })
     that.rollPoling();
 
     document.onkeydown = function (event) {
       var e = event || window.event || arguments.callee.caller.arguments[0];
       if (e && e.keyCode == 13) {
-        event.preventDefault();
+        e.preventDefault();
         that.sendMessage()
       }
     };
   },
 
   methods: {
+    cancelAddfile() {
+      this.toggleFileMask();
+      this.fileName = "";
+      this.fileFolderName = "";
+      this.time = "";
+    },
+    getFolders() {
+      let params = JSON.stringify({ username: localStorage.username });
+      return api.getFolders(params).then(res => {
+        let data = res.data.data.map(el => el.name);
+        this.folders = data;
+      });
+    },
+    openFileDialog(item) {
+      this.viewFileMask = true;
+      let that = this;
+      new Promise(function (resolve, reject) {
+        that.getFolders().then(resolve);
+      })
+        .then(function (resolve, reject) {
+          that.getFiles()
+          that.fileName = item.name;
+        })
+    },
+    addFile(item) {
+      if (this.fileName != "") {
+        this.getTime();
+        if (!this.fileFolderName) {
+          this.$message({
+            showClose: true,
+            message: "请选择笔记本",
+            type: "error"
+          });
+          return;
+        }
+        let file = this.files;
+        for (let i = 0; i < file.length; i++) {
+          if (file[i].name == this.fileName && file[i].folder == this.fileFolderName) {
+            this.$message({
+              showClose: true,
+              message: "该文件夹已有相同的文本名称，请修改名称",
+              type: "error"
+            });
+            return
+          }
+        }
+        let params = JSON.stringify({ username: localStorage.username, name: this.fileName, folder: this.fileFolderName, content: item.content, time: this.time });
+        api.addFile(params).then(res => {
+          this.getFiles();
+        })
+        this.toggleFileMask();
+        this.fileName = "";
+        this.fileFolderName = "";
+        this.time = "";
+        this.$router.push({ name: "notes" });
+      }
+    },
+    getTime() {
+      let myDate = new Date();
+      let [y, m, d, h, f, s] = [
+        myDate.getFullYear(),
+        myDate.getMonth() + 1,
+        myDate.getDate(),
+        myDate.getHours(),
+        myDate.getMinutes(),
+        myDate.getSeconds()
+      ];
+      m = m >= 10 ? m : "0" + m;
+      d = d >= 10 ? d : "0" + d;
+      h = h >= 10 ? h : "0" + h;
+      f = f >= 10 ? f : "0" + f;
+      s = s >= 10 ? s : "0" + s;
+      this.time = y + "/" + m + "/" + d + " " + h + ":" + f + ":" + s;
+    },
+    addMember() {
+      if (localStorage.username == (this.partnerAndcrowds[this.ind].account.split(';'))[0]) {
+        this.dialogVisible2 = true;
+      }
+      else {
+        this.$message({
+          type: 'warning',
+          message: '您不是群主不能修改群成员!',
+          duration: 2000
+        });
+      }
+    },
+    removeMember() {
+      if (localStorage.username == (this.partnerAndcrowds[this.ind].account.split(';'))[0]) {
+        this.dialogVisible3 = true;
+      }
+      else {
+        this.$message({
+          type: 'warning',
+          message: '您不是群主不能修改群成员!',
+          duration: 2000
+        });
+      }
+    },
+    confirmAddMember() {
+      this.dialogVisible2 = false;
+      let menbs = (this.partnerAndcrowds[this.ind].account.split(';'));
+      menbs.shift();
+      this.qunMember = menbs.concat(this.qunMember);
+      this.qunName = this.partnerAndcrowds[this.ind].name;
+      this.createCrowd();
+    },
+    confirmRemoveMember() {
+      this.dialogVisible3 = false;
+      let menbs = (this.partnerAndcrowds[this.ind].account.split(';'));
+      menbs.shift();
+      this.qunMember.forEach((item, index) => {
+        if (menbs.indexOf(item) >= 0) {
+          menbs.splice(menbs.indexOf(item), menbs.indexOf(item) + 1);
+        }
+      })
+      this.qunMember = menbs;
+      this.qunName = this.partnerAndcrowds[this.ind].name;
+      this.createCrowd();
+    },
     rollPoling() {    // 轮询访问数据库
       let that = this;
       that.timer = setInterval(() => {
@@ -362,14 +605,30 @@ export default {
     },
     getAllMessagePers() {
       // 发起请求获取全部的好友/或者群 --- 就是每一条消息，只要是发给username的，都把好友/群返回保存进数组
+      let that = this;
       let params = JSON.stringify({ username: localStorage.username });
       return api.getAllMessage(params).then(res => {
         if (res.data.reason == 'OK') {
-          this.messPerson = res.data.data;
+          this.messPerson = res.data.data.data;
+          if (res.data.data.hasNewFriOrCrowd == 1) {
+            this.$message({
+              showClose: true,
+              message: "有新好友/群添加,已刷新列表",
+              type: "success"
+            });
+            new Promise(function (resolve, reject) {
+              that.getFriend().then(resolve);
+            })
+              .then(function (resolve, reject) {
+                that.getCrowd().then(resolve);
+              })
+              .then(function (resolve, reject) {
+                that.getMessage().then(resolve);
+              });
+          }
         }
       })
     },
-
     documentClick() {
       this.activeIndex = -1;
       this.activeIndex2 = -1;
@@ -390,7 +649,6 @@ export default {
       let sendHeight = this.$refs.showBox.scrollHeight;
       this.$refs.showBox.scrollTo(0, sendHeight)
     },
-
     changePartnerIndex(index) {
       this.ind = index;
       this.partnerAndcrowds[this.ind].hasNew = false;
@@ -420,38 +678,29 @@ export default {
       })
 
     },
-    openFile(item) {
-      // 如果文件里面已经有这个内容，名字后面截图三位，如果是‘（num）’的格式，就把‘ （num+1） ’这个加在名字后面再保存
-      let flag = true;
-      this.$store.state.myfiles.forEach((itemFile, index) => {        //如果列表中已经保存过这个文件，则不弹出信息，且不添加文件
-        if (itemFile.name == item.name) {
-          flag = false;
-
-        }
-      })
-      if (flag) {
-        item.folder = '';
-        this.$store.commit("addMyFiles", item);
-        this.$message({
-          type: 'success',
-          message: '已保存到我的桌面!'
-        });
-      }
-      this.$router.push({ name: "addEdit", params: { item: item } });
+    getFiles() {
+      let params = JSON.stringify({ username: localStorage.username });
+      api.getFiles(params).then(res => {
+        this.files = res.data.data;
+      });
     },
-
+    toggleFileMask() {
+      this.viewFileMask = !this.viewFileMask;
+    },
     createCrowd() {
       if (this.qunName == '') {
         this.$message({
           type: 'warning',
-          message: '群名不能为空!'
+          message: '群名不能为空!',
+          duration: 2000
         });
         return;
       }
       else if (this.qunMember.length < 1) {
         this.$message({
           type: 'warning',
-          message: '请至少添加一位群成员!'
+          message: '请至少添加一位群成员!',
+          duration: 1000
         });
         return;
       }
@@ -624,11 +873,10 @@ export default {
           this.scrollToBottom();
         })
       }
-
     },
     getMessage() {
       let recP = this.partnerAndcrowds[this.ind];
-      let params = JSON.stringify({ sendPerson: localStorage.username, recPerson: recP.account.split(';').length > 1 ? recP.name : recP.account }); // 个人
+      let params = JSON.stringify({ sendPerson: localStorage.username, recPerson: (recP.account && recP.account.split(';').length > 1) ? recP.name : recP.account }); // 个人
       this.messages = [];
       this.fileRecord = [];
       if (recP.account.split(';').length > 1) {         // 群 

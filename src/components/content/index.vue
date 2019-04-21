@@ -1,7 +1,10 @@
 <template>
   <div class="content-box">
     <!-- 左边导航栏 -->
-    <div class="left-side-box" @click="closeTheFolderOuter">
+    <div
+      class="left-side-box"
+      @click="closeTheFolderOuter"
+    >
       <div class="userAccount">
         <img src="@/assets/pic.png">
         <!-- <span>账户名</span> -->
@@ -57,19 +60,22 @@
         </router-link>
         
       </div>-->
-      <div class="menuList" @click="chooseIndex(2)" :class="{clickStyle:index==2}">
+      <div
+        class="menuList"
+        @click="chooseIndex(2)"
+        :class="{clickStyle:index==2}"
+      >
         <router-link :to="{name:'partner'}">
           <i class="el-icon-goods"></i>好友及群聊
         </router-link>
       </div>
       <div
         class="menuList"
-        style="display:none"
         @click="chooseIndex(3)"
         :class="{clickStyle:index==3}"
       >
-        <router-link :to="{name:'myFiles'}">
-          <i class="el-icon-goods"></i>我的文件
+        <router-link :to="{name:'shareToMe'}">
+          <i class="el-icon-document"></i>共享给我的
         </router-link>
       </div>
 
@@ -79,7 +85,10 @@
         </router-link>
       </div> -->
       <div class="menuList">
-        <a href="javascript:void(0);" @click="Synch">
+        <a
+          href="javascript:void(0);"
+          @click="Synch"
+        >
           <i class="el-icon-refresh"></i>同步
         </a>
       </div>
@@ -90,7 +99,8 @@
         v-document-click="documentClick"
       >
         <ul>
-          <li @click="dialogVisible3=true;fileVisible = false;shareMyFile()">分享</li>
+          <li @click="dialogVisible3=true;fileVisible = false;shareMyFile('分享')">分享</li>
+          <li @click="dialogVisible3=true;fileVisible = false;shareMyFile('共享')">共享</li>
           <li @click="moreDetail()">查看</li>
           <li @click="editMyFile()">重命名</li>
           <li @click="deleteMyFile()">删除</li>
@@ -109,22 +119,42 @@
       </div>
     </div>
     <!-- 右边显示 -->
-    <div class="right-side-box" @click="closeTheFolderInner">
+    <div
+      class="right-side-box"
+      @click="closeTheFolderInner"
+    >
       <!-- 1.添加笔记本名（文件夹）弹出框 -->
-      <div class="view-add-folder" v-if="viewFolderMask">
+      <div
+        class="view-add-folder"
+        v-if="viewFolderMask"
+      >
         <div class="folder-box">
           <div class="fold-input">
             <span>笔记本名称：</span>
             <el-input v-model="foldName"></el-input>
           </div>
           <div class="fold-btn">
-            <el-button type="primary" @click="addFolder" class="addFolder-btn">确定</el-button>
+            <el-button
+              type="primary"
+              @click="addFolder"
+              class="addFolder-btn"
+            >确定</el-button>
             <el-button @click="cancelAddFolder">取消</el-button>
 
-            <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+            <el-dialog
+              title="提示"
+              :visible.sync="dialogVisible"
+              width="30%"
+            >
               <span>请填写笔记本名称</span>
-              <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+              <span
+                slot="footer"
+                class="dialog-footer"
+              >
+                <el-button
+                  type="primary"
+                  @click="dialogVisible = false"
+                >确 定</el-button>
               </span>
             </el-dialog>
           </div>
@@ -132,7 +162,10 @@
       </div>
 
       <!-- 2.添加笔记（文本）弹出框 -->
-      <div class="view-add-folder" v-if="viewFileMask">
+      <div
+        class="view-add-folder"
+        v-if="viewFileMask"
+      >
         <div class="folder-box">
           <div class="fold-input">
             <span>笔记名称：</span>
@@ -140,7 +173,11 @@
           </div>
           <div class="select-fold">
             <span>笔记本：</span>
-            <el-select v-model="fileFolderName" clearable placeholder="请选择笔记本">
+            <el-select
+              v-model="fileFolderName"
+              clearable
+              placeholder="请选择笔记本"
+            >
               <el-option
                 v-for="item in folders"
                 :key="item"
@@ -150,77 +187,145 @@
             </el-select>
           </div>
           <div class="fold-btn">
-            <el-button type="primary" @click="addfile" class="addFolder-btn">确定</el-button>
+            <el-button
+              type="primary"
+              @click="addfile"
+              class="addFolder-btn"
+            >确定</el-button>
             <el-button @click="cancelAddfile">取消</el-button>
 
-            <el-dialog title="提示" :visible.sync="dialogVisible2" width="30%">
+            <el-dialog
+              title="提示"
+              :visible.sync="dialogVisible2"
+              width="30%"
+            >
               <span>请填写笔记本名称</span>
-              <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="dialogVisible2 = false">确定</el-button>
+              <span
+                slot="footer"
+                class="dialog-footer"
+              >
+                <el-button
+                  type="primary"
+                  @click="dialogVisible2 = false"
+                >确定</el-button>
               </span>
             </el-dialog>
           </div>
         </div>
       </div>
       <!-- 3.分享文件的弹出框 -->
-      <el-dialog title :visible.sync="dialogVisible3" width="40%" class="share-file-dialog">
-        分享至：
-        <el-select v-model="shareMumber" placeholder multiple="multiple">
+      <el-dialog
+        title
+        :visible.sync="dialogVisible3"
+        width="40%"
+        class="share-file-dialog"
+      >
+        <span>{{type}}至：</span>
+        <el-select
+          v-model="shareMumber"
+          placeholder
+          multiple="multiple"
+        >
           <el-option
             v-for="item in partnerAndcrowds"
             :key="item.account"
             :label="item.name"
             :value="item.account.split(';').length>1?item.name:item.account"
+            :disabled="type=='共享' && item.account.split(';').length>1"
           ></el-option>
         </el-select>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible3 = false">取 消</el-button>
-          <el-button type="primary" @click="confirmShareFlie()">确 定</el-button>
+        <div v-if="type=='共享'">
+          <span>共享权限：</span>
+          <el-select
+            v-model="shareAuth"
+            placeholder
+          >
+            <el-option
+              v-for="item in auths"
+              :key="item.auth"
+              :label="item.label"
+              :value="item.auth"
+            ></el-option>
+          </el-select>
+        </div>
+        <span
+          slot="footer"
+          class="dialog-footer"
+        >
+          <el-button @click="dialogVisible3 = false;">取 消</el-button>
+          <el-button
+            type="primary"
+            @click="confirmShareFlie()"
+          >确 定</el-button>
         </span>
       </el-dialog>
       <!-- 4.修改名字弹出框 -->
-      <div class="view-change-name" v-if="viewChangeName">
+      <div
+        class="view-change-name"
+        v-if="viewChangeName"
+      >
         <div class="name-box">
           <div class="name-input">
             <span>昵称：</span>
             <el-input v-model="myChangeName"></el-input>
           </div>
           <div class="fold-btn">
-            <el-button type="primary" @click="conFirmChangeName">确定</el-button>
+            <el-button
+              type="primary"
+              @click="conFirmChangeName"
+            >确定</el-button>
             <el-button @click="cancelChangeName">取消</el-button>
           </div>
         </div>
       </div>
       <!-- 确认弹出框 -->
-      <div class="view-confirm-save" v-if="viewConfirmMask">
+      <div
+        class="view-confirm-save"
+        v-if="viewConfirmMask"
+      >
         <div class="confirm-box">
           <h1>确认保存？</h1>
-          <el-button type="primary" @click="confirmSaveFile">确定</el-button>
+          <el-button
+            type="primary"
+            @click="confirmSaveFile"
+          >确定</el-button>
           <el-button @click="cancelSaveFile">取消</el-button>
         </div>
       </div>
       <!-- 修改笔记（文本）名字弹出框 -->
-      <div class="view-change-name" v-if="viewFileName">
+      <div
+        class="view-change-name"
+        v-if="viewFileName"
+      >
         <div class="name-box">
           <div class="name-input">
             <span>文本名称:</span>
             <el-input v-model="myChangeName"></el-input>
           </div>
           <div class="fold-btn">
-            <el-button type="primary" @click="conFirmChangeFileName">确定</el-button>
+            <el-button
+              type="primary"
+              @click="conFirmChangeFileName"
+            >确定</el-button>
             <el-button @click="cancelChangeFileName">取消</el-button>
           </div>
         </div>
       </div>
       <!-- 修改笔记本 （文件夹）名字弹出框-->
-      <div class="view-change-name" v-if="viewChangeName2">
+      <div
+        class="view-change-name"
+        v-if="viewChangeName2"
+      >
         <div class="name-box">
           <div class="name-input">
             <span>文件夹名称:</span>
             <el-input v-model="myChangeName"></el-input>
           </div>
           <div class="fold-btn">
-            <el-button type="primary" @click="conFirmChangeFileName2">确定</el-button>
+            <el-button
+              type="primary"
+              @click="conFirmChangeFileName2"
+            >确定</el-button>
             <el-button @click="cancelChangeFileName2">取消</el-button>
           </div>
         </div>
@@ -244,13 +349,11 @@ export default {
     this.getName();
     this.getFiles();//获取文本
     this.getFolders();//获取文件夹
-    
-   
     console.log(this.data);
     let params = JSON.stringify({ username: localStorage.username });
     this.getCrowd(params);
     this.getFriend(params);
-    this.$router.push({name:"notes"});
+    this.$router.push({ name: "notes" });
   },
   data() {
     return {
@@ -268,7 +371,8 @@ export default {
       foldName: "",
       fileName: "",
       fileFolderName: "",
-
+      shareAuth: '',
+      auths: [{ auth: 'readAble', label: '可查看' }, { auth: 'writeAble', label: '可编辑' }],
       // username: this.$store.state.username, //登录用户名
       name: "", //用户名
       myChangeName: "", //修改昵称
@@ -283,7 +387,9 @@ export default {
       shareMumber: [],
       shareItemName: "",
       crowds: [],
-      partners: []
+      partners: [],
+      editName: '',
+      type: '分享',
     };
   },
   computed: {
@@ -294,13 +400,22 @@ export default {
   store,
   watch: {
     files(val) {
-      console.log(val)
+      // console.log(val)
       // this.files = val;
       this.data = this.handleData(val);
     },
     folders(val) {
       // this.folders = val;
       // this.data = this.handleData(this.files);
+    },
+    $route(to, from) {
+      let params = JSON.stringify({ username: localStorage.username });
+      if (to.path == '/content/notes' && from.path == '/content/partner') {
+        this.getFiles();//获取文本
+        this.getFolders();//获取文件夹
+        this.getCrowd(params);
+        this.getFriend(params);
+      }
     }
   },
   methods: {
@@ -309,14 +424,14 @@ export default {
     getFiles() {
       let params = JSON.stringify({ username: localStorage.username });
       api.getFiles(params).then(res => {
-        console.log(res);
+        // console.log(res);
         this.files = res.data.data;
-         
-        console.log(this.files );
+
+        // console.log(this.files);
         this.data = this.handleData(this.files);
         //1-1.vuex==>获取之后处理
-       // store.commit("getFiles", res.data.data);
-      //  console.log(this.myFiles)
+        // store.commit("getFiles", res.data.data);
+        //  console.log(this.myFiles)
       });
     },
     //获取笔记本
@@ -326,10 +441,10 @@ export default {
         let data = res.data.data.map(el => el.name);
         // 1-2.vuex==>获取之后处理
         // store.commit("getFolders", data);
-        
+
         this.folders = data;
         this.data = this.handleData(this.files);
-        console.log(this.folders)
+        // console.log(this.folders)
       });
     },
     //获取群
@@ -357,8 +472,9 @@ export default {
       });
     },
     //分享笔记
-    shareMyFile() {
+    shareMyFile(type) {
       this.shareItemName = this.rightItem;
+      this.type = type;
     },
     //确定分享
     confirmShareFlie() {
@@ -372,7 +488,7 @@ export default {
       this.dialogVisible3 = false;
       this.sendMessage();
     },
-  //分享笔记内容
+    //分享笔记内容
     sendMessage() {
       let timeNow = new Date();
       let time =
@@ -396,13 +512,28 @@ export default {
         });
         api.sendMessage(editMessage).then(res => {
           if (res.data.reason == "OK") {
+            let that = this;
             this.$message({
               type: "success",
-              message: "分享成功!"
+              message: that.type + "成功!"
             });
           }
         });
+        if (this.type == '共享') {
+          let param = JSON.stringify({ username: localStorage.username, folder: this.shareItemName.folder, name: this.shareItemName.name, beshareUser: item, authority: this.shareAuth })
+          console.log(param)
+          api.shareFile(param).then(res => {
+            if (res.data.reason != "OK") {
+              let that = this;
+              this.$message({
+                type: "error",
+                message: that.type + "失败!"
+              });
+            }
+          });
+        }
       });
+      this.shareAuth = '';
       this.shareMumber = [];
     },
     //重命名笔记本
@@ -422,13 +553,13 @@ export default {
           let folder = this.rightItem;
           // 1-3.删除vuex处理
           //新添加一个方法
-           let params = JSON.stringify({
-          username: localStorage.username,
-          name: folder,
-        });
-        //删除文件夹和文本的folder是这个的==>返回删除后的myfolder信息和myfiles信息
-          api.deleteFolder(params).then(res=>{
-              
+          let params = JSON.stringify({
+            username: localStorage.username,
+            name: folder,
+          });
+          //删除文件夹和文本的folder是这个的==>返回删除后的myfolder信息和myfiles信息
+          api.deleteFolder(params).then(res => {
+
             this.getFiles();
             this.getFolders();
             this.$message({
@@ -482,18 +613,18 @@ export default {
       this.viewFileName = !this.viewFileName;
     },
     conFirmChangeFileName() {
-      
+
       //1-9.修改文本名
       // vuex
       // this.$store.commit("editmyFile", this.rightItem);
-    // 新增加一个方法修改相应的文本名称为文件名
-    let params=JSON.stringify({username:localStorage.username,pre:this.rightItem.name,folder:this.rightItem.folder,now:this.myChangeName});
-    this.rightItem.name = this.myChangeName;
-    api.editFileName(params).then(res=>{
-      this.getFiles();
-    })
-     
-     this.viewFileName = !this.viewFileName;
+      // 新增加一个方法修改相应的文本名称为文件名
+      let params = JSON.stringify({ username: localStorage.username, pre: this.rightItem.name, folder: this.rightItem.folder, now: this.myChangeName });
+      this.rightItem.name = this.myChangeName;
+      api.editFileName(params).then(res => {
+        this.getFiles();
+      })
+
+      this.viewFileName = !this.viewFileName;
       this.data = this.handleData(this.files);
       Bus.$emit("change-content", this.rightItem);
        Bus.$emit("fresh");
@@ -506,7 +637,7 @@ export default {
     //删除文本
     deleteMyFile() {
       let item = this.rightItem;
-      console.log(item);
+      // console.log(item);
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -516,8 +647,8 @@ export default {
           this.fileVisible = false;
           let files = { ...item };
           //1-5.删除文本，
-          let params=JSON.stringify({username:localStorage.username,name:item.name,folder:item.folder});
-          api.deleteFile(params).then(res=>{
+          let params = JSON.stringify({ username: localStorage.username, name: item.name, folder: item.folder });
+          api.deleteFile(params).then(res => {
             // 返回删除成功即可
             this.getFiles();
           })
@@ -575,19 +706,19 @@ export default {
     },
     //拖拽成功触发函数
     handleDrop(draggingNode, dropNode, dropType, ev) {
-      console.log(draggingNode);
+      // console.log(draggingNode);
       //修改文件夹
-      let params=JSON.stringify({username:localStorage.username,name:draggingNode.data.label,folder:draggingNode.data.data.folder});
-      api.deleteFile(params).then(res=>{
+      let params = JSON.stringify({ username: localStorage.username, name: draggingNode.data.label, folder: draggingNode.data.data.folder });
+      api.deleteFile(params).then(res => {
         //       // 返回删除成功即可
-         let params1 = JSON.stringify({username:localStorage.username,name:draggingNode.data.label,folder:dropNode.label,content:draggingNode.data.data.content,time:draggingNode.data.data.time}); 
-        api.addFile(params1).then(res=>{
+        let params1 = JSON.stringify({ username: localStorage.username, name: draggingNode.data.label, folder: dropNode.label, content: draggingNode.data.data.content, time: draggingNode.data.data.time });
+        api.addFile(params1).then(res => {
 
         })
-      //       this.getFiles();
-          })
+        //       this.getFiles();
+      })
       draggingNode.data.data.folder = dropNode.label;
-      console.log(this.files);
+      // console.log(this.files);
     },
     //允许拖拽放置
     allowDrop(draggingNode, dropNode, type) {
@@ -595,16 +726,13 @@ export default {
         if (this.folders.indexOf(dropNode.data.label) == -1) {
           return type !== "inner";
         } else {
-          if(dropNode.data.children){
-          let labels = dropNode.data.children.map(el=>el.label);
+          let labels = dropNode.data.children.map(el => el.label);
           // 文本同名不允许拖拽
-          if(labels.indexOf(draggingNode.data.label)!=-1){
-             return type !== "inner";
-          }else{
-             return true;
-          } 
+          if (labels.indexOf(draggingNode.data.label) != -1) {
+            return type !== "inner";
+          } else {
+            return true;
           }
-              
         }
       }
     },
@@ -614,10 +742,11 @@ export default {
     },
     //处理数据为树节点结构
     handleData(data) {
-      console.log(data);
+      // console.log(data);
       // let myData = [{label:'我的笔记本',children:[]},{label:'全部笔记',children:[]}];
       let myData = [{ label: "我的笔记本", children: [] }];
       let bb = this.folders;
+      // console.log(bb);
 
       for (let i = 0; i < bb.length; i++) {
         let cc = data.filter(el => {
@@ -663,13 +792,14 @@ export default {
     //确认保存（修改笔记内容）
     confirmSaveFile() {
       // 1-6修改文本内容
-      let params=JSON.stringify({ 
-        username:localStorage.username,
+      let params = JSON.stringify({
+        username: this.editName ? this.editName : localStorage.username,
         name: this.fileName,
         folder: this.fileFolderName,
         content: this.fileContent,
-        time: this.time});
-      api.modifyContent(params).then(res=>{
+        time: this.time      });
+      console.log(params)
+      api.modifyContent(params).then(res => {
         this.getFiles();
         //  this.data = this.handleData(this.files);
         // 将内容和时间修改
@@ -705,17 +835,18 @@ export default {
       this.viewConfirmMask = !this.viewConfirmMask;
     },
     //获取编辑器文件内容和文件名称
-    FileContent(text, filename, foldername, time) {
+    FileContent(text, filename, foldername, time, editName) {
       this.fileContent = text;
       this.fileName = filename;
       this.fileFolderName = foldername;
       this.time = time;
+      this.editName = editName;
     },
     cancelAddfile() {
       this.toggleFileMask();
-         this.fileName = "";
-        this.fileFolderName = "";
-        this.time = "";
+      this.fileName = "";
+      this.fileFolderName = "";
+      this.time = "";
     },
     // 添加笔记本的弹出罩切换
     toggleFolderMask() {
@@ -748,8 +879,8 @@ export default {
     addFolder() {
       if (this.foldName != "") {
         // 1-7添加文件夹
-        let params = JSON.stringify({username:localStorage.username,name:this.foldName});
-        api.addFolder(params).then(res=>{
+        let params = JSON.stringify({ username: localStorage.username, name: this.foldName });
+        api.addFolder(params).then(res => {
           this.getFolders();
           this.handleData(this.files);
         })
@@ -779,20 +910,20 @@ export default {
           });
           return;
         }
-        console.log("2222");
+        // console.log("2222");
         // console.log(this.$store.state.myfiles);
         let file = this.files;
         // let flag = false;
-        for(let i =0 ;i< file.length;i++){
-          if(file[i].name==this.fileName&&file[i].folder == this.fileFolderName){
-            
+        for (let i = 0; i < file.length; i++) {
+          if (file[i].name == this.fileName && file[i].folder == this.fileFolderName) {
+
             this.$message({
-            showClose: true,
-            message: "该文件夹已有相同的文本名称，请修改名称",
-            // durati1on: 4000,
-            type: "error"
-          });
-          return
+              showClose: true,
+              message: "该文件夹已有相同的文本名称，请修改名称",
+              // durati1on: 4000,
+              type: "error"
+            });
+            return
           }
         }
         // 1-8-添加文本
@@ -862,15 +993,15 @@ export default {
         (this.viewChangeName = !this.viewChangeName);
       this.$router.push({ name: "notes" });
     },
-    Synch(){
-      console.log("同步");
+    Synch() {
+      // console.log("同步");
       this.getFiles();
       this.getFolders();
       this.$message({
         showClose: true,
         message: "同步成功",
-            // duration: 4000,
-       type: "success"
+        // duration: 4000,
+        type: "success"
       })
     }
   }

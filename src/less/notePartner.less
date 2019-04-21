@@ -131,6 +131,15 @@
     overflow: hidden; // 清除兄弟节点的浮动
     float: left;
 
+    .el-dialog {
+      input {
+        border: none;
+        border-bottom: 1px solid black;
+        font-size: 16px;
+        border-radius: 0;
+      }
+    }
+
     .send-message-title {
       position: fixed;
       width: 37%;
@@ -144,6 +153,12 @@
       color: #000;
       border-bottom: 1px solid #dededf;
       padding-left: 2%;
+
+      .addMember,
+      .removeMember {
+        font-size: 20px;
+        cursor: pointer;
+      }
 
       .delete {
         position: absolute;
@@ -172,6 +187,47 @@
         padding: 3% 0;
         color: #000;
         box-sizing: border-box;
+
+        .add-file-dialog {
+
+          .folder-box {
+            width: 80%;
+            height: 30%;
+            margin: 0 auto;
+            padding-top: 48px;
+            background: #fff;
+            overflow: hidden;
+
+            .fold-btn {
+              height: 20%;
+              margin: 0 auto;
+              float: right;
+            }
+
+            .fold-input {
+              width: 50%;
+              height: 20%;
+              margin: auto;
+
+              .el-input {
+                width: 70%;
+                height: 16px;
+
+                .el-input__inner {
+                  border: none;
+                  border-radius: 0px;
+                  border-bottom: 1px solid #dcdfe6;
+                }
+              }
+            }
+
+            .select-fold {
+              width: 50%;
+              height: 20%;
+              margin: 0 auto;
+            }
+          }
+        }
 
         img {
           width: 20px;
@@ -225,9 +281,9 @@
             font-size: 2rem;
           }
 
-          .action {
+          .actionFile {
             position: absolute;
-            left: 120px;
+            left: 100px;
             top: 0px;
             width: 120px;
             z-index: 999;
