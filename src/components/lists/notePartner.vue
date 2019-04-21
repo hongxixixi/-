@@ -876,7 +876,7 @@ export default {
     },
     getMessage() {
       let recP = this.partnerAndcrowds[this.ind];
-      let params = JSON.stringify({ sendPerson: localStorage.username, recPerson: recP.account.split(';').length > 1 ? recP.name : recP.account }); // 个人
+      let params = JSON.stringify({ sendPerson: localStorage.username, recPerson: (recP.account && recP.account.split(';').length > 1) ? recP.name : recP.account }); // 个人
       this.messages = [];
       this.fileRecord = [];
       if (recP.account.split(';').length > 1) {         // 群 

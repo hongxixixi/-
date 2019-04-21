@@ -3,7 +3,16 @@
     class="editor-box"
     ref="editor"
   >
-    <div class="file-title">笔记名:{{filename}}</div>
+    <div class="file-title">笔记名:{{filename}}
+      <span
+        v-if="auth"
+        style="margin-left:28px;font-size:16px;"
+      >权限：{{auth.indexOf('writeAble')==-1?'可查看':'可编辑查看'}}</span>
+      <span
+        style="font-size:16px;"
+        v-if="auth"
+      >(由用户{{sharePers}}共享)</span>
+    </div>
     <div class="sava-edit">
       <!-- <i class="el-icon-edit"></i>
       <i class="el-icon-upload"></i>
@@ -13,6 +22,9 @@
       <el-button
         type="primary"
         @click="addFile"
+        v-if="showSavaBotton"
+        ref="sava"
+        style="display:block"
       >本地保存</el-button>
     </div>
     <div
@@ -28,6 +40,8 @@ import Bus from "@/pages/common/eventBus.js";
 import E from "wangeditor";
 import store from "@/store/store.js";
 import em from "./em.js";
+import api from "@/api/index.js";
+
 export default {
   name: "editor",
   data() {
@@ -38,7 +52,11 @@ export default {
       time: "",
       editor: "",
       editName: '',
-      flag: false
+      flag: false,
+      auth: '',
+      sharePers: '',
+      mark: false,
+      showSavaBotton: true
     };
   },
 
@@ -49,7 +67,11 @@ export default {
       Bus.$on("change-content", this.change);
     }
   },
-
+  computed: {
+    forState() {
+      return { sharePers: this.sharePers, filename: this.filename, foldername: this.foldername };
+    }
+  },
   methods: {
     change(item) {
       this.editor.txt.html(item.content);
@@ -101,17 +123,24 @@ export default {
         this.foldername = this.$route.params.item.folder;
         this.time = this.$route.params.item.time;
         this.editName = this.$route.params.item.editName;
-        if (this.$route.params.item.auth == 'readAble') {
+        this.auth = this.$route.params.item.auth ? this.$route.params.item.auth : '';
+        this.sharePers = this.$route.params.item.username;
+        if (this.auth && this.auth == 'readAble') {
+          this.showSavaBotton = false;
           let that = this;
           document.onkeydown = function (event) {
-            var e = event || window.event || arguments.callee.caller.arguments[0];
-            e.returnvalue = false;                  //return false应该只是不冒泡什么的 ,e.returnvalue = false;才是输入无效
             that.$message({
               showClose: true,
-              message: "您没有权限修改文件",
-              type: "error"
+              message: "您没有权限修改文件,修改将无法保存",
+              type: "error",
+              duration: 2000
             });
             return false;
+          }
+        }
+        else {
+          document.onkeydown = function (event) {
+            return true;
           }
         }
       }
@@ -144,9 +173,7 @@ export default {
       this.$emit("toggleConfirmSave");
     },
 
-    // beforeDestroy(){
-    //    Bus.$off("change-content");
-    // }
+
   },
   watch: {
     $route(to, from) {
@@ -154,13 +181,62 @@ export default {
       this.init();
     },
     foldername(val) {
-      console.log(val);
-      //调用
-    }
+    },
+    forState(val, oldval) {
+
+      if (!this.auth || this.auth.indexOf('writeAble') != -1) {
+        let params1 = JSON.stringify({                   // 无论是不是第一次切换进来都要改变当前编辑的文件的状态
+          username: val.sharePers,
+          name: val.filename,
+          folder: val.foldername
+        });
+        api.getState(params1).then(res => {
+          this.state = res.data.data.status;
+          console.log(this.state + '拿到的当前文件的状态')
+          if (this.state == 0) {
+            api.changeState(params1).then(res => {
+              this.mark = true;
+              api.getState(params1).then((res) => {
+                console.log(res.data.data.status + '拿到的修改后的当前的文件状态')
+              })
+            });
+          }
+          else {
+            this.showSavaBotton = false;
+            this.$message({
+              showClose: true,
+              message: "当前文件正在被其他用户编辑，修改将无法保存",
+              type: "error"
+            });
+          }
+        });
+
+        if (oldval) {                                    // 不是第一次切换进来，要把原来编辑的文件的状态改变     
+          let params = JSON.stringify({
+            username: oldval.sharePers,
+            name: oldval.filename,
+            folder: oldval.foldername
+          });
+          api.changeState(params).then(res => {
+            api.getState(params).then((res) => {
+              console.log(res.data.data.status + '旧的文件状态')
+            })
+          });
+        }
+      }
+    },
   },
   beforeDestroy() {
-    //调用
-    console.log("33333");
+    if (!this.auth || this.auth.indexOf('writeAble') != -1 && this.mark) {
+      let params = JSON.stringify({
+        username: this.sharePers,
+        name: this.filename,
+        folder: this.foldername
+      });
+      api.changeState(params).then(res => {
+        console.log(res.data.data.status + '销毁之后的文件状态')
+      });
+    }
   }
 };
 </script>

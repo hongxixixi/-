@@ -41,7 +41,6 @@ export default {
       let params = JSON.stringify({ username: localStorage.username });
       api.getAuthFiles(params).then(res => {
         this.files = res.data.data;
-        // files 包括：{username:'',name:'',folder:'',content:'',time:'',readPerson：‘’，editPerson：‘’，auth:'xxx''}
       });
     },
     editFile(item) {
