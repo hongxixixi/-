@@ -94,8 +94,27 @@ const api = {
   },
   getAllMessage(params) {
     return axios.post('/getAllMessage.api', params);
-  }
+  },
+  saveMessageLen(params){
+    return axios.post('/saveMessageLen.api', params);
+  },
+  getMessageLen(params){
+    return axios.post('/getMessageLen.api', params);
+  },
+  getAuthFiles(params){
+    return axios.post('/getAuthFiles.api', params);
+  },
+  shareFile(params){
+    return axios.post('/shareFile.api', params);
+  },
+  changeState(params){
+    return axios.post('/changeState.api', params);
+  },
+  getState(params){
+    return axios.post('/getState.api', params);
+  },
 
+  
   //   api.getAllMessage(JSON.stringify({username:localStorage.username})).then(res=>{
   // console.log(res);
   // })

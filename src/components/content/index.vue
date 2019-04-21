@@ -437,7 +437,7 @@ export default {
             });
           })
           // this.$store.commit("deleteMyFolder", folder);
-          
+           Bus.$emit("fresh");
         })
         .catch(() => {
           this.$message({
@@ -455,6 +455,7 @@ export default {
          
          this.getFiles();
          this.getFolders();
+        Bus.$emit("fresh");
        })
       
       // this.$store.commit("editmyFolder", this.rightItem);
@@ -495,7 +496,8 @@ export default {
      this.viewFileName = !this.viewFileName;
       this.data = this.handleData(this.files);
       Bus.$emit("change-content", this.rightItem);
-      this.$router.push({ name: "addEdit", params: { item: this.rightItem } });
+       Bus.$emit("fresh");
+      // this.$router.push({ name: "addEdit", params: { item: this.rightItem } });
     },
     cancelChangeFileName() {
       this.myChangeName = this.rightItem.name;
@@ -524,6 +526,7 @@ export default {
             type: "success",
             message: "删除成功!"
           });
+           Bus.$emit("fresh");
           this.$router.push({ name: "notes" });
         })
         .catch(() => {
@@ -752,7 +755,7 @@ export default {
         })
         // this.$store.commit("addMyFolder", this.foldName);
         this.toggleFolderMask();
-
+        Bus.$emit("fresh");
         this.foldName = "";
         this.$router.push({ name: "notes" });
       } else {
@@ -793,7 +796,7 @@ export default {
           }
         }
         // 1-8-添加文本
-               JSON.stringify({username:localStorage.username,name:this.fileName,folder:this.fileFolderName,content:'',time:this.time});
+        let params=  JSON.stringify({username:localStorage.username,name:this.fileName,folder:this.fileFolderName,content:'',time:this.time});
         api.addFile(params).then(res=>{
           
           this.getFiles();
@@ -806,6 +809,7 @@ export default {
         //   content: "",
         //   time: this.time
         // });
+         Bus.$emit("fresh");
         this.toggleFileMask();
         this.fileName = "";
         this.fileFolderName = "";

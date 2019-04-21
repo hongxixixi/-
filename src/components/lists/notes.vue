@@ -1,10 +1,22 @@
 <template>
   <div class="note-lists">
     <div class="block">
-      <el-button @click="back">返回主页面</el-button>
-      <span class="demonstration">根据时间筛选文本:</span>
+      <el-button @click="back">显示所有笔记本</el-button>
+      <span class="demonstration">笔记排序方式:</span>
+      <el-select v-model="sort" placeholder="请选择">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
+      </el-select>
+
+      <span class="demonstration">根据时间筛选笔记:</span>
       <el-date-picker v-model="value1" type="date" placeholder="选择日期" value-format="yyyy/MM/dd"></el-date-picker>
-      <el-button @click="filterTime">确定</el-button>
+        <span class="demonstration">关键字筛选:</span>
+        <el-input v-model="name" style="width:200px;" placeholder="输入关键字"></el-input>
+        <el-button @click="search">搜索</el-button>
     </div>
     <template v-for="(item,index) in myFiles">
       <div
@@ -17,12 +29,13 @@
       >
         <i class="iconfont icon-wenjian1"></i>
         {{item.name}}
-        <div v-if="index==activeIndex" class="action" v-document-click="documentClick">
+        <div v-if="index==activeIndex" class="action1" v-document-click="documentClick">
           <ul>
-            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li>
+            <!-- <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li> -->
             <li @click="moreDetail(item)">查看</li>
-            <li @click="editMyFile(item)">编辑</li>
-            <li @click="deleteMyFile(item)">删除</li>
+            <!-- <li @click="editMyFile(item)">编辑</li> -->
+            <li @click="openFile(item)">编辑笔记</li>
+            <!-- <li @click="deleteMyFile(item)">删除</li> -->
           </ul>
         </div>
       </div>
@@ -35,12 +48,13 @@
       >
         <i class="iconfont icon-wenjian1" :title="item.folder"></i>
         {{item.name}}
-        <div v-if="index==activeIndex" class="action" v-document-click="documentClick">
+        <div v-if="index==activeIndex" class="action1" v-document-click="documentClick">
           <ul>
-            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li>
+            <!-- <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li> -->
             <li @click="moreDetail(item)">查看</li>
-            <li @click="editMyFile(item)">编辑</li>
-            <li @click="deleteMyFile(item)">删除</li>
+            <!-- <li @click="editMyFile(item)">编辑</li> -->
+            <li @click="openFile(item)">编辑笔记</li>
+            <!-- <li @click="deleteMyFile(item)">删除</li> -->
           </ul>
         </div>
       </div>
@@ -69,12 +83,13 @@
       >
         <i class="iconfont icon-wenjian1" :title="item.folder"></i>
         {{item.name}}
-        <div v-if="index==activeIndex" class="action" v-document-click="documentClick">
+        <div v-if="index==activeIndex" class="action1" v-document-click="documentClick">
           <ul>
-            <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li>
+            <!-- <li @click="dialogVisible=true;fileVisible = false;shareMyFile(item)">分享</li> -->
             <li @click="moreDetail(item)">查看</li>
-            <li @click="editMyFile(item)">编辑</li>
-            <li @click="deleteMyFile(item)">删除</li>
+            <!-- <li @click="editMyFile(item)">编辑</li> -->
+            <li @click="openFile(item)">编辑笔记</li>
+            <!-- <li @click="deleteMyFile(item)">删除</li> -->
           </ul>
         </div>
       </div>
@@ -91,7 +106,7 @@
         {{item}}
         <div v-if="index==activeIndex2" class="action" v-document-click="documentClick">
           <ul>
-            <li @click="editMyFolder(item)">编辑</li>
+            <li @click="editMyFolder(item)">编辑笔记</li>
             <li @click="deleteMyFolder(item)">删除</li>
           </ul>
         </div>
@@ -127,11 +142,21 @@
 <script>
 import api from "@/api/index.js";
 import store from "@/store/store.js";
-
+import Bus from "@/pages/common/eventBus.js";
 export default {
-  components: {},
   data() {
     return {
+      sort: "",
+      options: [
+        {
+          value: "更新",
+          label: "更新时间"
+        },
+        {
+          value: "创建",
+          label: "创建时间"
+        }
+      ],
       value1: "",
       FolderFile: "",
       activeIndex: -1,
@@ -154,58 +179,94 @@ export default {
       files: "",
       folders: "",
       flag: true,
-      myFiles:'',
-      myFolders:'',
-      time:''
+      myFiles: "",
+      myFolders: "",
+      count: 0, //计数
+      name:''
     };
+  },
+  watch: {
+    sort(val) {
+      this.name="";
+      if (val == "更新") {
+        this.getTime();
+      } else if (val == "创建") {
+        this.getTime2();
+      }
+    },
+    count(val) {
+      if (val == 2) {
+        this.count = 0;
+        this.myFiles = [...this.files];
+        this.myFolders = [...this.folders];
+      }
+    },
+    value1(val) {
+      this.name="";
+      this.sort = "";
+      if (!val) {
+        this.back();
+      } else {
+        this.filterTime();
+      }
+    }
   },
   computed: {
     partnerAndcrowds() {
       return this.partners.concat(this.crowds);
     }
   },
-  beforeDestroy() {
-    this.time = '';
-    // 这里最好有个离开之前询问是否需要保存当前文件的，不然忘记同步文件不就没有了
-  },
+  beforeDestroy() {},
   mounted() {
-    console.log("222");
-    //每次进来这个页面都获取一次当前的群列表和好友列表
-    let params = JSON.stringify({ username: localStorage.username });;
-    // this.getCrowd(params);
-    // this.getFriend(params);
-   this.getFiles();//获取文本
-    this.getFolders();//获取文件夹
+    let params = JSON.stringify({ username: localStorage.username });
+    this.getFiles(); //获取文本
+    this.getFolders(); //获取文件夹
     this.flag = true;
-    // this.time=setInterval(el=>{
-    //   this.getFolders();
-    //   setTimeout(e=>{
-
-    //     this.myFolders = this.folders;
-    //   },3000)
-    // },2000)
-    // this.back();
-    // this.myFiles = this.files;
-    //     this.myFolders = this.folders;
-    // console.log(this.myFiles);
-    // console.log(this.myFloders);
-    setTimeout(el=>{
-          this.myFiles = this.files;
-    this.myFolders = this.folders;
-    },200)
+    Bus.$on("fresh", this.fresh);
   },
   methods: {
-     getFiles() {
+    fresh() {
+      this.getFiles(); //获取文本
+      this.getFolders(); //获取文件夹
+      this.flag = true;
+      this.value1 = "";
+      this.sort = "";
+    },
+    getTime() {
+      let that = this;
+      this.myFiles = [...this.files];
+      this.myFiles.sort(function(a, b) {
+        return Number(that.toTime(a.time)) - Number(that.toTime(b.time));
+      });
+    },
+    toTime(time) {
+      let date = time.replace(/-/g, "/");
+      this.flag = false;
+      this.myFolders = "";
+      this.FolderFile = "";
+      return new Date(date).getTime();
+    },
+    getTime2() {
+      this.myFiles = [...this.files];
+      this.myFolders = "";
+      this.FolderFile = "";
+      this.flag = false;
+    },
+    search(){
+     this.myFiles=  this.files.filter(el=>{
+         return el.name.search(this.name)!=-1;
+      })
+       this.myFolders = "";
+      this.FolderFile = "";
+      this.sort=""
+      this.flag = false;
+   
+    },
+    getFiles() {
       let params = JSON.stringify({ username: localStorage.username });
       api.getFiles(params).then(res => {
-        console.log(res);
         this.files = res.data.data;
-         
-        console.log(this.files );
-        // this.data = this.handleData(this.files);
-        //1-1.vuex==>获取之后处理
-       // store.commit("getFiles", res.data.data);
-      //  console.log(this.myFiles)
+        this.count++;
       });
     },
     //获取笔记本
@@ -215,22 +276,22 @@ export default {
         let data = res.data.data.map(el => el.name);
         // 1-2.vuex==>获取之后处理
         // store.commit("getFolders", data);
-        
         this.folders = data;
+        this.count++;
         // this.data = this.handleData(this.files);
-        console.log(this.folders)
       });
     },
     back() {
       this.value1 = "";
       this.FolderFile = "";
+      this.sort = "";
       this.filterTime();
       this.flag = true;
     },
     filterTime() {
       if (!this.value1) {
-        this.myFiles = this.files;
-        this.myFolders = this.folders;
+        this.myFiles = [...this.files];
+        this.myFolders = [...this.folders];
       } else {
         let myDate = new Date(this.value1);
         let [y, m, d] = [
@@ -249,7 +310,6 @@ export default {
           }
         }
         this.myFiles = [...timeFile];
-        console.log(this.myFiles);
         if (this.myFiles.length == 0) {
           this.$notify({
             title: "提示",
@@ -264,6 +324,7 @@ export default {
     },
 
     moreDetail(item) {
+      this.showContent= item.content;
       this.$alert(item.content, "文件名：" + item.name, {
         dangerouslyUseHTMLString: true
       });
@@ -271,7 +332,6 @@ export default {
     shareMyFile(item) {
       this.shareItemName = item;
     },
-
 
     getCrowd(params) {
       api.getCrowd(params).then(res => {
@@ -344,11 +404,16 @@ export default {
     conFirmChangeFileName() {
       // this.item.name = this.myChangeName;
       // this.$store.commit("editmyFile", this.item);
-      let params=JSON.stringify({username:localStorage.username,pre:this.item.name,folder:this.item.folder,now:this.myChangeName});
-    this.item.name = this.myChangeName;
-    api.editFileName(params).then(res=>{
-      this.getFiles();
-    })
+      let params = JSON.stringify({
+        username: localStorage.username,
+        pre: this.item.name,
+        folder: this.item.folder,
+        now: this.myChangeName
+      });
+      this.item.name = this.myChangeName;
+      api.editFileName(params).then(res => {
+        this.getFiles();
+      });
       this.viewChangeName = !this.viewChangeName;
     },
     cancelChangeFileName() {
@@ -446,18 +511,15 @@ export default {
       this.shareItem = "";
     },
     openFile(item) {
-      this.moreDetail(item);
-      // this.$router.push({ name: "addEdit", params: { item: item } });
+      this.$router.push({ name: "addEdit", params: { item: item } });
     },
     openFolder(item) {
       let files = this.files.filter(function(file) {
-        // console.log(file);
+
         return file.folder == item;
       });
       this.FolderFile = [...files];
       this.myFolders = "";
-      // console.log(this.myFiles);
-      // this.$router.push({ name: "myFiles", params: { item } });
     }
   }
 };
