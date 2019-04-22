@@ -53,6 +53,7 @@ export default {
       let params = item;
       params.editName = item.username;
       params.auth = item.auth;
+      params.isBeShare = true;
       this.$router.push({ name: "addEdit", params: { item: item } });
     }
   }

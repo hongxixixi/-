@@ -417,26 +417,26 @@ export default {
       }
     }
   },
-  beforeCreate() {
-    console.log(localStorage.sharePers);
-    console.log(localStorage.filename);
-    console.log(localStorage.foldername);
-    let params = JSON.stringify({
-      username: localStorage.sharePers,
-      name: localStorage.filename,
-      folder: localStorage.foldername
-    })
-    api.changeState(params).then(res => {
-      api.getState(params).then((res) => {
-        console.log(res.data.data.status + params + '销毁之后的文件状态')
-      })
-    });
-  },
-  beforeDestroy() {
-    localStorage.setItem('sharePers', '');
-    localStorage.setItem('filename', '');
-    localStorage.setItem('foldername', '');
-  },
+  // beforeCreate() {
+  //   console.log(localStorage.sharePers);
+  //   console.log(localStorage.filename);
+  //   console.log(localStorage.foldername);
+  //   let params = JSON.stringify({
+  //     username: localStorage.sharePers,
+  //     name: localStorage.filename,
+  //     folder: localStorage.foldername
+  //   })
+  //   api.changeState(params).then(res => {
+  //     api.getState(params).then((res) => {
+  //       console.log(res.data.data.status + params + '销毁之后的文件状态')
+  //     })
+  //   });
+  // },
+  // beforeDestroy() {
+  //   localStorage.setItem('sharePers', '');
+  //   localStorage.setItem('filename', '');
+  //   localStorage.setItem('foldername', '');
+  // },
   methods: {
 
     //获取笔记
@@ -854,7 +854,7 @@ export default {
       this.viewConfirmMask = !this.viewConfirmMask;
     },
     //获取编辑器文件内容和文件名称
-    FileContent(text, filename, foldername, time, editName) {
+    FileContent(text, filename, foldername, time, sharePers) {
       this.fileContent = text;
       this.fileName = filename;
       this.fileFolderName = foldername;
@@ -1023,6 +1023,7 @@ export default {
         // duration: 4000,
         type: "success"
       })
+      this.$router.push({ name: "notes" });
     }
   }
 };

@@ -64,6 +64,7 @@ export default {
       showSavaBotton: true,
       editPerson: '',
       readPerson: '',
+      isBeShare: false,
     };
   },
 
@@ -75,7 +76,7 @@ export default {
   },
   computed: {
     forState() {
-      return { sharePers: this.sharePers, filename: this.filename, foldername: this.foldername };
+      return { sharePers: this.isBeShare ? this.sharePers : localStorage.username, filename: this.filename, foldername: this.foldername, isBeShare: this.isBeShare };
     }
   },
   methods: {
@@ -86,6 +87,7 @@ export default {
       this.time = item.time;
       this.readPerson = item.readPerson;
       this.editPerson = item.editPerson;
+      this.isBeShare = item.isBeShare;
     },
     init() {
       this.editor = new E("#editorElem");
@@ -130,11 +132,12 @@ export default {
         this.filename = this.$route.params.item.name;
         this.foldername = this.$route.params.item.folder;
         this.time = this.$route.params.item.time;
-        this.editName = this.$route.params.item.editName;
+        this.editName = this.$route.params.item.editName;     // 这个是文件桌面没有的属性，可以区分开修改文件内容时保存请求的username到底用哪个
         this.auth = this.$route.params.item.auth ? this.$route.params.item.auth : '';
-        this.sharePers = this.$route.params.item.username;
+        this.sharePers = this.$route.params.item.username;    // 
         this.readPerson = this.$route.params.item.readPerson;
         this.editPerson = this.$route.params.item.editPerson;
+        this.isBeShare = this.$route.params.item.isBeShare
 
         if (this.auth && this.auth == 'readAble') {
           this.showSavaBotton = false;
@@ -197,6 +200,7 @@ export default {
     foldername(val) {
     },
     forState(val, oldval) {
+      console.log(val, oldval)
       if (!this.auth || this.auth.indexOf('writeAble') != -1) {
         let params1 = JSON.stringify({                   // 无论是不是第一次切换进来都要改变当前编辑的文件的状态
           username: val.sharePers,
@@ -208,6 +212,7 @@ export default {
           console.log(this.state + params1 + '拿到的当前文件的状态')
           if (this.state == 0) {
             api.changeState(params1).then(res => {
+              // alert('a修改当前文件')
               this.mark = true;
               localStorage.setItem('sharePers', this.sharePers);
               localStorage.setItem('filename', this.filename);
@@ -229,11 +234,12 @@ export default {
 
         if (oldval.sharePers) {                                    // 不是第一次切换进来，要把原来编辑的文件的状态改变     
           let params = JSON.stringify({
-            username: oldval.sharePers,
+            username: oldval.isBeShare ? oldval.sharePers : localStorage.username,
             name: oldval.filename,
             folder: oldval.foldername
           });
           api.changeState(params).then(res => {
+            // alert('b旧的文件状态')
             api.getState(params).then((res) => {
               console.log(res.data.data.status + params + '旧的文件状态')
             })
@@ -246,11 +252,12 @@ export default {
   beforeDestroy() {
     if ((!this.auth || this.auth.indexOf('writeAble') != -1) && this.mark) {
       let params = JSON.stringify({
-        username: this.sharePers,
+        username: this.isBeShare ? this.sharePers : localStorage.username,
         name: this.filename,
         folder: this.foldername
       });
       api.changeState(params).then(res => {
+        // alert('c销毁前的执行')
         api.getState(params).then((res) => {
           console.log(res.data.data.status + params + '销毁之后的文件状态')
         })
