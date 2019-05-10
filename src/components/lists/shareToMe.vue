@@ -35,12 +35,11 @@ export default {
   },
   mounted() {
     this.getAuthFiles();
-    Bus.$on('synch')
+    Bus.$on('synch', this.synch)
   },
   methods: {
     //获取笔记
     synch() {
-      alert('a')
       this.getAuthFiles();
     },
     getAuthFiles() {
