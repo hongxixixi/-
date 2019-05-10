@@ -297,7 +297,7 @@
 
     <div class="show-file">
       <div class='show-file-title'>
-        <span>文件分享记录</span>
+        <span>笔记记录</span>
       </div>
       <el-date-picker
         v-model="datePicker"
