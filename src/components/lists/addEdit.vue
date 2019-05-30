@@ -191,7 +191,7 @@ export default {
   },
   watch: {
     mark(val) {
-      // console.log(val)
+      console.log(val)
     },
     $route(to, from) {
       this.flag = true;
@@ -200,30 +200,28 @@ export default {
     foldername(val) {
     },
     forState(val, oldval) {
-      // 判断一下是否存在权限，若有则说明是被分享的文件
+      console.log(val, oldval)
       if (!this.auth || this.auth.indexOf('writeAble') != -1) {
-        // 无论是不是第一次切换进来都要改变当前编辑的笔记的状态，除了只能查看的笔记
-        let params1 = JSON.stringify({
+        let params1 = JSON.stringify({                   // 无论是不是第一次切换进来都要改变当前编辑的文件的状态
           username: val.sharePers,
           name: val.filename,
           folder: val.foldername
         });
         api.getState(params1).then(res => {
-          // 当前文件的状态
           this.state = res.data.data.status;
-          // 若状态为0，即笔记当前没有被其他用户编辑，则修改笔记状态，进入编辑状态
+          console.log(this.state + params1 + '拿到的当前文件的状态')
           if (this.state == 0) {
             api.changeState(params1).then(res => {
+              // alert('a修改当前文件')
               this.mark = true;
               localStorage.setItem('sharePers', this.sharePers);
               localStorage.setItem('filename', this.filename);
               localStorage.setItem('foldername', this.foldername);
               api.getState(params1).then((res) => {
-                // 修改后的当前的笔记状态
+                console.log(res.data.data.status + params1 + '拿到的修改后的当前的文件状态')
               })
             });
           }
-          // 若状态不为0，即笔记正在被编辑，只允许查看，不能修改
           else {
             this.showSavaBotton = false;
             this.$message({
@@ -234,7 +232,7 @@ export default {
           }
         });
 
-        if (oldval.sharePers) {                                    // 不是第一次切换进来，要把上一个编辑的文件的状态改变     
+        if (oldval.sharePers) {                                    // 不是第一次切换进来，要把原来编辑的文件的状态改变     
           let params = JSON.stringify({
             username: oldval.isBeShare ? oldval.sharePers : localStorage.username,
             name: oldval.filename,
@@ -243,7 +241,7 @@ export default {
           api.changeState(params).then(res => {
             // alert('b旧的文件状态')
             api.getState(params).then((res) => {
-              // console.log(res.data.data.status + params + '旧的文件状态')
+              console.log(res.data.data.status + params + '旧的文件状态')
             })
           });
         }
@@ -261,7 +259,7 @@ export default {
       api.changeState(params).then(res => {
         // alert('c销毁前的执行')
         api.getState(params).then((res) => {
-          // console.log(res.data.data.status + params + '销毁之后的文件状态')
+          console.log(res.data.data.status + params + '销毁之后的文件状态')
         })
       });
     }

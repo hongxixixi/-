@@ -416,7 +416,7 @@ export default {
 
   mounted() {
     let that = this;
-    that.messages = [];
+
     new Promise(function (resolve, reject) {
       that.getFriend().then(resolve);
     })
@@ -424,9 +424,7 @@ export default {
         that.getCrowd().then(resolve);
       })
       .then(function (resolve, reject) {
-        if (that.partnerAndcrowds.length > 0) {
-          that.getMessage().then(resolve);
-        }
+        that.getMessage().then(resolve);
       });
 
     that.getAllMessagePers().then(function (resolve, reject) {      // mount的时候，是让新旧消息相等，后面有新消息才有提示
@@ -583,12 +581,9 @@ export default {
 
     },
     findNewMessPers() {
-      // 轮询之后若新消息比就消息长，则是有新的未读消息
       if (this.messPerson.length >= this.preMessPerson.length) {
-        // 截取新的部分
         let newMesPers = this.messPerson.slice(this.preMessPerson.length);
         let nowPartnerHasNew = false;
-        // 遍历匹配新的部分是哪些好友
         newMesPers.forEach((itemPers, indexMes) => {
           this.partnerAndcrowds.forEach((item, index) => {
             if (item.name == itemPers || item.account == itemPers) {   // 群名或者好友账号跟多出来的消息返回的名字相同
@@ -615,23 +610,22 @@ export default {
       return api.getAllMessage(params).then(res => {
         if (res.data.reason == 'OK') {
           this.messPerson = res.data.data.data;
-          // if (res.data.data.hasNewFriOrCrowd == 1) {
-          //   this.$message({
-          //     showClose: true,
-          //     message: "有新好友/群添加,已刷新列表",
-          //     type: "success",
-          //     duration: 2000,
-          //   });
-          //   new Promise(function (resolve, reject) {
-          //     that.getFriend().then(resolve);
-          //   })
-          //     .then(function (resolve, reject) {
-          //       that.getCrowd().then(resolve);
-          //     })
-          //     .then(function (resolve, reject) {
-          //       that.getMessage().then(resolve);
-          //     });
-          // }
+          if (res.data.data.hasNewFriOrCrowd == 1) {
+            this.$message({
+              showClose: true,
+              message: "有新好友/群添加,已刷新列表",
+              type: "success"
+            });
+            new Promise(function (resolve, reject) {
+              that.getFriend().then(resolve);
+            })
+              .then(function (resolve, reject) {
+                that.getCrowd().then(resolve);
+              })
+              .then(function (resolve, reject) {
+                that.getMessage().then(resolve);
+              });
+          }
         }
       })
     },
@@ -695,14 +689,14 @@ export default {
     },
     createCrowd() {
       if (this.qunName == '') {
-        this.$message({         // 输入群名为空的提示信息
+        this.$message({
           type: 'warning',
           message: '群名不能为空!',
           duration: 2000
         });
         return;
       }
-      else if (this.qunMember.length < 1) {     //未选择群成员的提示信息
+      else if (this.qunMember.length < 1) {
         this.$message({
           type: 'warning',
           message: '请至少添加一位群成员!',
@@ -710,13 +704,13 @@ export default {
         });
         return;
       }
-      this.dialogVisible1 = false;    //关闭弹窗
-      let menbs = JSON.parse(JSON.stringify(this.qunMember));   //将群成员复制，方便下面对群成员转换成字符串
+      this.dialogVisible1 = false;
+      let menbs = JSON.parse(JSON.stringify(this.qunMember));
       menbs.unshift(localStorage.username);      //第一个-群主
       let params = JSON.stringify({ name: this.qunName, people: menbs.join(';') })
-      this.qunMember = [];      //拿到参数以后清空输入框
+      this.qunMember = [];
       this.qunName = '';
-      api.createCrowd(params).then(res => {   //向后台发起创建群的接口
+      api.createCrowd(params).then(res => {
         if (res.data.reason == 'OK') {
           this.getCrowd();
         }
@@ -775,46 +769,46 @@ export default {
     },
 
     addFriend() {
-      if (this.partnersAccount == '') {         // 输入的账号为空
+      if (this.partnersAccount == '') {
         this.$message({
           type: 'warning',
           message: '用户不存在!'
         });
         return;
       }
-      if (this.partnersAccount == localStorage.username) {    // 输入的是自身账号
+      if (this.partnersAccount == localStorage.username) {
         this.$message({
           type: 'warning',
           message: '不能添加自己为好友!'
         });
         return;
       }
-      this.dialogVisible = false;       // 弹出框隐藏
-      let params = JSON.stringify({ username: localStorage.username, fname: this.partnersAccount });    // 发送的接口参数
-      api.addFriend(params).then(res => {       // 发起请求
+      this.dialogVisible = false;
+      let params = JSON.stringify({ username: localStorage.username, fname: this.partnersAccount });
+      api.addFriend(params).then(res => {
         if (res.data.reason == 'OK') {
-          this.getFriend();           // 刷新页面，重新获取好友列表
+
+          this.getFriend();
         }
       });
-      this.partnersAccount = ''     // 清空输入框
+      this.partnersAccount = ''
     },
 
     deleteFriend(params) {
-      this.$confirm('此操作将删除该好友, 是否继续?', '提示', {      //提示用户是否确认删除
+      this.$confirm('此操作将删除该好友, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.deleteFriend(params).then(res => {                  // 点击确认则发起请求删除该好友，参数是点击删除的好友账号
+        api.deleteFriend(params).then(res => {
           this.ind--;
-          this.ind = this.ind < 0 ? 0 : this.ind;               // 当前指向的好友减1，若已经是最后一位，则让ind为0
-          this.getFriend();                                 // 刷新页面，重新获取好友列表
+          this.getFriend();
         })
-        this.$message({                                     // 成功的提示信息
+        this.$message({
           type: 'success',
           message: '删除成功!'
         });
-      }).catch(() => {                                      //失败的提示信息
+      }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消删除'
@@ -823,14 +817,14 @@ export default {
     },
 
     deleteCrowd(params) {
-      this.$confirm('此操作将删除/退出该群, 是否继续?', '提示', { //提示用户是否确认删除
+      this.$confirm('此操作将删除/退出该群, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        api.deleteCrowd(params).then(res => {  // 点击确认则发起请求删除该群，参数是点击删除的群名
+        api.deleteCrowd(params).then(res => {
           this.ind--;
-          this.getCrowd();                // 刷新页面，重新获取群列表
+          this.getCrowd();
         })
         this.$message({
           type: 'success',
@@ -856,11 +850,9 @@ export default {
       }
     },
     sendMessage() {
-      //发送消息的时间，格式需要处理
       let timeNow = new Date()
       let time = timeNow.getFullYear() + '/' + ('0' + (timeNow.getMonth() + 1)).slice(-2) + '/' + ('0' + timeNow.getDate()).slice(-2) + '  ' +
         timeNow.getHours() + ':' + timeNow.getMinutes() + ':' + ('0' + timeNow.getSeconds()).slice(-2);
-      // 参数的recPerson是接收者，是一个好友账号或者群名，sendPerson是发送者，一般为当前登录用户
       let recP = this.partnerAndcrowds[this.ind];
       let editMessage = JSON.stringify({ sendPerson: localStorage.username, recPerson: recP.account.split(';').length > 1 ? recP.name : recP.account, message: this.$refs.messageText.value, time: time })
       if (this.$refs.messageText.value == '') {
@@ -871,15 +863,12 @@ export default {
         return;
       }
       else {
-        // 调用发送消息的接口
         api.sendMessage(editMessage).then(res => {
           if (res.data.reason == 'OK') {
             this.getMessage();
           }
         });
-        // 清空消息文本输入框
         this.$refs.messageText.value = ''
-        // nextTick使当前的页面刷新之后再设置消息滚动条在最底部
         this.$nextTick(function () {
           this.scrollToBottom();
         })

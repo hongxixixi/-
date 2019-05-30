@@ -490,13 +490,12 @@ export default {
         }
       });
     },
-    //点击分享笔记
+    //分享笔记
     shareMyFile(type) {
-      //把当前要分享的文件信息传给shareItemName
       this.shareItemName = this.rightItem;
       this.type = type;
     },
-    //确定分享之后发送消息
+    //确定分享
     confirmShareFlie() {
       if (this.shareMumber.length <= 0) {
         this.$message({
@@ -541,7 +540,7 @@ export default {
         });
         if (this.type == '共享') {
           let param = JSON.stringify({ username: localStorage.username, folder: this.shareItemName.folder, name: this.shareItemName.name, beshareUser: item, authority: this.shareAuth })
-          // console.log(param)
+          console.log(param)
           api.shareFile(param).then(res => {
             if (res.data.reason != "OK") {
               let that = this;
@@ -553,7 +552,7 @@ export default {
           });
         }
       });
-      // this.shareAuth = '';
+      this.shareAuth = '';
       this.shareMumber = [];
     },
     //重命名笔记本
@@ -855,7 +854,7 @@ export default {
       this.viewConfirmMask = !this.viewConfirmMask;
     },
     //获取编辑器文件内容和文件名称
-    FileContent(text, filename, foldername, time, editName) {
+    FileContent(text, filename, foldername, time, sharePers) {
       this.fileContent = text;
       this.fileName = filename;
       this.fileFolderName = foldername;
