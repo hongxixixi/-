@@ -43,7 +43,11 @@
       <el-row
         class="error"
         :class="{'active':registerFlag}"
+<<<<<<< HEAD
       >该用户已存在1111</el-row>
+=======
+      >该用户已存在merge的方式，看看提交怎么变化</el-row>
+>>>>>>> Revert "注释一些代码"
       <el-form-item style="margin-left:0px">
         <el-button type="primary">
           <router-link :to="{name:'login'}">返回登录</router-link>
