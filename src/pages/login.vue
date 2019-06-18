@@ -17,20 +17,12 @@
       >
         <el-form-item
           label="用户名1111111111qwewqew"
-<<<<<<< HEAD
           prop="usernamewewewewe"
-=======
-          prop="username"
->>>>>>> 1111
         >
           <el-input v-model.number="ruleForm2.username"></el-input>
         </el-form-item>
         <el-form-item
-<<<<<<< HEAD
           label="asdsdsdsds"
-=======
-          label="密码1111DE"
->>>>>>> 1111
           prop="pass"
         >
           <el-input
