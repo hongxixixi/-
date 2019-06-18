@@ -79,7 +79,7 @@ export default {
     };
     var validatePass = (rule, value, callback) => {
       if (value === "") {
-        callback(new Error("请输入密码"));
+        callback(new Error("请输入密码ba"));
       } else {
         callback();
       }
