@@ -46,7 +46,7 @@
       >该用户已存在</el-row>
       <el-form-item style="margin-left:0px">
         <el-button type="primary">
-          <router-link :to="{name:'login'}">返回登录</router-link>
+          <router-link :to="{name:'login'}">返回登录12323232</router-link>
         </el-button>
         <el-button
           type="primary"
