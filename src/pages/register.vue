@@ -25,12 +25,9 @@
         ></el-input>
       </el-form-item>
       <el-form-item
-        <<<<<<<
-        HEAD
-        label="确认密码"=======label="确认密码11111111"
-      >>>>>>> hhh
+        label="确认密码11111111"
         prop="checkPass"
-        >
+      >
         <el-input
           type="password"
           v-model="checkRules.checkPass"
